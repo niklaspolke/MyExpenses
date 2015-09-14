@@ -8,16 +8,34 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 @Entity
+@NamedQueries(
+	value={
+	@NamedQuery(
+		name="Expense.findAll",
+		query="SELECT e FROM Expense e")
+	}
+)
 public class Expense implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@Transient
 	private final NumberFormat FORMATTER = NumberFormat.getCurrencyInstance(Locale.GERMANY);
 
 	@Id
 	@GeneratedValue(generator = "ID_SEQ", strategy = GenerationType.TABLE)
+	@TableGenerator(name="USER_SEQ",
+		table="sequences",
+		pkColumnName="SEQ_NAME", // Specify the name of the column of the primary key
+		valueColumnName="SEQ_NUMBER", // Specify the name of the column that stores the last value generated
+		pkColumnValue="ID_GENERATOR", // Specify the primary key column value that would be considered as a primary key generator
+		allocationSize=1)
 	private long id;
 
 	private Double amount;

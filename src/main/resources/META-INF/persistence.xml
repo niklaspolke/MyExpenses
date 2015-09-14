@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+        xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+    <persistence-unit name="myexpenses-db" transaction-type="RESOURCE_LOCAL">
+        <description>persistence unit of production environment</description>
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <!-- matching to tomcat configuration:
+            <Resource name="jdbc/myexpenses-db" auth="Container" type="javax.sql.DataSource"
+                driverClassName="org.sqlite.JDBC" url="jdbc:sqlite:/home/pi/myexpenses/myexpenses_sqlite.db"
+                maxTotal="20" maxIdle="10" maxWaitMillis="-1" />
+        -->
+        <non-jta-data-source>jdbc/myexpenses-db</non-jta-data-source>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    </persistence-unit>
+    <persistence-unit name="myexpenses-testdb" transaction-type="RESOURCE_LOCAL">
+        <description>in-memory sqlite database for persistence unit tests</description>
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+        <properties>
+            <property name="eclipselink.logging.level" value="WARNING"/>
+            <property name="eclipselink.logging.level.sql" value="WARNING"/>
+            <property name="eclipselink.target-database" value="Database" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:sqlite::memory:"/>
+            <property name="javax.persistence.jdbc.driver" value="org.sqlite.JDBC"/>
+        </properties>
+    </persistence-unit>
+</persistence>
