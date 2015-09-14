@@ -1,15 +1,5 @@
-<%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
+<%@ include file="header.jspf" %>
 
-<html>
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="css/styles.css">
-        <title>MyExpenses</title>
-    </head>
+    <h1>Welcome to MyExpenses</h1>
 
-    <body>
-        <header>
-            <h1 class="title">MyExpenses</h1>
-        </header>
-    </body>
-</html>
+<%@ include file="footer.jspf" %>

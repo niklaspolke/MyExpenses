@@ -1,4 +1,24 @@
 .title {
     text-align: center;
     border: thick solid navy;
+    border-radius: 50%;
+    width: 400px;
+    margin: auto;
+    height: 50px;
+}
+div.inline-block {
+     display: inline-block;
+     vertical-align: top;
+     margin: 15px;
+}
+ul.menu {
+    list-style-type: none;
+    padding: 0;
+}
+li.menu-item {
+    text-align: center;
+    margin: 0px 0px 30px 0px;
+}
+li.menu-item:hover {
+    background-color: lightgray;
 }
