@@ -16,9 +16,10 @@ public class ExpenseTest {
 
 	@Test
 	public void toString_NormalValues() {
+		expense.setId(4);
 		expense.setAmount(Double.valueOf("18.35"));
 		expense.setReason("food");
-		assertEquals("Expense: # - 18,35 € for <food>", expense.toString());
+		assertEquals("Expense: #4 - 18,35 € for <food>", expense.toString());
 	}
 
 	@Test

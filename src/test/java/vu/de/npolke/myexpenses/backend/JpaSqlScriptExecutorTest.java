@@ -13,23 +13,23 @@ import org.junit.Test;
 
 import vu.de.npolke.myexpenses.model.Expense;
 
-public class SqlScriptExecutorTest {
+public class JpaSqlScriptExecutorTest {
 
-	private SqlScriptExecutor executor;
+	private JpaSqlScriptExecutor executor;
 
 	@Before
 	public void setup() {
-		executor = new SqlScriptExecutor(DatabaseConnectionTest.TEST_PERSISTENCE_UNIT);
+		executor = new JpaSqlScriptExecutor(DatabaseConnectionTest.TEST_PERSISTENCE_UNIT);
 	}
 
 	@Test
-	public void testSqlScript() {
-		executor.executeSqlScript(SqlScriptExecutor.INITIALIZE_DB_SCRIPT);
+	public void sqlScript() {
+		executor.executeSqlScript(JpaSqlScriptExecutor.INITIALISE_DB_SCRIPT);
 	}
 
 	@Test
-	public void testReuseOfDatabaseConnection() {
-		executor.executeSqlScript(SqlScriptExecutor.INITIALIZE_DB_SCRIPT);
+	public void initialisedDb() {
+		executor.executeSqlScript(JpaSqlScriptExecutor.INITIALISE_DB_SCRIPT);
 		EntityManager connection = executor.getConnectionPool().createEntityManager();
 		connection.getTransaction().begin();
 		TypedQuery<Expense> allExpensesQuery = connection.createNamedQuery("Expense.findAll", Expense.class);

@@ -41,8 +41,8 @@ public class DatabaseConnectionTest {
 	@Before
 	public void setup() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		dbConnect = new DatabaseConnection();
-		SqlScriptExecutor executor = new SqlScriptExecutor(TEST_PERSISTENCE_UNIT);
-		executor.executeSqlScript(SqlScriptExecutor.INITIALIZE_DB_SCRIPT);
+		JpaSqlScriptExecutor executor = new JpaSqlScriptExecutor(TEST_PERSISTENCE_UNIT);
+		executor.executeSqlScript(JpaSqlScriptExecutor.INITIALISE_DB_SCRIPT);
 
 		Field privateField = DatabaseConnection.class.getDeclaredField(DATABASECONNECTION_CONNECTIONPOOL_ATTRIBUTE);
 		privateField.setAccessible(true);
@@ -50,7 +50,7 @@ public class DatabaseConnectionTest {
 	}
 
 	@Test
-	public void testGetNewEntityManager() {
+	public void getNewEntityManager() {
 		EntityManager em = dbConnect.connect();
 		assertNotNull(em);
 		assertTrue(em.isOpen());
@@ -62,7 +62,7 @@ public class DatabaseConnectionTest {
 	}
 
 	@Test
-	public void testSelectRollback() {
+	public void selectRollback() {
 		EntityManager em = dbConnect.connect();
 		TypedQuery<Expense> allExpensesQuery = em.createNamedQuery("Expense.findAll", Expense.class);
 		List<Expense> allExpenses = allExpensesQuery.getResultList();
@@ -73,7 +73,7 @@ public class DatabaseConnectionTest {
 	}
 
 	@Test
-	public void testSelectCommit() {
+	public void selectCommit() {
 		EntityManager em = dbConnect.connect();
 		TypedQuery<Expense> allExpensesQuery = em.createNamedQuery("Expense.findAll", Expense.class);
 		List<Expense> allExpenses = allExpensesQuery.getResultList();
@@ -84,7 +84,7 @@ public class DatabaseConnectionTest {
 	}
 
 	@Test
-	public void testErrorRollback() {
+	public void errorRollback() {
 		EntityManager em = dbConnect.connect();
 		Query incorrectQuery = em.createNativeQuery("SELECT * FROM expectError");
 		try {
@@ -97,7 +97,7 @@ public class DatabaseConnectionTest {
 	}
 
 	@Test
-	public void testErrorCommit() {
+	public void errorCommit() {
 		EntityManager em = dbConnect.connect();
 		Query incorrectQuery = em.createNativeQuery("SELECT * FROM expectError");
 		try {
