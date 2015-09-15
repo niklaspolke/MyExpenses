@@ -25,10 +25,14 @@ public class AddExpenseServlet extends HttpServlet {
 
 		final Double amount = Double.valueOf(request.getParameter("amount").replaceAll(",", "."));
 		final String reason = request.getParameter("reason");
+		final String day = request.getParameter("day");
+		final String month = request.getParameter("month");
+		final String year = request.getParameter("year");
 
 		Expense expense = new Expense();
 		expense.setAmount(amount);
 		expense.setReason(reason);
+		expense.setReadableDateAsString(day + "." + month + "." + year);
 
 		EntityManager dbConnection = DB_CONNECT.connect();
 		dbConnection.persist(expense);

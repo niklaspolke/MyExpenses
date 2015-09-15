@@ -43,6 +43,7 @@ public class JdbcSqlScriptExecutorTest {
 		while (result.next()) {
 			countResults++;
 			Expense expense = new Expense();
+			expense.setDatabaseDate(result.getString("date"));
 			expense.setAmount(result.getDouble("amount"));
 			expense.setReason(result.getString("reason"));
 			expense.setId(result.getLong("id"));

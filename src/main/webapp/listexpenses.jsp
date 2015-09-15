@@ -11,6 +11,7 @@
     <thead>
         <tr>
             <th>Id</th>
+            <th>Date</th>
             <th>Amount</th>
             <th>Reason</th>
         </tr>
@@ -19,6 +20,7 @@
         <c:forEach var="expense" items="${sessionScope.expenses}">
             <tr>
                 <td class="number bordered"><c:out value="${expense.id}"/></td>
+                <td class="number bordered"><c:out value="${expense.getReadableDateAsString()}"/></td>
                 <td class="number bordered"><fmt:formatNumber value="${expense.amount}" type="currency"/></td>
                 <td class="bordered"><c:out value="${expense.reason}"/></td>
             </tr>
