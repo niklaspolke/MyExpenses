@@ -11,7 +11,7 @@
                 driverClassName="org.sqlite.JDBC" url="jdbc:sqlite:/home/pi/myexpenses/myexpenses_sqlite.db"
                 maxTotal="20" maxIdle="10" maxWaitMillis="-1" />
         -->
-        <non-jta-data-source>jdbc/myexpenses-db</non-jta-data-source>
+        <non-jta-data-source>java:/comp/env/jdbc/myexpenses-db</non-jta-data-source>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
     </persistence-unit>
     <persistence-unit name="myexpenses-testdb" transaction-type="RESOURCE_LOCAL">

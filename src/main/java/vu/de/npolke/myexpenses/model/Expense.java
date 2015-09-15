@@ -30,7 +30,7 @@ public class Expense implements Serializable {
 
 	@Id
 	@GeneratedValue(generator = "ID_SEQ", strategy = GenerationType.TABLE)
-	@TableGenerator(name="USER_SEQ",
+	@TableGenerator(name="ID_SEQ",
 		table="sequences",
 		pkColumnName="SEQ_NAME", // Specify the name of the column of the primary key
 		valueColumnName="SEQ_NUMBER", // Specify the name of the column that stores the last value generated
