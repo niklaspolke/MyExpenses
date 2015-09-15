@@ -1,8 +1,14 @@
-<%@ include file="header.jspf" %>
+<%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
+<c:import url="header.jspf" charEncoding="UTF-8"/>
+
+<h3>Add Expense</h3>
 
 <form action="addexpense" method="post">
     <fieldset>
-        <legend>Add expense</legend>
+        <legend>Expense</legend>
         <table>
             <tbody>
                 <tr>
@@ -49,4 +55,4 @@
     </fieldset>
 </form>
 
-<%@ include file="footer.jspf" %>
+<c:import url="footer.jspf" charEncoding="UTF-8"/>

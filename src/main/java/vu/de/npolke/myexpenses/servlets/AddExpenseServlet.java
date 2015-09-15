@@ -32,9 +32,10 @@ public class AddExpenseServlet extends HttpServlet {
 
 		EntityManager dbConnection = DB_CONNECT.connect();
 		dbConnection.persist(expense);
+
 		DB_CONNECT.commit();
 		DB_CONNECT.close();
 
-		response.sendRedirect("index.jsp");
+		response.sendRedirect("listexpenses");
 	}
 }

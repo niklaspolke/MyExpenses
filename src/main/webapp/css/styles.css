@@ -22,3 +22,16 @@ li.menu-item {
 li.menu-item:hover {
     background-color: lightgray;
 }
+.tableList {
+    border-collapse: collapse;
+}
+td {
+    padding: 5px 15px 5px 15px;
+}
+td.bordered {
+    padding: 5px 15px 5px 15px;
+    border: 1px solid navy;
+}
+td.number {
+    text-align: right;
+}
