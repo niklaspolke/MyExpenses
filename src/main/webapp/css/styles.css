@@ -28,10 +28,13 @@ li.menu-item:hover {
 td {
     padding: 5px 15px 5px 15px;
 }
+input {
+    width: 100%;
+}
 td.bordered {
     padding: 5px 15px 5px 15px;
     border: 1px solid navy;
 }
-td.number {
+td.number, th.right {
     text-align: right;
 }
