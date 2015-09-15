@@ -6,6 +6,7 @@
 
 <h3>Expenses:</h3>
 
+<fmt:setLocale value="de_DE"/>
 <table class="tableList">
     <thead>
         <tr>
