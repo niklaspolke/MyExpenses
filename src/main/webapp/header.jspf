@@ -13,21 +13,17 @@
 
         <div class="inline-block">
             <ul class="menu">
-                <li class="menu-item"><a href="addexpense">
+                <li class="menu-item"><a href="addexpense" title="add expense">
                     <img src="img/sign-add_96.png" alt="add expense" title="add expense"/>
                     <br/>Add Expense
                 </a></li>
-                <li class="menu-item"><a href="listexpenses">
-                    <img src="img/folder_96.png" alt="list expense" title="list expense"/>
+                <li class="menu-item"><a href="listexpenses" title="list expenses">
+                    <img src="img/folder_96.png" alt="list expenses" title="list expenses"/>
                     <br/>List Expenses
                 </a></li>
-                <li class="menu-item"><a href="listcategories">
+                <li class="menu-item"><a href="listcategories" title="list categories">
                     <img src="img/layers_96.png" alt="list categories" title="list categories"/>
                     <br/>List Categories
-                </a></li>
-                <li class="menu-item"><a href="addcategory.jsp">
-                    <img src="img/sign-add_96.png" alt="add category" title="add category"/>
-                    <br/>Add Category
                 </a></li>
             </ul>
         </div>

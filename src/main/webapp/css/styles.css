@@ -19,8 +19,11 @@ li.menu-item {
     text-align: center;
     margin: 0px 0px 30px 0px;
 }
-li.menu-item:hover {
+li.menu-item:hover, a:hover, input:hover, select:hover {
     background-color: lightgray;
+}
+a {
+    display: inline-block;
 }
 .tableList {
     border-collapse: collapse;
@@ -28,8 +31,9 @@ li.menu-item:hover {
 td {
     padding: 5px 15px 5px 15px;
 }
-input {
+input, select {
     width: 100%;
+    border-radius: 5px;
 }
 table.bordered td {
     padding: 5px 15px 5px 15px;
