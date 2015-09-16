@@ -43,6 +43,7 @@ public class AddExpenseServlet extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=UTF-8");
 
 		final Double amount = Double.valueOf(request.getParameter("amount").replaceAll(",", "."));
