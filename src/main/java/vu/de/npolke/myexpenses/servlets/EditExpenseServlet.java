@@ -63,9 +63,13 @@ public class EditExpenseServlet extends HttpServlet {
 		expense.setAmount(amount);
 		expense.setReason(reason);
 		expense.setReadableDateAsString(day + "." + month + "." + year);
-		expense.setCategory(new Category(Long.parseLong(categoryId)));
 
 		EntityManager dbConnection = DB_CONNECT.connect();
+
+		if (Long.parseLong(categoryId) != expense.getCategory().getId()) {
+			Category category = dbConnection.find(Category.class, Long.parseLong(categoryId));
+			expense.setCategory(category);
+		}
 
 		dbConnection.merge(expense);
 

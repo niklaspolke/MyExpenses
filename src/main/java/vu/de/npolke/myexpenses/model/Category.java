@@ -1,6 +1,7 @@
 package vu.de.npolke.myexpenses.model;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -32,6 +34,9 @@ public class Category implements Serializable {
 
 	private String name;
 
+	@OneToMany(mappedBy="category")
+	private Set<Expense> expenses;
+
 	public Category() {
 	}
 
@@ -53,6 +58,10 @@ public class Category implements Serializable {
 
 	public void setName(final String name) {
 		this.name = name;
+	}
+
+	public Set<Expense> getExpenses() {
+		return expenses;
 	}
 
 	@Override
