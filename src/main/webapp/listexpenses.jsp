@@ -4,7 +4,7 @@
 
 <c:import url="header.jspf" charEncoding="UTF-8"/>
 
-<h3>Expenses:</h3>
+<h3>List Expenses:</h3>
 
 <fmt:setLocale value="de_DE"/>
 <table class="tableList bordered">
@@ -27,6 +27,7 @@
                 <td class="number"><fmt:formatNumber value="${expense.amount}" type="currency"/></td>
                 <td><c:out value="${expense.reason}"/></td>
                 <td style="border:none">
+                    <a href="editexpense?id=${expense.id}"><img src="img/pencil_24.png" alt="edit expense" title="edit expense" width="24" height="24"/></a>
                     <a href="deleteexpense?id=${expense.id}"><img src="img/sign-delete_24.png" alt="delete expense" title="delete expense" width="24" height="24"/></a>
                 </td>
             </tr>
