@@ -43,10 +43,22 @@ public class JpaSqlScriptExecutor extends SqlScriptExecutor {
 	}
 
 	private void commit() {
-		dbConnection.getTransaction().commit();
+		if (dbConnection.getTransaction().isActive()) {
+			try {
+				dbConnection.getTransaction().commit();
+			} catch (Exception e) {
+				// eclipselink bug --> Internal Exception: java.sql.SQLException: cannot rollback - no transaction is active
+			}
+		}
 	}
 
 	private void rollback() {
-		dbConnection.getTransaction().rollback();
+		if (dbConnection.getTransaction().isActive()) {
+			try {
+				dbConnection.getTransaction().rollback();
+			} catch (Exception e) {
+				// eclipselink bug --> Internal Exception: java.sql.SQLException: cannot rollback - no transaction is active
+			}
+		}
 	}
 }

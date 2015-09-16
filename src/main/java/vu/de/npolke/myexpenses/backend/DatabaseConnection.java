@@ -30,7 +30,7 @@ public class DatabaseConnection {
 	public void commit() {
 		if (dbConnection.getTransaction().isActive()) {
 			if (dbConnection.getTransaction().getRollbackOnly()) {
-				dbConnection.getTransaction().rollback();
+				rollback();
 			} else {
 				dbConnection.getTransaction().commit();
 			}
@@ -39,7 +39,11 @@ public class DatabaseConnection {
 
 	public void rollback() {
 		if (dbConnection.getTransaction().isActive()) {
-			dbConnection.getTransaction().rollback();
+			try {
+				dbConnection.getTransaction().rollback();
+			} catch (Exception e) {
+				// eclipselink bug --> Internal Exception: java.sql.SQLException: cannot rollback - no transaction is active
+			}
 		}
 	}
 }

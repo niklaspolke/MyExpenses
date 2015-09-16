@@ -31,7 +31,7 @@ td {
 input {
     width: 100%;
 }
-td.bordered {
+table.bordered td {
     padding: 5px 15px 5px 15px;
     border: 1px solid navy;
 }

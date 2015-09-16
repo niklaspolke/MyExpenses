@@ -1,6 +1,7 @@
 package vu.de.npolke.myexpenses.backend;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.sql.Connection;
@@ -12,6 +13,7 @@ import java.sql.Statement;
 import org.junit.Before;
 import org.junit.Test;
 
+import vu.de.npolke.myexpenses.model.Category;
 import vu.de.npolke.myexpenses.model.Expense;
 
 public class JdbcSqlScriptExecutorTest {
@@ -38,7 +40,7 @@ public class JdbcSqlScriptExecutorTest {
 
 		Connection connection = DriverManager.getConnection(JdbcSqlScriptExecutor.URL_PREFIX + FILE);
 		Statement allExpensesQuery = connection.createStatement();
-		ResultSet result = allExpensesQuery.executeQuery("select * from expense");
+		ResultSet result = allExpensesQuery.executeQuery("select * from expenses");
 		int countResults = 0;
 		while (result.next()) {
 			countResults++;
@@ -47,6 +49,10 @@ public class JdbcSqlScriptExecutorTest {
 			expense.setAmount(result.getDouble("amount"));
 			expense.setReason(result.getString("reason"));
 			expense.setId(result.getLong("id"));
+			Category category = new Category();
+			category.setName("<not read yet>");
+			category.setId(result.getInt("category_id"));
+			expense.setCategory(category);
 			System.out.println(expense);
 		}
 		assertEquals(3, countResults);

@@ -9,8 +9,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
@@ -19,6 +21,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 @Entity
+@Table(name="expenses")
 @NamedQueries(
 	value={
 	@NamedQuery(
@@ -57,6 +60,9 @@ public class Expense implements Serializable {
 
 	private String reason;
 
+	@ManyToOne
+	private Category category;
+
 	public long getId() {
 		return id;
 	}
@@ -83,6 +89,7 @@ public class Expense implements Serializable {
 		return getDate() != null ? getDate().toString(READABLE_DATE_FORMATTER) : null;
 	}
 
+	@Transient
 	public LocalDate getDate() {
 		if (date == null && databaseDate != null) {
 			date = DATABASE_FORMATTER.parseLocalDate(databaseDate);
@@ -111,13 +118,22 @@ public class Expense implements Serializable {
 		this.reason = reason;
 	}
 
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
 	@Override
 	public String toString() {
 		//@formatter:off
 		StringBuilder text = new StringBuilder().append("Expense: #")
 				.append(getId() != 0 ? getId() : "").append(" ")
 				.append("(").append(getReadableDateAsString() != null ? getReadableDateAsString() : "??.??.????").append(") - ")
-				.append(getAmount() != null ? NUMBER_FORMATTER.format(getAmount().doubleValue()) : NUMBER_FORMATTER.format(0)).append(" for ")
+				.append(getAmount() != null ? NUMBER_FORMATTER.format(getAmount().doubleValue()) : NUMBER_FORMATTER.format(0)).append(" - ")
+				.append(getCategory() != null ? getCategory().getName() : "null").append(" --> ")
 				.append("<").append(getReason() != null ? getReason() : "").append(">");
 		return text.toString();
 		//@formatter:on

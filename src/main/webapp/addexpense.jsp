@@ -66,6 +66,21 @@
                 </tr>
                 <tr>
                     <th class="right">
+                        <label for="category">category:</label>
+                    </th>
+                    <td colspan="3">
+                        <select
+                            name="category"
+                            title="category of expense"
+                            required="required">
+                            <c:forEach items="${sessionScope.categories}" var="singlecategory">
+                                <option value="${singlecategory.id}">${singlecategory.name}</option>
+                            </c:forEach>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="right">
                         <label for="amount">amount (€):</label>
                     </th>
                     <td colspan="3">

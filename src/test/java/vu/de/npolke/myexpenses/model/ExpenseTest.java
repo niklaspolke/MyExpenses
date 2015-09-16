@@ -23,19 +23,22 @@ public class ExpenseTest {
 		expense.setId(4);
 		expense.setDatabaseDate("2015.09.15");
 		expense.setAmount(Double.valueOf("18.35"));
-		expense.setReason("food");
-		assertEquals("Expense: #4 (15.09.2015) - 18,35 € for <food>", expense.toString());
+		expense.setReason("chicken");
+		Category cat = new Category();
+		cat.setName("food");
+		expense.setCategory(cat);
+		assertEquals("Expense: #4 (15.09.2015) - 18,35 € - food --> <chicken>", expense.toString());
 	}
 
 	@Test
 	public void toString_NullValues() {
-		assertEquals("Expense: # (??.??.????) - 0,00 € for <>", expense.toString());
+		assertEquals("Expense: # (??.??.????) - 0,00 € - null --> <>", expense.toString());
 	}
 
 	@Test
 	public void toString_AmountWithoutDecimalFraction() {
 		expense.setAmount(Double.valueOf("18"));
-		assertEquals("Expense: # (??.??.????) - 18,00 € for <>", expense.toString());
+		assertEquals("Expense: # (??.??.????) - 18,00 € - null --> <>", expense.toString());
 	}
 
 	@Test
