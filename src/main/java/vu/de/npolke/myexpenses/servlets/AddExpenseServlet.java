@@ -56,13 +56,9 @@ public class AddExpenseServlet extends HttpServlet {
 		expense.setAmount(amount);
 		expense.setReason(reason);
 		expense.setReadableDateAsString(day + "." + month + "." + year);
+		expense.setCategory(new Category(Long.parseLong(categoryId)));
 
 		EntityManager dbConnection = DB_CONNECT.connect();
-
-		TypedQuery<Category> findCategoryByIdQuery = dbConnection.createNamedQuery("Category.findById", Category.class);
-		findCategoryByIdQuery.setParameter("id", Long.parseLong(categoryId));
-		Category category = findCategoryByIdQuery.getSingleResult();
-		expense.setCategory(category);
 
 		dbConnection.persist(expense);
 
