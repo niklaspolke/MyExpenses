@@ -15,6 +15,7 @@
             <th>Category</th>
             <th>Amount</th>
             <th>Reason</th>
+            <th>Modify</th>
         </tr>
     </thead>
     <tbody>
@@ -25,6 +26,9 @@
                 <td><c:out value="${expense.category.name}"/></td>
                 <td class="number"><fmt:formatNumber value="${expense.amount}" type="currency"/></td>
                 <td><c:out value="${expense.reason}"/></td>
+                <td style="border:none">
+                    <a href="deleteexpense?id=${expense.id}"><img src="img/sign-delete_24.png" alt="delete expense" title="delete expense" width="24" height="24"/></a>
+                </td>
             </tr>
         </c:forEach>
     </tbody>
