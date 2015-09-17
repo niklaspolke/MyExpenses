@@ -14,6 +14,6 @@ License for the specific language governing permissions and limitations under
 the License.
 --%>
 <%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
-<c:redirect url="listexpenses"/>
+        </div>
+    </body>
+</html>
