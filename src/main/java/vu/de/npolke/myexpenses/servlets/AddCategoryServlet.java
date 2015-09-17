@@ -35,6 +35,6 @@ public class AddCategoryServlet extends HttpServlet {
 		DB_CONNECT.commit();
 		DB_CONNECT.close();
 
-		response.sendRedirect("listexpenses");
+		response.sendRedirect("listcategories");
 	}
 }
