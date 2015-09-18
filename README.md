@@ -2,6 +2,7 @@
 Web Application to track and analyse my expenses
 * Project:  https://waffle.io/niklaspolke/MyExpenses
 * Build: [![Build Status](https://travis-ci.org/niklaspolke/MyExpenses.svg)](https://travis-ci.org/niklaspolke/MyExpenses)
+* Coverage: [![Coverage Status](https://coveralls.io/repos/niklaspolke/MyExpenses/badge.svg?branch=master&service=github)](https://coveralls.io/github/niklaspolke/MyExpenses?branch=master)
 
 ### Planned features:
 * User registration / login
