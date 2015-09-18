@@ -12,7 +12,7 @@ Web Application to track and analyse my expenses
 
 ### Architecture:
 * Java EE
-* JSP / EL / JSTL / flot.js
+* JSP / EL / JSTL / Chartist.js
 * JPA / EclipseLink / Sqlite
 * Maven
 * Tomcat

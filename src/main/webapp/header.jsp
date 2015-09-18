@@ -41,6 +41,10 @@ the License.
                     <img src="img/layers_96.png" alt="list categories" title="list categories"/>
                     <br/>List Categories
                 </a></li>
+                <li class="menu-item"><a href="showstatistics" title="show statistics">
+                    <img src="img/file-powerpoint_96.png" alt="show statistics" title="show statistics"/>
+                    <br/>Show Statistics
+                </a></li>
             </ul>
         </div>
 
