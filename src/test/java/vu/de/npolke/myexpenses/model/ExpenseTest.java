@@ -1,9 +1,7 @@
 package vu.de.npolke.myexpenses.model;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,8 +24,6 @@ import org.junit.Test;
  */
 public class ExpenseTest {
 
-	private final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("dd.MM.yyyy");
-
 	private Expense expense;
 
 	@Before
@@ -44,6 +40,7 @@ public class ExpenseTest {
 		Category cat = new Category();
 		cat.setName("food");
 		expense.setCategory(cat);
+
 		assertEquals("Expense: #4 (15.09.2015) - 18,35 € - food --> <chicken>", expense.toString());
 	}
 
@@ -55,6 +52,7 @@ public class ExpenseTest {
 	@Test
 	public void toString_AmountWithoutDecimalFraction() {
 		expense.setAmount(Double.valueOf("18"));
+
 		assertEquals("Expense: # (??.??.????) - 18,00 € - null --> <>", expense.toString());
 	}
 
@@ -62,12 +60,12 @@ public class ExpenseTest {
 	public void databaseSetDateAsString() {
 		expense.setDatabaseDate("2015.09.15");
 
-		assertEquals("15.09.2015", expense.getDate().toString(DateTimeFormat.forPattern("dd.MM.yyyy")));
+		assertEquals("15.09.2015", expense.getReadableDateAsString());
 	}
 
 	@Test
 	public void applicationSetDate() {
-		expense.setDate(DATE_FORMATTER.parseLocalDate("15.09.2015"));
+		expense.setReadableDateAsString("15.09.2015");
 
 		assertEquals("2015.09.15", expense.getDatabaseDate());
 	}

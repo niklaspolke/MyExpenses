@@ -1,8 +1,8 @@
 package vu.de.npolke.myexpenses.servlets.util;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -33,7 +33,7 @@ public class JsonObject {
 	private static final String ARRAY_START = "[";
 	private static final String ARRAY_END = "]";
 
-	private Map<String, Object> parameter = new HashMap<String, Object>();
+	private Map<String, Object> parameter = new TreeMap<String, Object>();
 
 	public JsonObject addParameter(final String key, final Object value) {
 		parameter.put(key, value);

@@ -94,7 +94,6 @@ public class Expense implements Serializable {
 
 	public void setDatabaseDate(String databaseDate) {
 		this.databaseDate = databaseDate;
-		this.date = DATABASE_FORMATTER.parseLocalDate(databaseDate);
 	}
 
 	public void setReadableDateAsString(final String readableDate) {
@@ -106,17 +105,11 @@ public class Expense implements Serializable {
 		return getDate() != null ? getDate().toString(READABLE_DATE_FORMATTER) : null;
 	}
 
-	@Transient
 	public LocalDate getDate() {
 		if (date == null && databaseDate != null) {
 			date = DATABASE_FORMATTER.parseLocalDate(databaseDate);
 		}
 		return date;
-	}
-
-	public void setDate(LocalDate date) {
-		this.date = date;
-		this.databaseDate = this.date.toString(DATABASE_FORMATTER);
 	}
 
 	public Double getAmount() {

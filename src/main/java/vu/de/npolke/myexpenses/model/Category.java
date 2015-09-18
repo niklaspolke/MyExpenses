@@ -52,14 +52,7 @@ public class Category implements Serializable {
 	private String name;
 
 	@OneToMany(mappedBy="category")
-	private Set<Expense> expenses;
-
-	public Category() {
-	}
-
-	public Category(final long id) {
-		setId(id);
-	}
+	Set<Expense> expenses;
 
 	public long getId() {
 		return id;
@@ -86,7 +79,7 @@ public class Category implements Serializable {
 		//@formatter:off
 		StringBuilder text = new StringBuilder().append("Category: #")
 				.append(getId() != 0 ? getId() : "").append(" - ")
-				.append(getName());
+				.append("<").append(getName() != null ? getName() : "").append(">");
 		return text.toString();
 		//@formatter:on
 	}
