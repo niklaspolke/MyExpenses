@@ -45,7 +45,9 @@ public class DeleteExpenseServlet extends HttpServlet {
 		EntityManager dbConnection = DB_CONNECT.connect();
 
 		Expense expense = dbConnection.find(Expense.class, Long.parseLong(id));
-		expense.getCategory().getExpenses().remove(expense);
+		if (expense.getCategory() != null) {
+			expense.getCategory().getExpenses().remove(expense);
+		}
 		dbConnection.remove(expense);
 
 		DB_CONNECT.commit();
