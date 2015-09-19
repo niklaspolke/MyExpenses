@@ -40,18 +40,21 @@ public class DeleteExpenseServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
 
-		final String id = request.getParameter("id");
+		String id = request.getParameter("id");
+		String confirmed = request.getParameter("confirmed");
 
-		EntityManager dbConnection = DB_CONNECT.connect();
+		if ("yes".equalsIgnoreCase(confirmed)) {
+			EntityManager dbConnection = DB_CONNECT.connect();
 
-		Expense expense = dbConnection.find(Expense.class, Long.parseLong(id));
-		if (expense.getCategory() != null) {
-			expense.getCategory().getExpenses().remove(expense);
+			Expense expense = dbConnection.find(Expense.class, Long.parseLong(id));
+			if (expense.getCategory() != null) {
+				expense.getCategory().getExpenses().remove(expense);
+			}
+			dbConnection.remove(expense);
+
+			DB_CONNECT.commit();
+			DB_CONNECT.close();
 		}
-		dbConnection.remove(expense);
-
-		DB_CONNECT.commit();
-		DB_CONNECT.close();
 
 		request.getRequestDispatcher("listexpenses").forward(request, response);;
 	}

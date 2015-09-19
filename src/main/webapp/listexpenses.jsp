@@ -44,12 +44,25 @@ the License.
                 <td><c:out value="${expense.reason}"/></td>
                 <td style="border:none">
                     <a href="editexpense?id=${expense.id}"><img src="img/pencil_24.png" alt="edit expense" title="edit expense" width="24" height="24"/></a>
-                    <a href="deleteexpense?id=${expense.id}"><img src="img/sign-delete_24.png" alt="delete expense" title="delete expense" width="24" height="24"/></a>
+                    <a id="delete${expense.id}" href="deleteexpense?id=${expense.id}" onclick="return prompt('delete${expense.id}', '${expense}')"><img src="img/sign-delete_24.png" alt="delete expense" title="delete expense" width="24" height="24"/></a>
                 </td>
             </tr>
         </c:forEach>
     </tbody>
 </table>
+
+<script type="text/javascript">
+function prompt(id, expense) {
+    var confirmed = confirm("Attention: Unrecoverable Delete Action\n\nDo you really want to delete:\n" + expense + " ?");
+    if (confirmed) {
+        var deleteLink = document.getElementById(id);
+        deleteLink.setAttribute('href', deleteLink.getAttribute('href') + '&confirmed=yes');
+        return true;
+    } else {
+        return false;
+    }
+}
+</script>
 
 
 <jsp:include page="footer.jsp"/>

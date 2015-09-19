@@ -40,17 +40,20 @@ public class DeleteCategoryServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
 
-		final String id = request.getParameter("id");
+		String id = request.getParameter("id");
+		String confirmed = request.getParameter("confirmed");
 
-		EntityManager dbConnection = DB_CONNECT.connect();
+		if ("yes".equalsIgnoreCase(confirmed)) {
+			EntityManager dbConnection = DB_CONNECT.connect();
 
-		Category category = dbConnection.find(Category.class, Long.parseLong(id));
-		if (category.getExpenses().size() == 0) {
-			dbConnection.remove(category);
+			Category category = dbConnection.find(Category.class, Long.parseLong(id));
+			if (category.getExpenses().size() == 0) {
+				dbConnection.remove(category);
+			}
+
+			DB_CONNECT.commit();
+			DB_CONNECT.close();
 		}
-
-		DB_CONNECT.commit();
-		DB_CONNECT.close();
 
 		request.getRequestDispatcher("listcategories").forward(request, response);;
 	}
