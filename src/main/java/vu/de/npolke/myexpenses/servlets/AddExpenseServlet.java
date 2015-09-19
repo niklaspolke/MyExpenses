@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.joda.time.LocalDate;
+
 import vu.de.npolke.myexpenses.backend.DatabaseConnection;
 import vu.de.npolke.myexpenses.model.Category;
 import vu.de.npolke.myexpenses.model.Expense;
@@ -54,6 +56,7 @@ public class AddExpenseServlet extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		session.setAttribute("categories", categories);
+		session.setAttribute("defaultDate", LocalDate.now());
 
 		response.sendRedirect("addexpense.jsp");
 	}
