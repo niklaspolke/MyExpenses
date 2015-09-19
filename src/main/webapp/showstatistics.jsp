@@ -24,12 +24,48 @@ the License.
 
 <h3>Test Statistics:</h3>
 
-<div id="myChart" style="height: 300px;width: 300px;"></div>
+<div class="inline-block">
+    <form action="showstatistics" method="post">
+        <select
+            name="month"
+            title="month of expense"
+            style="height:30px;font-size:1.5em;margin-bottom: 30px"
+            required="required" onchange="this.form.submit()">
+            <c:forEach var="month" items="${sessionScope.months}">
+                <option value="${month}" ${sessionScope.month eq month ? 'selected' : ''}>${month}</option>
+            </c:forEach>
+        </select>
+    </form>
+
+    <div id="myChart" style="height: 300px;width: 300px;"></div>
+</div>
+
+<div class="inline-block">
+    <fmt:setLocale value="de_DE"/>
+    <table class="tableList bordered">
+        <tr>
+            <th>Category</th>
+            <th style="width:100px">Value</th>
+        </tr>
+        <c:forEach var="category" items="${sessionScope.statistics}">
+            <tr>
+                <td>
+                    ${category.name}
+                </td><td class="number">
+                    <fmt:formatNumber value="${category.value}" type="currency"/>
+                </td>
+            </tr>
+        </c:forEach>
+        <tr>
+        </tr>
+    </table>
+</div>
 
 <script type="text/javascript">
+var chart;
 document.body.onload = function() {
-    var data = JSON.parse('${sessionScope.chart}');
-    new Chartist.Pie('#myChart', data);
+    let chart = JSON.parse('${sessionScope.chart}');
+    new Chartist.Pie('#myChart', chart);
 }
 </script>
 
