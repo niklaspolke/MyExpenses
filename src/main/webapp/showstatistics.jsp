@@ -16,10 +16,10 @@ the License.
 <%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<link rel="stylesheet" href="css/chartist.min.css">
 
 
 <jsp:include page="header.jsp"/>
+<link rel="stylesheet" href="css/chartist.min.css">
 <script type="text/javascript" src="js/chartist.min.js"></script>
 
 <h3>Test Statistics:</h3>
@@ -62,9 +62,8 @@ the License.
 </div>
 
 <script type="text/javascript">
-var chart;
 document.body.onload = function() {
-    let chart = JSON.parse('${sessionScope.chart}');
+    var chart = JSON.parse('${sessionScope.chart}');
     new Chartist.Pie('#myChart', chart);
 }
 </script>
