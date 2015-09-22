@@ -51,7 +51,7 @@ public class ListExpensesServlet extends HttpServlet {
 		dbConnection.getTransaction().setRollbackOnly();
 
 		account = dbConnection.find(Account.class, account.getId());
-		account.getExpenses().sort(new ExpenseComparator<>());
+		account.getExpenses().sort(new ExpenseComparator<Expense>());
 
 		DB_CONNECT.rollback();
 		DB_CONNECT.close();

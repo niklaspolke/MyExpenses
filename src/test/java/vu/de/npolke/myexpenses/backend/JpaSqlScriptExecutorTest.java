@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,6 +46,11 @@ public class JpaSqlScriptExecutorTest {
 	@Before
 	public void setup() {
 		executor = new JpaSqlScriptExecutor(DatabaseConnectionTest.TEST_PERSISTENCE_UNIT);
+	}
+
+	@After
+	public void shutdown() {
+		executor.getConnectionPool().close();
 	}
 
 	@Test
@@ -126,7 +132,5 @@ public class JpaSqlScriptExecutorTest {
 		connection.persist(expense);
 		connection.getTransaction().commit();
 		connection.close();
-
-		executor.getConnectionPool().close();
 	}
 }

@@ -47,7 +47,7 @@ public class CategoryComparatorTest {
 		categories.add(c3);
 		categories.add(c4);
 
-		categories.sort(new CategoryComparator<>());
+		categories.sort(new CategoryComparator<Category>());
 
 		assertEquals(c4, categories.get(0));
 		assertEquals(c2, categories.get(1));

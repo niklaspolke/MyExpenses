@@ -53,7 +53,7 @@ public class AddExpenseServlet extends HttpServlet {
 		EntityManager dbConnection = DB_CONNECT.connect();
 
 		account = dbConnection.find(Account.class, account.getId());
-		account.getCategories().sort(new CategoryComparator<>());
+		account.getCategories().sort(new CategoryComparator<Category>());
 
 		DB_CONNECT.rollback();
 		DB_CONNECT.close();

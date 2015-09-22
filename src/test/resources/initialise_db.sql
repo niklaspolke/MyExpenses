@@ -1,3 +1,4 @@
+DROP SCHEMA PUBLIC CASCADE;
 DROP TABLE expense;
 DROP TABLE category;
 DROP TABLE account;

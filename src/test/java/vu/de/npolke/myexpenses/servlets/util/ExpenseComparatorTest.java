@@ -52,7 +52,7 @@ public class ExpenseComparatorTest {
 		expenses.add(e3);
 		expenses.add(e4);
 
-		expenses.sort(new ExpenseComparator<>());
+		expenses.sort(new ExpenseComparator<Expense>());
 
 		assertEquals(e4, expenses.get(0));
 		assertEquals(e1, expenses.get(1));
@@ -73,7 +73,7 @@ public class ExpenseComparatorTest {
 		expenses.add(e3);
 		expenses.add(e4);
 
-		expenses.sort(new ExpenseComparator<>());
+		expenses.sort(new ExpenseComparator<Expense>());
 
 		assertEquals(e4, expenses.get(0));
 		assertEquals(e1, expenses.get(1));
@@ -94,7 +94,7 @@ public class ExpenseComparatorTest {
 		expenses.add(e3);
 		expenses.add(e4);
 
-		expenses.sort(new ExpenseComparator<>());
+		expenses.sort(new ExpenseComparator<Expense>());
 
 		assertEquals(e1, expenses.get(0));
 		assertEquals(e3, expenses.get(1));

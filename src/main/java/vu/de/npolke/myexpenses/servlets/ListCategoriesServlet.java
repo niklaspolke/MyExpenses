@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import vu.de.npolke.myexpenses.backend.DatabaseConnection;
 import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Category;
+import vu.de.npolke.myexpenses.servlets.util.CategoryComparator;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -50,6 +51,7 @@ public class ListCategoriesServlet extends HttpServlet {
 		dbConnection.getTransaction().setRollbackOnly();
 
 		account = dbConnection.find(Account.class, account.getId());
+		account.getCategories().sort(new CategoryComparator<Category>());
 
 		DB_CONNECT.rollback();
 		DB_CONNECT.close();
