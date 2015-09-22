@@ -3,6 +3,7 @@ package vu.de.npolke.myexpenses.servlets;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Locale;
 
 import javax.persistence.EntityManager;
@@ -53,7 +54,7 @@ public class AddExpenseServlet extends HttpServlet {
 		EntityManager dbConnection = DB_CONNECT.connect();
 
 		account = dbConnection.find(Account.class, account.getId());
-		account.getCategories().sort(new CategoryComparator<Category>());
+		Collections.sort(account.getCategories(), new CategoryComparator<Category>());
 
 		DB_CONNECT.rollback();
 		DB_CONNECT.close();

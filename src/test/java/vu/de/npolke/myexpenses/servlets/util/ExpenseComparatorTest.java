@@ -3,6 +3,7 @@ package vu.de.npolke.myexpenses.servlets.util;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -52,7 +53,7 @@ public class ExpenseComparatorTest {
 		expenses.add(e3);
 		expenses.add(e4);
 
-		expenses.sort(new ExpenseComparator<Expense>());
+		Collections.sort(expenses, new ExpenseComparator<Expense>());
 
 		assertEquals(e4, expenses.get(0));
 		assertEquals(e1, expenses.get(1));
@@ -73,7 +74,7 @@ public class ExpenseComparatorTest {
 		expenses.add(e3);
 		expenses.add(e4);
 
-		expenses.sort(new ExpenseComparator<Expense>());
+		Collections.sort(expenses, new ExpenseComparator<Expense>());
 
 		assertEquals(e4, expenses.get(0));
 		assertEquals(e1, expenses.get(1));
@@ -94,7 +95,7 @@ public class ExpenseComparatorTest {
 		expenses.add(e3);
 		expenses.add(e4);
 
-		expenses.sort(new ExpenseComparator<Expense>());
+		Collections.sort(expenses, new ExpenseComparator<Expense>());
 
 		assertEquals(e1, expenses.get(0));
 		assertEquals(e3, expenses.get(1));

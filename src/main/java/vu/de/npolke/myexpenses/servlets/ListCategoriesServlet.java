@@ -2,6 +2,7 @@ package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.persistence.EntityManager;
 import javax.servlet.ServletException;
@@ -51,7 +52,7 @@ public class ListCategoriesServlet extends HttpServlet {
 		dbConnection.getTransaction().setRollbackOnly();
 
 		account = dbConnection.find(Account.class, account.getId());
-		account.getCategories().sort(new CategoryComparator<Category>());
+		Collections.sort(account.getCategories(), new CategoryComparator<Category>());
 
 		DB_CONNECT.rollback();
 		DB_CONNECT.close();

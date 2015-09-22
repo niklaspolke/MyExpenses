@@ -3,6 +3,7 @@ package vu.de.npolke.myexpenses.servlets.util;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -47,7 +48,7 @@ public class CategoryComparatorTest {
 		categories.add(c3);
 		categories.add(c4);
 
-		categories.sort(new CategoryComparator<Category>());
+		Collections.sort(categories, new CategoryComparator<Category>());
 
 		assertEquals(c4, categories.get(0));
 		assertEquals(c2, categories.get(1));

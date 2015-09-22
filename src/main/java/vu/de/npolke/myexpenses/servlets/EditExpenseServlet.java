@@ -2,6 +2,7 @@ package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.persistence.EntityManager;
 import javax.servlet.ServletException;
@@ -53,7 +54,7 @@ public class EditExpenseServlet extends HttpServlet {
 		EntityManager dbConnection = DB_CONNECT.connect();
 
 		account = dbConnection.find(Account.class, account.getId());
-		account.getCategories().sort(new CategoryComparator<Category>());
+		Collections.sort(account.getCategories(), new CategoryComparator<Category>());
 		Expense expense = dbConnection.find(Expense.class, Long.parseLong(id));
 
 		DB_CONNECT.rollback();
