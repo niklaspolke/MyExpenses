@@ -3,6 +3,8 @@ package vu.de.npolke.myexpenses.servlets;
 import java.io.IOException;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,7 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import vu.de.npolke.myexpenses.backend.DatabaseConnection;
 import vu.de.npolke.myexpenses.model.Account;
-import vu.de.npolke.myexpenses.model.Expense;
+import vu.de.npolke.myexpenses.servlets.util.HashUtil;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -31,38 +33,44 @@ import vu.de.npolke.myexpenses.model.Expense;
  *
  * @author Niklas Polke
  */
-@WebServlet("/deleteexpense")
-public class DeleteExpenseServlet extends HttpServlet {
+@WebServlet("/login")
+public class LoginServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
 	private final DatabaseConnection DB_CONNECT = new DatabaseConnection();
 
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=UTF-8");
 
-		String id = request.getParameter("id");
-		String confirmed = request.getParameter("confirmed");
+		final String login = request.getParameter("login");
+		final String password = request.getParameter("password");
+		final String passwordHash = HashUtil.toMD5(password);
 
-		HttpSession session = request.getSession();
-		Account account = (Account) session.getAttribute("account");
+		EntityManager dbConnection = DB_CONNECT.connect();
 
-		if ("yes".equalsIgnoreCase(confirmed)) {
-			EntityManager dbConnection = DB_CONNECT.connect();
+		TypedQuery<Account> checkLoginQuery = dbConnection.createNamedQuery("Account.checkLogin", Account.class);
+		checkLoginQuery.setParameter("login", login);
+		checkLoginQuery.setParameter("password", passwordHash);
 
-			Expense expense = dbConnection.find(Expense.class, Long.parseLong(id));
-			account = dbConnection.find(Account.class, account.getId());
-			account.remove(expense);
-			expense.setAccount(account);
-			dbConnection.remove(expense);
-
-			DB_CONNECT.commit();
-			DB_CONNECT.close();
+		Account account;
+		try  {
+			account = checkLoginQuery.getSingleResult();
+		} catch (NoResultException nre) {
+			account = null;
 		}
 
-		session.setAttribute("account", account);
+		DB_CONNECT.commit();
+		DB_CONNECT.close();
 
-		request.getRequestDispatcher("listexpenses").forward(request, response);;
+		if (account != null) {
+			HttpSession session = request.getSession();
+			session.setAttribute("account", account);
+			response.sendRedirect("listexpenses");
+		} else {
+			response.sendRedirect("index.jsp");
+		}
 	}
 }

@@ -16,4 +16,62 @@ the License.
 <%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<c:redirect url="listexpenses"/>
+<jsp:include page="header.jsp">
+    <jsp:param value="true" name="disabled"/>
+</jsp:include>
+
+<h3>Login</h3>
+
+<div style="margin: auto; width:400px">
+    <form action="login" method="post">
+        <fieldset>
+            <legend>User</legend>
+            <table>
+                <tbody>
+                    <tr>
+                        <th class="right">
+                            <label for="login">Username:</label>
+                        </th>
+                        <td>
+                            <input
+                                type="text"
+                                name="login"
+                                size="40"
+                                maxlength="20"
+                                title="username - at least 4 characters"
+                                placeholder="<username>"
+                                pattern=".{4,}"
+                                required="required">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="right">
+                            <label for="password">Password:</label>
+                        </th>
+                        <td>
+                            <input
+                                type="password"
+                                name="password"
+                                size="40"
+                                maxlength="30"
+                                title="login password"
+                                placeholder="<password>"
+                                required="required">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="reset" value="Reset">
+                        </td>
+                        <td>
+                            <input type="submit" value="Login">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </fieldset>
+    </form>
+</div>
+
+
+<jsp:include page="footer.jsp"/>

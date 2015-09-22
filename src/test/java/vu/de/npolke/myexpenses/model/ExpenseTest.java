@@ -24,6 +24,12 @@ import org.junit.Test;
  */
 public class ExpenseTest {
 
+	private static final int ID = 4;
+	private static final Double AMOUNT = 18.35;
+	private static final String REASON = "chicken";
+	private static final String DATABASE_DATE = "15.09.15";
+	private static final Account ACCOUNT = new Account();
+
 	private Expense expense;
 
 	@Before
@@ -33,40 +39,30 @@ public class ExpenseTest {
 
 	@Test
 	public void toString_NormalValues() {
-		expense.setId(4);
-		expense.setDatabaseDate("2015.09.15");
-		expense.setAmount(Double.valueOf("18.35"));
-		expense.setReason("chicken");
+		expense.setId(ID);
+		expense.setReadableDayAsString("?#*");
+		expense.setReadableDayAsString(DATABASE_DATE);
+		expense.setAmount(AMOUNT);
+		expense.setReason(REASON);
+		expense.setAccount(ACCOUNT);
 		Category cat = new Category();
 		cat.setName("food");
 		expense.setCategory(cat);
 
-		assertEquals("Expense: #4 (15.09.2015) - 18,35 € - food --> <chicken>", expense.toString());
-	}
+		assertEquals(ID, expense.getId());
+		assertEquals(AMOUNT, expense.getAmount(), 0.01);
+		assertEquals(REASON, expense.getReason());
+		assertEquals(ACCOUNT, expense.getAccount());
+		assertEquals(DATABASE_DATE, expense.getReadableDayAsString());
 
-	@Test
-	public void toString_NullValues() {
-		assertEquals("Expense: # (??.??.????) - 0,00 € - null --> <>", expense.toString());
+		assertEquals("Expense: (15.09.15) - 18,35 € - food for chicken", expense.toString());
 	}
 
 	@Test
 	public void toString_AmountWithoutDecimalFraction() {
 		expense.setAmount(Double.valueOf("18"));
+		expense.setReadableDayAsString(DATABASE_DATE);
 
-		assertEquals("Expense: # (??.??.????) - 18,00 € - null --> <>", expense.toString());
-	}
-
-	@Test
-	public void databaseSetDateAsString() {
-		expense.setDatabaseDate("2015.09.15");
-
-		assertEquals("15.09.2015", expense.getReadableDateAsString());
-	}
-
-	@Test
-	public void applicationSetDate() {
-		expense.setReadableDateAsString("15.09.2015");
-
-		assertEquals("2015.09.15", expense.getDatabaseDate());
+		assertEquals("Expense: (15.09.15) - 18,00 € - null for ", expense.toString());
 	}
 }

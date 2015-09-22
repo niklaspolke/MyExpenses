@@ -25,7 +25,7 @@ import java.io.InputStreamReader;
  */
 public abstract class SqlScriptExecutor {
 
-	public static final String INITIALISE_DB_SCRIPT = "target/test-classes/initialise_db.sql";
+	public static final String INITIALISE_DB_SCRIPT = "src/test/resources/initialise_db.sql";
 	public static final String INITIALISE_DB_SCRIPT_ENCODING = "UTF-8";
 	private static final String SQL_STATEMENT_END = ";";
 

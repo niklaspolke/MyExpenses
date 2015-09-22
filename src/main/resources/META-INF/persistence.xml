@@ -37,8 +37,8 @@ the License.
             <property name="eclipselink.logging.level" value="WARNING"/>
             <property name="eclipselink.logging.level.sql" value="WARNING"/>
             <property name="eclipselink.target-database" value="Database" />
-            <property name="javax.persistence.jdbc.url" value="jdbc:sqlite::memory:"/>
-            <property name="javax.persistence.jdbc.driver" value="org.sqlite.JDBC"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:test;shutdown=true;hsqldb.lock_file=false"/>
+            <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver"/>
         </properties>
     </persistence-unit>
 </persistence>

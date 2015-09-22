@@ -1,10 +1,6 @@
 package vu.de.npolke.myexpenses.model;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +24,10 @@ import org.junit.Test;
  */
 public class CategoryTest {
 
+	private static final int ID = 4;
+	private static final String NAME = "food";
+	private static final Account ACCOUNT = new Account();
+
 	private Category category;
 
 	@Before
@@ -36,18 +36,40 @@ public class CategoryTest {
 	}
 
 	@Test
-	public void toString_NormalValues() {
-		category.setId(4);
-		category.setName("Food");
-		category.expenses = new HashSet<Expense>();
+	public void normalValues() {
+		category.setId(ID);
+		category.setName(NAME);
+		category.setAccount(ACCOUNT);
 
-		assertEquals("Category: #4 - <Food>", category.toString());
-		assertNotNull(category.getExpenses());
+		assertEquals(ID, category.getId());
+		assertEquals(NAME, category.getName());
+		assertEquals(ACCOUNT, category.getAccount());
+
+		assertEquals("Category: food", category.toString());
 	}
 
 	@Test
-	public void toString_NullValues() {
-		assertEquals("Category: # - <>", category.toString());
-		assertNull(category.getExpenses());
+	public void addExpense() {
+		Expense expense = new Expense();
+		Expense expense2 = new Expense();
+		category.add(expense);
+		category.add(expense2);
+
+		assertEquals(2, category.getExpenses().size());
+		assertEquals(expense, category.getExpenses().get(0));
+		assertEquals(expense2, category.getExpenses().get(1));
+		assertEquals(category, expense.getCategory());
+		assertEquals(category, expense2.getCategory());
+	}
+
+	@Test
+	public void removeExpense() {
+		Expense expense = new Expense();
+		category.remove(expense);
+		category.add(expense);
+		category.remove(expense);
+
+		assertEquals(0, category.getExpenses().size());
+		assertEquals(null, expense.getCategory());
 	}
 }

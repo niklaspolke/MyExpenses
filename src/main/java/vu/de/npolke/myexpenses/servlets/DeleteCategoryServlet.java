@@ -8,8 +8,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import vu.de.npolke.myexpenses.backend.DatabaseConnection;
+import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Category;
 
 /**
@@ -43,17 +45,25 @@ public class DeleteCategoryServlet extends HttpServlet {
 		String id = request.getParameter("id");
 		String confirmed = request.getParameter("confirmed");
 
+		HttpSession session = request.getSession();
+		Account account = (Account) session.getAttribute("account");
+
 		if ("yes".equalsIgnoreCase(confirmed)) {
 			EntityManager dbConnection = DB_CONNECT.connect();
 
 			Category category = dbConnection.find(Category.class, Long.parseLong(id));
+			account = dbConnection.find(Account.class, account.getId());
 			if (category.getExpenses().size() == 0) {
+				account.remove(category);
+				category.setAccount(account);
 				dbConnection.remove(category);
 			}
 
 			DB_CONNECT.commit();
 			DB_CONNECT.close();
 		}
+
+		session.setAttribute("account", account);
 
 		request.getRequestDispatcher("listcategories").forward(request, response);;
 	}

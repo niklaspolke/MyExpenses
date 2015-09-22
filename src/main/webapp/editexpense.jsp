@@ -54,7 +54,7 @@ the License.
                             title="day - 1-31"
                             placeholder="31"
                             required="required"
-                            value="${sessionScope.expense.date.getDayOfMonth()}">
+                            value="${sessionScope.expense.getDay().get(5)}">
                     </td>
                     <td>
                         <input
@@ -67,7 +67,7 @@ the License.
                             title="month - 1-12"
                             placeholder="12"
                             required="required"
-                            value="${sessionScope.expense.date.getMonthOfYear()}">
+                            value="${sessionScope.expense.getDay().get(2)}">
                     </td>
                     <td>
                         <input
@@ -80,7 +80,7 @@ the License.
                             title="year - yyyy"
                             placeholder="2015"
                             required="required"
-                            value="${sessionScope.expense.date.getYear()}">
+                            value="${sessionScope.expense.getDay().get(1)}">
                     </td>
                 </tr>
                 <tr>

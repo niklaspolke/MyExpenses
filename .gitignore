@@ -5,3 +5,7 @@ target/
 .project
 *.bat
 *.db
+*.lck
+*.log
+*.properties
+*.script

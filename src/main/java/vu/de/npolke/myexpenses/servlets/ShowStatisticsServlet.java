@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import vu.de.npolke.myexpenses.backend.DatabaseConnection;
+import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.servlets.util.JsonObject;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 
@@ -40,26 +41,29 @@ public class ShowStatisticsServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	private static final String SELECT_DISTINCT_MONTHS =
-		"SELECT DISTINCT substr(e.date, 1, 7) AS month " +
-				"FROM expenses e " +
+		"SELECT DISTINCT year(e.day)+'.'+lpad(month(e.day),2,'0') AS month " +
+				"FROM expense e " +
+				"WHERE e.account_id = ?1 " +
 				"ORDER BY month DESC";
 
 	private static final String SELECT_STATISTICS_FOR_MONTH =
-		"SELECT c.name as category, sum(e.amount) as sum " +
-		"FROM categories c " +
+		"SELECT c.name as category, sum(e.amount) as sumofamount " +
+		"FROM category c " +
 		"LEFT OUTER JOIN ( " +
 				"SELECT category_id, amount " +
-				"FROM expenses " +
-				"WHERE substr(date, 1, 7) = ?1 ) e " +
+				"FROM expense " +
+				"WHERE year(day)+'.'+lpad(month(day),2,'0') = ?1 AND account_id = ?2 ) e " +
 		"ON e.category_id = c.id " +
+		"WHERE c.account_id = ?2 " +
 		"GROUP BY c.name " +
 		"ORDER BY c.name ASC";
 
 	private final DatabaseConnection DB_CONNECT = new DatabaseConnection();
 
-	private static void readStatisticsForMonth(final String month, final HttpServletRequest request, final EntityManager dbConnection) {
+	private static void readStatisticsForMonth(final String month, final HttpServletRequest request, final EntityManager dbConnection, final Account account) {
 		Query statisticsQuery = dbConnection.createNativeQuery(SELECT_STATISTICS_FOR_MONTH);
 		statisticsQuery.setParameter(1, month);
+		statisticsQuery.setParameter(2, account.getId());
 		@SuppressWarnings("unchecked")
 		List<Object[]> queryResultStatistics = statisticsQuery.getResultList();
 		List<StatisticsPair> list4Table = new ArrayList<StatisticsPair>();
@@ -89,10 +93,14 @@ public class ShowStatisticsServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
 
+		HttpSession session = request.getSession();
+		Account account = (Account) session.getAttribute("account");
+
 		EntityManager dbConnection = DB_CONNECT.connect();
 		dbConnection.getTransaction().setRollbackOnly();
 
 		Query monthsQuery = dbConnection.createNativeQuery(SELECT_DISTINCT_MONTHS);
+		monthsQuery.setParameter(1, account.getId());
 		@SuppressWarnings("unchecked")
 		List<Object> queryResultMonths = monthsQuery.getResultList();
 		List<String> months = new ArrayList<String>();
@@ -100,12 +108,11 @@ public class ShowStatisticsServlet extends HttpServlet {
 			months.add((String) queryResultMonth);
 		}
 
-		readStatisticsForMonth(months.get(0), request, dbConnection);
+		readStatisticsForMonth(months.get(0), request, dbConnection, account);
 
 		DB_CONNECT.rollback();
 		DB_CONNECT.close();
 
-		HttpSession session = request.getSession();
 		session.setAttribute("months", months);
 
 		response.sendRedirect("showstatistics.jsp");
@@ -117,10 +124,13 @@ public class ShowStatisticsServlet extends HttpServlet {
 
 		String month = request.getParameter("month");
 
+		HttpSession session = request.getSession();
+		Account account = (Account) session.getAttribute("account");
+
 		EntityManager dbConnection = DB_CONNECT.connect();
 		dbConnection.getTransaction().setRollbackOnly();
 
-		readStatisticsForMonth(month, request, dbConnection);
+		readStatisticsForMonth(month, request, dbConnection, account);
 
 		DB_CONNECT.rollback();
 		DB_CONNECT.close();

@@ -19,7 +19,7 @@ the License.
     border-radius: 50%;
     width: 400px;
     margin: auto;
-    height: 50px;
+    height: 40px;
 }
 div.inline-block {
      display: inline-block;
@@ -33,9 +33,10 @@ ul.menu {
 li.menu-item {
     text-align: center;
     margin: 0px 0px 30px 0px;
+    border-radius: 5px;
 }
 li.menu-item:hover, a:hover, input:hover, select:hover {
-    background-color: lightgray;
+    background-color: darkgray;
 }
 a {
     display: inline-block;

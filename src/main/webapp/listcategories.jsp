@@ -16,6 +16,7 @@ the License.
 <%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <jsp:include page="header.jsp"/>
 
@@ -45,7 +46,7 @@ the License.
                 <td><c:out value="${category.name}"/></td>
                 <td style="border:none">
                     <a href="editcategory?id=${category.id}"><img src="img/pencil_24.png" alt="edit category" title="edit category" width="24" height="24"/></a>
-                    <a id="delete${category.id}" href="deletecategory?id=${category.id}" onclick="return prompt('delete${category.id}', '${category}')"><img src="img/sign-delete_24.png" alt="delete category" title="delete category" width="24" height="24"/></a>
+                    <a id="delete${category.id}" href="deletecategory?id=${category.id}" onclick="return prompt('delete${category.id}', '${fn:replace(category, '\"', '&quot;')}')"><img src="img/sign-delete_24.png" alt="delete category" title="delete category" width="24" height="24"/></a>
                 </td>
             </tr>
         </c:forEach>

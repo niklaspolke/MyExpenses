@@ -6,10 +6,15 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,19 +40,27 @@ import vu.de.npolke.myexpenses.model.Expense;
  */
 public class JdbcSqlScriptExecutorTest {
 
-	private static final String FILE = "target/test-classes/myexpenses_sqlite_initialised.db";
+	private static final String FILE = "myexpenses_hsqldb";
+
+	private final DateFormat DATA_FORMATTER = DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMANY);
 
 	private JdbcSqlScriptExecutor executor;
 
 	@Before
 	public void setup() {
-		executor = new JdbcSqlScriptExecutor(FILE);
+		executor = new JdbcSqlScriptExecutor(FILE + ";shutdown=true;hsqldb.lock_file=false");
+	}
+
+	@After
+	public void shutdown() {
+
+		executor.closeDatabaseConnection();
 	}
 
 	@Test
 	public void dbFileCreation() {
 		executor.executeSqlScript(JdbcSqlScriptExecutor.INITIALISE_DB_SCRIPT);
-		File result = new File(FILE);
+		File result = new File(FILE + ".script");
 		assertTrue(result.isFile());
 	}
 
@@ -55,14 +68,16 @@ public class JdbcSqlScriptExecutorTest {
 	public void initialisedDb() throws SQLException {
 		executor.executeSqlScript(SqlScriptExecutor.INITIALISE_DB_SCRIPT);
 
-		Connection connection = DriverManager.getConnection(JdbcSqlScriptExecutor.URL_PREFIX + FILE);
+		Connection connection = DriverManager.getConnection(JdbcSqlScriptExecutor.URL_PREFIX + FILE + ";shutdown=true;hsqldb.lock_file=false");
 		Statement allExpensesQuery = connection.createStatement();
-		ResultSet result = allExpensesQuery.executeQuery("select * from expenses");
+		ResultSet result = allExpensesQuery.executeQuery("select id, amount, reason, category_id, account_id, day from expense where account_id = 1");
 		int countResults = 0;
 		while (result.next()) {
 			countResults++;
 			Expense expense = new Expense();
-			expense.setDatabaseDate(result.getString("date"));
+			Calendar calendar = Calendar.getInstance(Locale.GERMANY);
+			calendar.setTime(result.getDate("day"));
+			expense.setReadableDayAsString(DATA_FORMATTER.format(calendar.getTime()));
 			expense.setAmount(result.getDouble("amount"));
 			expense.setReason(result.getString("reason"));
 			expense.setId(result.getLong("id"));
@@ -73,5 +88,11 @@ public class JdbcSqlScriptExecutorTest {
 			System.out.println(expense);
 		}
 		assertEquals(3, countResults);
+
+		PreparedStatement insert = connection.prepareStatement("INSERT INTO expense(id, amount, reason, category_id, account_id, day) VALUES(104, 44.4, 'spezieller Test2s', 11, 1, ?)");
+		insert.setDate(1, new java.sql.Date(System.currentTimeMillis()), Calendar.getInstance(Locale.GERMANY));
+		insert.executeUpdate();
+		connection.commit();
+		connection.close();
 	}
 }

@@ -1,10 +1,9 @@
 package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import vu.de.npolke.myexpenses.backend.DatabaseConnection;
+import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Category;
 
 /**
@@ -43,17 +43,19 @@ public class ListCategoriesServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
 
+		HttpSession session = request.getSession();
+		Account account = (Account) session.getAttribute("account");
+
 		EntityManager dbConnection = DB_CONNECT.connect();
 		dbConnection.getTransaction().setRollbackOnly();
 
-		TypedQuery<Category> findAllCategoriesQuery = dbConnection.createNamedQuery("Category.findAll", Category.class);
-		List<Category> allCategories = findAllCategoriesQuery.getResultList();
-
-		HttpSession session = request.getSession();
-		session.setAttribute("categories", allCategories);
+		account = dbConnection.find(Account.class, account.getId());
 
 		DB_CONNECT.rollback();
 		DB_CONNECT.close();
+
+		session.setAttribute("account", account);
+		session.setAttribute("categories", new ArrayList<Category>(account.getCategories()));
 
 		response.sendRedirect("listcategories.jsp");
 	}

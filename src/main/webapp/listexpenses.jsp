@@ -16,6 +16,7 @@ the License.
 <%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <jsp:include page="header.jsp"/>
 
@@ -38,13 +39,13 @@ the License.
         <c:forEach var="expense" items="${sessionScope.expenses}">
             <tr>
                 <td class="number"><c:out value="${expense.id}"/></td>
-                <td><c:out value="${expense.getReadableDateAsString()}"/></td>
+                <td><c:out value="${expense.getReadableDayAsString()}"/></td>
                 <td><c:out value="${expense.category.name}"/></td>
                 <td class="number"><fmt:formatNumber value="${expense.amount}" type="currency"/></td>
                 <td><c:out value="${expense.reason}"/></td>
                 <td style="border:none">
                     <a href="editexpense?id=${expense.id}"><img src="img/pencil_24.png" alt="edit expense" title="edit expense" width="24" height="24"/></a>
-                    <a id="delete${expense.id}" href="deleteexpense?id=${expense.id}" onclick="return prompt('delete${expense.id}', '${expense}')"><img src="img/sign-delete_24.png" alt="delete expense" title="delete expense" width="24" height="24"/></a>
+                    <a id="delete${expense.id}" href="deleteexpense?id=${expense.id}" onclick="return prompt('delete${expense.id}', '${fn:replace(expense, '\"', '&quot;')}')"><img src="img/sign-delete_24.png" alt="delete expense" title="delete expense" width="24" height="24"/></a>
                 </td>
             </tr>
         </c:forEach>

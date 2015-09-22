@@ -14,6 +14,7 @@ License for the specific language governing permissions and limitations under
 the License.
 --%>
 <%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -22,26 +23,39 @@ the License.
         <title>MyExpenses</title>
     </head>
 
+<c:set var="disabled" value="${param.disabled eq 'true'}" scope="page"/>
+
     <body>
         <header>
-            <h1 class="title">MyExpenses</h1>
+            <div style="background-color:lightgray;display:table;width:100%">
+                <div style="display:table-cell;vertical-align:middle;align:center">
+                    <h1 class="title" style="width:100%;margin:auto">MyExpenses</h1>
+                </div>
+                <div style="display:table-cell;text-align:center;height:130px">
+                    <div style="display:inline-block;width:96px">
+                        <c:if test="${not disabled}">
+                            <img src="img/user-id_96.png" alt="user profile" title="user profile"/><br/><span style="font-weight:bold"><c:out value="${sessionScope.account.login}"/></span>
+                        </c:if>
+                    </div>
+                </div>
+            </div>
         </header>
 
-        <div class="inline-block">
+        <div class="inline-block" style="background-color:lightgray;margin:0px;padding:15px;padding-top:0px">
             <ul class="menu">
-                <li class="menu-item"><a href="addexpense" title="add expense">
+                <li class="menu-item" style="${disabled ? '' : 'background-color:white'}"><a ${disabled ? '' : 'href="addexpense"'} title="add expense">
                     <img src="img/sign-add_96.png" alt="add expense" title="add expense"/>
                     <br/>Add Expense
                 </a></li>
-                <li class="menu-item"><a href="listexpenses" title="list expenses">
+                <li class="menu-item" style="${disabled ? '' : 'background-color:white'}"><a ${disabled ? '' : 'href="listexpenses"'} title="list expenses">
                     <img src="img/folder_96.png" alt="list expenses" title="list expenses"/>
                     <br/>List Expenses
                 </a></li>
-                <li class="menu-item"><a href="listcategories" title="list categories">
+                <li class="menu-item" style="${disabled ? '' : 'background-color:white'}"><a ${disabled ? '' : 'href="listcategories"'} title="list categories">
                     <img src="img/layers_96.png" alt="list categories" title="list categories"/>
                     <br/>List Categories
                 </a></li>
-                <li class="menu-item"><a href="showstatistics" title="show statistics">
+                <li class="menu-item" style="${disabled ? '' : 'background-color:white'}"><a ${disabled ? '' : 'href="showstatistics"'} title="show statistics">
                     <img src="img/file-powerpoint_96.png" alt="show statistics" title="show statistics"/>
                     <br/>Show Statistics
                 </a></li>

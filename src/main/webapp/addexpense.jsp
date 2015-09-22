@@ -53,7 +53,7 @@ the License.
                             max="31"
                             title="day - 1-31"
                             placeholder="31"
-                            value="${sessionScope.defaultDate.dayOfMonth}"
+                            value="${sessionScope.defaultDate.get(5)}"
                             required="required">
                     </td>
                     <td>
@@ -66,7 +66,7 @@ the License.
                             max="12"
                             title="month - 1-12"
                             placeholder="12"
-                            value="${sessionScope.defaultDate.monthOfYear}"
+                            value="${sessionScope.defaultDate.get(2)+1}"
                             required="required">
                     </td>
                     <td>
@@ -79,7 +79,7 @@ the License.
                             max="2100"
                             title="year - yyyy"
                             placeholder="2015"
-                            value="${sessionScope.defaultDate.year}"
+                            value="${sessionScope.defaultDate.get(1)}"
                             required="required">
                     </td>
                 </tr>

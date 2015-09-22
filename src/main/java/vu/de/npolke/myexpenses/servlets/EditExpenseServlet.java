@@ -1,10 +1,9 @@
 package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,8 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import vu.de.npolke.myexpenses.backend.DatabaseConnection;
+import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Category;
 import vu.de.npolke.myexpenses.model.Expense;
+import vu.de.npolke.myexpenses.servlets.util.CategoryComparator;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -46,18 +47,21 @@ public class EditExpenseServlet extends HttpServlet {
 
 		final String id = request.getParameter("id");
 
+		HttpSession session = request.getSession();
+		Account account = (Account) session.getAttribute("account");
+
 		EntityManager dbConnection = DB_CONNECT.connect();
 
-		TypedQuery<Category> findAllCategoriesQuery = dbConnection.createNamedQuery("Category.findAll", Category.class);
-		List<Category> categories = findAllCategoriesQuery.getResultList();
+		account = dbConnection.find(Account.class, account.getId());
+		account.getCategories().sort(new CategoryComparator<>());
 		Expense expense = dbConnection.find(Expense.class, Long.parseLong(id));
 
 		DB_CONNECT.rollback();
 		DB_CONNECT.close();
 
-		HttpSession session = request.getSession();
+		session.setAttribute("account", account);
 		session.setAttribute("expense", expense);
-		session.setAttribute("categories", categories);
+		session.setAttribute("categories", new ArrayList<Category>(account.getCategories()));
 
 		response.sendRedirect("editexpense.jsp");
 	}
@@ -79,13 +83,14 @@ public class EditExpenseServlet extends HttpServlet {
 		Expense expense = (Expense) session.getAttribute("expense");
 		expense.setAmount(amount);
 		expense.setReason(reason);
-		expense.setReadableDateAsString(day + "." + month + "." + year);
+		expense.setReadableDayAsString(day + "." + month + "." + year);
 
 		EntityManager dbConnection = DB_CONNECT.connect();
 
 		if (Long.parseLong(categoryId) != expense.getCategory().getId()) {
+			expense.getCategory().remove(expense);
 			Category category = dbConnection.find(Category.class, Long.parseLong(categoryId));
-			expense.setCategory(category);
+			category.add(expense);
 		}
 
 		dbConnection.merge(expense);

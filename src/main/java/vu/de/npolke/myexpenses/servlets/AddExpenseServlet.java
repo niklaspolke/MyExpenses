@@ -1,10 +1,11 @@
 package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,11 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.joda.time.LocalDate;
-
 import vu.de.npolke.myexpenses.backend.DatabaseConnection;
+import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Category;
 import vu.de.npolke.myexpenses.model.Expense;
+import vu.de.npolke.myexpenses.servlets.util.CategoryComparator;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -46,17 +47,22 @@ public class AddExpenseServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
 
+		HttpSession session = request.getSession();
+		Account account = (Account) session.getAttribute("account");
+
 		EntityManager dbConnection = DB_CONNECT.connect();
 
-		TypedQuery<Category> findAllCategoriesQuery = dbConnection.createNamedQuery("Category.findAll", Category.class);
-		List<Category> categories = findAllCategoriesQuery.getResultList();
+		account = dbConnection.find(Account.class, account.getId());
+		account.getCategories().sort(new CategoryComparator<>());
 
 		DB_CONNECT.rollback();
 		DB_CONNECT.close();
 
-		HttpSession session = request.getSession();
-		session.setAttribute("categories", categories);
-		session.setAttribute("defaultDate", LocalDate.now());
+		session.setAttribute("account", account);
+		session.setAttribute("categories", new ArrayList<Category>(account.getCategories()));
+		Calendar now = Calendar.getInstance(Locale.GERMANY);
+		now.setTimeInMillis(System.currentTimeMillis());
+		session.setAttribute("defaultDate", now);
 
 		response.sendRedirect("addexpense.jsp");
 	}
@@ -76,17 +82,25 @@ public class AddExpenseServlet extends HttpServlet {
 		Expense expense = new Expense();
 		expense.setAmount(amount);
 		expense.setReason(reason);
-		expense.setReadableDateAsString(day + "." + month + "." + year);
+		expense.setReadableDayAsString(day + "." + month + "." + year);
+
+		HttpSession session = request.getSession();
+		Account account = (Account) session.getAttribute("account");
 
 		EntityManager dbConnection = DB_CONNECT.connect();
 
+		account = dbConnection.find(Account.class, account.getId());
 		Category category = dbConnection.find(Category.class, Long.parseLong(categoryId));
-		expense.setCategory(category);
-		category.getExpenses().add(expense);
+
+		account.add(expense);
+		category.add(expense);
+
 		dbConnection.persist(expense);
 
 		DB_CONNECT.commit();
 		DB_CONNECT.close();
+
+		session.setAttribute("account", account);
 
 		response.sendRedirect("listexpenses");
 	}

@@ -29,11 +29,11 @@ public class JdbcSqlScriptExecutor extends SqlScriptExecutor {
 	/**
 	 * same jdbc driver as in META-INF/persistence.xml
 	 */
-	public static final String DRIVER = "org.sqlite.JDBC";
+	public static final String DRIVER = "org.hsqldb.jdbc.JDBCDriver";
 	/**
 	 * same start of url as in META-INF/persistence.xml
 	 */
-	public static final String URL_PREFIX = "jdbc:sqlite:";
+	public static final String URL_PREFIX = "jdbc:hsqldb:file:";
 
 	private String database;
 	private Connection connection;
@@ -48,7 +48,9 @@ public class JdbcSqlScriptExecutor extends SqlScriptExecutor {
 			Class.forName(DRIVER);
 			connection = DriverManager.getConnection(URL_PREFIX + database);
 		} catch (ClassNotFoundException cnfe) {
+			cnfe.printStackTrace();
 		} catch (SQLException sqle) {
+			sqle.printStackTrace();
 		}
 	}
 

@@ -8,9 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.OrderBy;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -30,8 +31,14 @@ import javax.persistence.Table;
  * @author Niklas Polke
  */
 @Entity
-@Table(name="category")
-public class Category implements Serializable {
+@NamedQueries(
+	value={
+	@NamedQuery(
+		name="Account.checkLogin",
+		query="SELECT a FROM Account a WHERE a.login = :login AND a.password = :password")
+	}
+)
+public class Account implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -39,13 +46,17 @@ public class Category implements Serializable {
 	@GeneratedValue(generator = "ID_SEQ", strategy = GenerationType.TABLE)
 	private long id;
 
-	private String name;
+	private String login;
 
-	@OneToMany(mappedBy="category")
+	private String password;
+
+	@OneToMany(mappedBy="account")
+	@OrderBy("name ASC")
+	List<Category> categories;
+
+	@OneToMany(mappedBy="account")
+	@OrderBy("day DESC")
 	List<Expense> expenses;
-
-	@ManyToOne
-	private Account account;
 
 	public long getId() {
 		return id;
@@ -55,19 +66,47 @@ public class Category implements Serializable {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getLogin() {
+		return login;
 	}
 
-	public void setName(final String name) {
-		this.name = name;
+	public void setLogin(final String login) {
+		this.login = login;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(final String password) {
+		this.password = password;
+	}
+
+	public void add(final Category category) {
+		if (getCategories() == null) {
+			categories = new ArrayList<Category>();
+		}
+		category.setAccount(this);
+		getCategories().add(category);
+	}
+
+	public void remove(final Category category) {
+		if (getCategories() == null) {
+			categories = new ArrayList<Category>();
+		}
+		category.setAccount(null);
+		getCategories().remove(category);
+	}
+
+	public List<Category> getCategories() {
+		return categories;
 	}
 
 	public void add(final Expense expense) {
 		if (getExpenses() == null) {
 			expenses = new ArrayList<Expense>();
 		}
-		expense.setCategory(this);
+		expense.setAccount(this);
 		getExpenses().add(expense);
 	}
 
@@ -75,7 +114,7 @@ public class Category implements Serializable {
 		if (getExpenses() == null) {
 			expenses = new ArrayList<Expense>();
 		}
-		expense.setCategory(null);
+		expense.setAccount(null);
 		getExpenses().remove(expense);
 	}
 
@@ -83,16 +122,12 @@ public class Category implements Serializable {
 		return expenses;
 	}
 
-	public Account getAccount() {
-		return account;
-	}
-
-	public void setAccount(final Account account) {
-		this.account = account;
-	}
-
 	@Override
 	public String toString() {
-		return new StringBuilder().append("Category: ").append(getName()).toString();
+		//@formatter:off
+		StringBuilder text = new StringBuilder().append("Account: ")
+				.append(getLogin());
+		return text.toString();
+		//@formatter:on
 	}
 }
