@@ -33,6 +33,7 @@ the License.
         <description>in-memory sqlite database for persistence unit tests</description>
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
+        <shared-cache-mode>NONE</shared-cache-mode>
         <properties>
             <property name="eclipselink.logging.level" value="WARNING"/>
             <property name="eclipselink.logging.level.sql" value="WARNING"/>
