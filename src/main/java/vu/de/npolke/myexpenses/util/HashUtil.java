@@ -1,4 +1,4 @@
-package vu.de.npolke.myexpenses.servlets.util;
+package vu.de.npolke.myexpenses.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

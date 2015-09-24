@@ -40,7 +40,7 @@ import vu.de.npolke.myexpenses.model.Expense;
  */
 public class JdbcSqlScriptExecutorTest {
 
-	private static final String FILE = "myexpenses_hsqldb";
+	private static final String FILE = "target/myexpenses_hsqldb";
 
 	private final DateFormat DATA_FORMATTER = DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMANY);
 
