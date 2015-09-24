@@ -41,7 +41,8 @@ the License.
                                 title="username - at least 4 characters"
                                 placeholder="<username>"
                                 pattern=".{4,}"
-                                required="required">
+                                required="required"
+                                autofocus>
                         </td>
                     </tr>
                     <tr>

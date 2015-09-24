@@ -39,7 +39,8 @@ the License.
                             maxlength="30"
                             title="name of category"
                             placeholder="category"
-                            required="required">
+                            required="required"
+                            autofocus>
                     </td>
                 </tr>
                 <tr>

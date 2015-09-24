@@ -40,7 +40,8 @@ the License.
                             title="name of category"
                             placeholder="category"
                             required="required"
-                            value="${sessionScope.category.name}">
+                            value="${sessionScope.category.name}"
+                            autofocus>
                     </td>
                 </tr>
                 <tr>

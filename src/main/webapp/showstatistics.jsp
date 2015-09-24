@@ -30,7 +30,8 @@ the License.
             name="month"
             title="month of expense"
             style="height:30px;font-size:1.5em;margin-bottom: 30px"
-            required="required" onchange="this.form.submit()">
+            required="required" onchange="this.form.submit()"
+            autofocus>
             <c:forEach var="month" items="${sessionScope.months}">
                 <option value="${month}" ${sessionScope.month eq month ? 'selected' : ''}>${month}</option>
             </c:forEach>

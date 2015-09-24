@@ -91,7 +91,8 @@ the License.
                         <select
                             name="category"
                             title="category of expense"
-                            required="required">
+                            required="required"
+                            autofocus>
                             <c:forEach items="${sessionScope.categories}" var="singlecategory">
                                 <option value="${singlecategory.id}" selected="${singlecategory.id eq sessionScope.expense.category.id ? 'selected' : ''}">${singlecategory.name}</option>
                             </c:forEach>
