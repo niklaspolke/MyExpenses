@@ -1,8 +1,11 @@
 package vu.de.npolke.myexpenses.services.connections;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -22,15 +25,16 @@ import java.sql.SQLException;
  * @author Niklas Polke
  */
 public class JdbcConnector {
-	public static final String DATABASE = "D:\\Git Repositories\\MyExpenses\\myexpenses_hsqldb";
-	public static final String DRIVER = "org.hsqldb.jdbc.JDBCDriver";
-	public static final String URL_PREFIX = "jdbc:hsqldb:file:";
-	public static final String URL_SUFFIX = ";user=SA;shutdown=true;hsqldb.lock_file=false";
+	public static final String DATASOURE = "jdbc/myexpenses-db";
+	public static final String JNDI_PREFIX = "java:/comp/env/";
+
+	private static DataSource datasource;
 
 	static {
 		try {
-			Class.forName(DRIVER);
-		} catch (ClassNotFoundException e) {
+			InitialContext context = new InitialContext();
+			datasource = (DataSource) context.lookup(JNDI_PREFIX + DATASOURE);
+		} catch (NamingException e) {
 			e.printStackTrace();
 		}
 	}
@@ -38,7 +42,7 @@ public class JdbcConnector {
 	public static Connection getConnection() {
 		Connection connection = null;
 		try {
-			connection = DriverManager.getConnection(URL_PREFIX + DATABASE + URL_SUFFIX);
+			connection = datasource.getConnection();
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
