@@ -65,10 +65,12 @@ public class CategoryDAOTest {
 			clearTable.executeUpdate("DELETE FROM category");
 			Statement insertStatement = connection.createStatement();
 			insertStatement.executeUpdate("INSERT INTO category (id, name, account_id) VALUES (10, 'food', 1)");
+
 			clearTable = connection.createStatement();
 			clearTable.executeUpdate("DELETE FROM sequence");
 			insertStatement = connection.createStatement();
 			insertStatement.executeUpdate("INSERT INTO sequence (seq_name, seq_number) VALUES ('ID_GENERATOR', 10)");
+
 			connection.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();

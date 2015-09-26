@@ -44,9 +44,11 @@ public class SequenceDAO extends AbstractConnectionDAO {
 			updateStatement.setLong(3, primaryKeyCache);
 			boolean updated = 1 == updateStatement.executeUpdate();
 			if (updated) {
+				connection.commit();
 				primaryKeyCache += 1;
 				nextPrimaryKey = primaryKeyCache;
 			} else {
+				connection.rollback();
 				primaryKeyCache = readPrimaryKey();
 				updateStatement = connection.prepareStatement(SQL_UPDATE);
 				updateStatement.setLong(1, primaryKeyCache + 1);
@@ -57,8 +59,8 @@ public class SequenceDAO extends AbstractConnectionDAO {
 					primaryKeyCache += 1;
 					nextPrimaryKey = primaryKeyCache;
 				}
+				connection.commit();
 			}
-			connection.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

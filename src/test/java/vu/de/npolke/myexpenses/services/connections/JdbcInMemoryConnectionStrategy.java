@@ -46,6 +46,7 @@ public class JdbcInMemoryConnectionStrategy implements ConnectionStrategy {
 		Connection connection = null;
 		try {
 			connection = DriverManager.getConnection(URL_PREFIX + databaseName + URL_SUFFIX);
+			connection.setAutoCommit(false);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}

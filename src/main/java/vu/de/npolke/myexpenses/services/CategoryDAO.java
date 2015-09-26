@@ -61,6 +61,7 @@ public class CategoryDAO extends AbstractConnectionDAO {
 				category.setId(newId);
 				category.setName(name);
 			}
+			connection.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -82,6 +83,7 @@ public class CategoryDAO extends AbstractConnectionDAO {
 				category.setId(id);
 				category.setName(result.getString("name"));
 			}
+			connection.rollback();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -99,6 +101,7 @@ public class CategoryDAO extends AbstractConnectionDAO {
 			updateStatement.setString(1, category.getName());
 			updateStatement.setLong(2, category.getId());
 			updated = 1 == updateStatement.executeUpdate();
+			connection.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -121,6 +124,7 @@ public class CategoryDAO extends AbstractConnectionDAO {
 				category.setName(result.getString("name"));
 				categories.add(category);
 			}
+			connection.rollback();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
