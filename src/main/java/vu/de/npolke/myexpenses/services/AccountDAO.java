@@ -27,9 +27,9 @@ import vu.de.npolke.myexpenses.util.HashUtil;
  */
 public class AccountDAO extends AbstractConnectionDAO {
 
-	private static final String SQL_READ_FROM_LOGIN = "SELECT id, login FROM Account WHERE login = ? AND password = ?";
+	private static final String SQL_READ_BY_LOGIN = "SELECT id, login FROM Account WHERE login = ? AND password = ?";
 
-	public Account readAccountFromLogin(final String login, final String password) {
+	public Account readByLogin(final String login, final String password) {
 		Account account = null;
 
 		String passwordHash = HashUtil.toMD5(password);
@@ -37,7 +37,7 @@ public class AccountDAO extends AbstractConnectionDAO {
 		Connection connection = getConnection();
 		PreparedStatement validateLoginStatement;
 		try {
-			validateLoginStatement = connection.prepareStatement(SQL_READ_FROM_LOGIN);
+			validateLoginStatement = connection.prepareStatement(SQL_READ_BY_LOGIN);
 			validateLoginStatement.setString(1, login);
 			validateLoginStatement.setString(2, passwordHash);
 			ResultSet result = validateLoginStatement.executeQuery();
@@ -46,8 +46,13 @@ public class AccountDAO extends AbstractConnectionDAO {
 				account.setId(result.getLong("id"));
 				account.setLogin(result.getString("login"));
 			}
+			connection.rollback();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			try {
+				connection.rollback();
+			} catch (SQLException se) {
+			}
 		}
 
 		return account;

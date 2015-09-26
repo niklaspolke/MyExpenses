@@ -41,14 +41,14 @@ public class LoginServlet extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=UTF-8");
+		HttpSession session = request.getSession();
 
 		final String login = request.getParameter("login");
 		final String password = request.getParameter("password");
 
-		Account account = accountDAO.readAccountFromLogin(login, password);
+		Account account = accountDAO.readByLogin(login, password);
 
 		if (account != null) {
-			HttpSession session = request.getSession();
 			session.setAttribute("account", account);
 			response.sendRedirect("listexpenses");
 		} else {

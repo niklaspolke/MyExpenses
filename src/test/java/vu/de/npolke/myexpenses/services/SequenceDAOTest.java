@@ -1,6 +1,6 @@
 package vu.de.npolke.myexpenses.services;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -10,10 +10,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.services.connections.ConnectionStrategy;
 import vu.de.npolke.myexpenses.services.connections.JdbcInMemoryConnectionStrategy;
-import vu.de.npolke.myexpenses.util.HashUtil;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -32,21 +30,23 @@ import vu.de.npolke.myexpenses.util.HashUtil;
  *
  * @author Niklas Polke
  */
-public class AccountDAOTest {
+public class SequenceDAOTest {
 
-	private static AccountDAO accountDAO;
+	private static SequenceDAO sequenceDAO;
 	private static Connection connection;
+
+	private long seq_value;
 
 	@BeforeClass
 	public static void initialise() {
-		ConnectionStrategy connectionStrategy = new JdbcInMemoryConnectionStrategy(AccountDAOTest.class.getName());
+		ConnectionStrategy connectionStrategy = new JdbcInMemoryConnectionStrategy(SequenceDAOTest.class.getName());
 		connection = connectionStrategy.getConnection();
-		accountDAO = (AccountDAO) DAOFactory.getDAO(Account.class);
-		accountDAO.setConnectionStrategy(connectionStrategy);
+		sequenceDAO = (SequenceDAO) DAOFactory.getDAO(Long.class);
+		sequenceDAO.setConnectionStrategy(connectionStrategy);
 
 		try {
 			Statement createTable = connection.createStatement();
-			createTable.executeUpdate("CREATE TABLE account (id INTEGER PRIMARY KEY, login VARCHAR(40) NOT NULL UNIQUE, password VARCHAR(40) NOT NULL)");
+			createTable.executeUpdate("CREATE TABLE sequence (seq_name VARCHAR(40) PRIMARY KEY, seq_number INTEGER NOT NULL)");
 			connection.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -57,9 +57,10 @@ public class AccountDAOTest {
 	public void setup() {
 		try {
 			Statement clearTable = connection.createStatement();
-			clearTable.executeUpdate("DELETE FROM account");
-			Statement insertAccount = connection.createStatement();
-			insertAccount.executeUpdate("INSERT INTO account (id, login, password) VALUES (1, 'user', '" + HashUtil.toMD5("password") + "')");
+			clearTable.executeUpdate("DELETE FROM sequence");
+			seq_value = 1000;
+			Statement insertSequence = connection.createStatement();
+			insertSequence.executeUpdate("INSERT INTO sequence (seq_name, seq_number) VALUES ('ID_GENERATOR', '" + seq_value + "')");
 			connection.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -67,25 +68,9 @@ public class AccountDAOTest {
 	}
 
 	@Test
-	public void readAccountFromLogin_ValidLogin() {
-		Account account = accountDAO.readByLogin("user", "password");
-
-		assertNotNull(account);
-		assertEquals(1, account.getId());
-		assertEquals("user", account.getLogin());
-	}
-
-	@Test
-	public void readAccountFromLogin_InvalidPassword() {
-		Account account = accountDAO.readByLogin("user", "wrong password");
-
-		assertNull(account);
-	}
-
-	@Test
-	public void readAccountFromLogin_InvalidUser() {
-		Account account = accountDAO.readByLogin("non existing user", "password");
-
-		assertNull(account);
+	public void getNextPrimaryKey() {
+		assertEquals(seq_value + 1, sequenceDAO.getNextPrimaryKey());
+		assertEquals(seq_value + 2, sequenceDAO.getNextPrimaryKey());
+		assertEquals(seq_value + 3, sequenceDAO.getNextPrimaryKey());
 	}
 }

@@ -2,17 +2,15 @@ package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
 
-import javax.persistence.EntityManager;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import vu.de.npolke.myexpenses.backend.DatabaseConnection;
-import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Category;
+import vu.de.npolke.myexpenses.services.CategoryDAO;
+import vu.de.npolke.myexpenses.services.DAOFactory;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -36,34 +34,18 @@ public class DeleteCategoryServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private final DatabaseConnection DB_CONNECT = new DatabaseConnection();
+	private CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
 
-		String id = request.getParameter("id");
-		String confirmed = request.getParameter("confirmed");
+		long categoryId = Long.parseLong(request.getParameter("id"));
+		String isDeleteConfirmed = request.getParameter("confirmed");
 
-		HttpSession session = request.getSession();
-		Account account = (Account) session.getAttribute("account");
-
-		if ("yes".equalsIgnoreCase(confirmed)) {
-			EntityManager dbConnection = DB_CONNECT.connect();
-
-			Category category = dbConnection.find(Category.class, Long.parseLong(id));
-			account = dbConnection.find(Account.class, account.getId());
-			if (category.getExpenses().size() == 0) {
-				account.remove(category);
-				category.setAccount(account);
-				dbConnection.remove(category);
-			}
-
-			DB_CONNECT.commit();
-			DB_CONNECT.close();
+		if ("yes".equalsIgnoreCase(isDeleteConfirmed)) {
+			categoryDAO.deleteById(categoryId);
 		}
-
-		session.setAttribute("account", account);
 
 		request.getRequestDispatcher("listcategories").forward(request, response);;
 	}

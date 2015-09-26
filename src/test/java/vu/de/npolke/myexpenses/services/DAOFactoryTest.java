@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import vu.de.npolke.myexpenses.model.Account;
+import vu.de.npolke.myexpenses.model.Category;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -26,7 +27,17 @@ import vu.de.npolke.myexpenses.model.Account;
 public class DAOFactoryTest {
 
 	@Test
+	public void sequenceDAO() {
+		assertTrue(DAOFactory.getDAO(Long.class) instanceof SequenceDAO);
+	}
+
+	@Test
 	public void accountDAO() {
 		assertTrue(DAOFactory.getDAO(Account.class) instanceof AccountDAO);
+	}
+
+	@Test
+	public void categoryDAO() {
+		assertTrue(DAOFactory.getDAO(Category.class) instanceof CategoryDAO);
 	}
 }
