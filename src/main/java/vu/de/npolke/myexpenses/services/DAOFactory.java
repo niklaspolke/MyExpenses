@@ -42,11 +42,14 @@ public class DAOFactory {
 		CategoryDAO categoryDAO = new CategoryDAO(sequenceDAO);
 		categoryDAO.setConnectionStrategy(connectionStrategy);
 
-		ExpenseDAO expenseDAO = new ExpenseDAO(sequenceDAO, categoryDAO);
+		ExpenseDAO expenseDAO = new ExpenseDAO(sequenceDAO);
 		expenseDAO.setConnectionStrategy(connectionStrategy);
 
 		StatisticsDAO statisticsDAO = new StatisticsDAO();
 		statisticsDAO.setConnectionStrategy(connectionStrategy);
+
+		categoryDAO.setExpenseDAO(expenseDAO);
+		expenseDAO.setCategoryDAO(categoryDAO);
 
 		daoRegistry.put(Long.class, sequenceDAO);
 		daoRegistry.put(Account.class, accountDAO);

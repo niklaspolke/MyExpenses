@@ -16,6 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import vu.de.npolke.myexpenses.model.Category;
+import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.connections.ConnectionStrategy;
 import vu.de.npolke.myexpenses.services.connections.JdbcInMemoryConnectionStrategy;
 
@@ -47,6 +48,8 @@ public class CategoryDAOTest {
 		connection = connectionStrategy.getConnection();
 		categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
 		categoryDAO.setConnectionStrategy(connectionStrategy);
+		ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
+		expenseDAO.setConnectionStrategy(connectionStrategy);
 		SequenceDAO sequenceDAO = (SequenceDAO) DAOFactory.getDAO(Long.class);
 		sequenceDAO.setConnectionStrategy(connectionStrategy);
 
@@ -54,6 +57,12 @@ public class CategoryDAOTest {
 			Statement createTable = connection.createStatement();
 			createTable.executeUpdate(
 					"CREATE TABLE category (id INTEGER PRIMARY KEY, name VARCHAR(40) NOT NULL, account_id INTEGER NOT NULL)");
+			createTable = connection.createStatement();
+			createTable.executeUpdate(
+					"CREATE TABLE expense (id INTEGER PRIMARY KEY, day DATE NOT NULL, amount DOUBLE NOT NULL, reason VARCHAR(40) NOT NULL, category_id INTEGER NOT NULL, account_id INTEGER NOT NULL)");
+			Statement insertStatement = connection.createStatement();
+			insertStatement.executeUpdate(
+					"INSERT INTO Expense (id, day, amount, reason, category_id, account_id) VALUES (101, '2015-09-27', 25.5, 'shopping', 10, 1)");
 			createTable = connection.createStatement();
 			createTable.executeUpdate(
 					"CREATE TABLE sequence (seq_name VARCHAR(40) PRIMARY KEY, seq_number INTEGER NOT NULL)");
@@ -147,19 +156,27 @@ public class CategoryDAOTest {
 
 	@Test
 	public void delete() {
-		boolean success = categoryDAO.deleteById(10);
-		Category category = categoryDAO.read(10);
+		long newCategoryId = categoryDAO.create("health", 1).getId();
+		boolean success = categoryDAO.deleteById(newCategoryId);
+		Category category = categoryDAO.read(newCategoryId);
 
 		assertTrue(success);
 		assertNull(category);
 	}
 
 	@Test
-	public void deleteNotExisting() {
-		boolean success = categoryDAO.deleteById(1110);
-		Category category = categoryDAO.read(1110);
+	public void deleteWithExpenses() {
+		boolean success = categoryDAO.deleteById(10);
+		Category category = categoryDAO.read(10);
 
 		assertFalse(success);
-		assertNull(category);
+		assertNotNull(category);
+	}
+
+	@Test
+	public void deleteNotExisting() {
+		boolean success = categoryDAO.deleteById(1110);
+
+		assertFalse(success);
 	}
 }

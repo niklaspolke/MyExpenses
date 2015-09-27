@@ -191,6 +191,29 @@ public class ExpenseDAOTest {
 	}
 
 	@Test
+	public void readByCategoryId() {
+		expenseDAO.create("25.01.15", 17.3, "just4fun", 12, 1);
+		expenseDAO.create("25.01.15", 17.3, "just4fun", 11, 1);
+		expenseDAO.create("25.01.15", 17.3, "just4fun", 12, 1);
+		expenseDAO.create("25.01.15", 17.3, "just4fun", 11, 1);
+		expenseDAO.create("25.01.15", 17.3, "just4fun", 12, 1);
+
+		List<Expense> expenses = expenseDAO.readByCategoryId(12);
+
+		assertNotNull(expenses);
+		assertEquals(3, expenses.size());
+		for (Expense expense : expenses) {
+			assertTrue(expense.getId() > 0);
+			assertEquals("25.01.15", expense.getReadableDayAsString());
+			assertEquals(17.3, expense.getAmount(), 0.01);
+			assertEquals("just4fun", expense.getReason());
+			assertEquals(12, expense.getCategoryId());
+			assertEquals("health", expense.getCategoryName());
+			assertEquals(1, expense.getAccountId());
+		}
+	}
+
+	@Test
 	public void delete() {
 		boolean success = expenseDAO.deleteById(101);
 		Expense expense = expenseDAO.read(101);

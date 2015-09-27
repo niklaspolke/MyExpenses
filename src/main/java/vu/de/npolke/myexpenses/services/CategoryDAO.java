@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import vu.de.npolke.myexpenses.model.Category;
+import vu.de.npolke.myexpenses.model.Expense;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -40,8 +41,14 @@ public class CategoryDAO extends AbstractConnectionDAO {
 
 	private SequenceDAO sequenceDAO;
 
+	private ExpenseDAO expenseDAO;
+
 	public CategoryDAO(final SequenceDAO sequenceDAO) {
 		this.sequenceDAO = sequenceDAO;
+	}
+
+	protected void setExpenseDAO(final ExpenseDAO expenseDAO) {
+		this.expenseDAO = expenseDAO;
 	}
 
 	public Category create(final String name, final long accountId) {
@@ -134,11 +141,16 @@ public class CategoryDAO extends AbstractConnectionDAO {
 		boolean deleted = false;
 
 		try (Connection connection = getConnection()) {
-			PreparedStatement deleteStatement;
-			deleteStatement = connection.prepareStatement(SQL_DELETE_BY_ID);
-			deleteStatement.setLong(1, categoryId);
-			deleted = 1 == deleteStatement.executeUpdate();
-			connection.commit();
+			List<Expense> expensesOfCategory = expenseDAO.readByCategoryId(categoryId);
+			if (expensesOfCategory.isEmpty()) {
+				PreparedStatement deleteStatement;
+				deleteStatement = connection.prepareStatement(SQL_DELETE_BY_ID);
+				deleteStatement.setLong(1, categoryId);
+				deleted = 1 == deleteStatement.executeUpdate();
+				connection.commit();
+			} else {
+				connection.rollback();
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
