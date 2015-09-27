@@ -58,9 +58,8 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 		expense.setCategoryName(categoryDAO.read(categoryId).getName());
 		expense.setAccountId(accountId);
 
-		Connection connection = getConnection();
-		PreparedStatement createStatement;
-		try {
+		try (Connection connection = getConnection()) {
+			PreparedStatement createStatement;
 			createStatement = connection.prepareStatement(SQL_INSERT);
 			createStatement.setLong(1, expense.getId());
 			createStatement.setDate(2, new java.sql.Date(expense.getDay().getTimeInMillis()), expense.getDay());
@@ -84,9 +83,8 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 	public Expense read(final long id) {
 		Expense expense = null;
 
-		Connection connection = getConnection();
-		PreparedStatement readStatement;
-		try {
+		try (Connection connection = getConnection()) {
+			PreparedStatement readStatement;
 			readStatement = connection.prepareStatement(SQL_READ_BY_ID);
 			readStatement.setLong(1, id);
 			ResultSet result = readStatement.executeQuery();
@@ -111,9 +109,8 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 	public boolean update(final Expense expense) {
 		boolean updated = false;
 
-		Connection connection = getConnection();
-		PreparedStatement updateStatement;
-		try {
+		try (Connection connection = getConnection()) {
+			PreparedStatement updateStatement;
 			updateStatement = connection.prepareStatement(SQL_UPDATE_BY_ID);
 			updateStatement.setDate(1, new java.sql.Date(expense.getDay().getTimeInMillis()), expense.getDay());
 			updateStatement.setDouble(2, expense.getAmount());
@@ -134,9 +131,8 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 	public List<Expense> readByAccountId(final long accountId) {
 		List<Expense> expenses = new ArrayList<Expense>();
 
-		Connection connection = getConnection();
-		PreparedStatement readStatement;
-		try {
+		try (Connection connection = getConnection()) {
+			PreparedStatement readStatement;
 			readStatement = connection.prepareStatement(SQL_READ_BY_ACCOUNT_ID);
 			readStatement.setLong(1, accountId);
 			ResultSet result = readStatement.executeQuery();
@@ -162,9 +158,8 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 	public boolean deleteById(final long expenseId) {
 		boolean deleted = false;
 
-		Connection connection = getConnection();
-		PreparedStatement deleteStatement;
-		try {
+		try (Connection connection = getConnection()) {
+			PreparedStatement deleteStatement;
 			deleteStatement = connection.prepareStatement(SQL_DELETE_BY_ID);
 			deleteStatement.setLong(1, expenseId);
 			deleted = 1 == deleteStatement.executeUpdate();
