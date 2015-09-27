@@ -18,7 +18,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import vu.de.npolke.myexpenses.model.Category;
 import vu.de.npolke.myexpenses.model.Expense;
 
 /**
@@ -68,9 +67,11 @@ public class JdbcSqlScriptExecutorTest {
 	public void initialisedDb() throws SQLException {
 		executor.executeSqlScript(SqlScriptExecutor.INITIALISE_DB_SCRIPT);
 
-		Connection connection = DriverManager.getConnection(JdbcSqlScriptExecutor.URL_PREFIX + FILE + ";shutdown=true;hsqldb.lock_file=false");
+		Connection connection = DriverManager
+				.getConnection(JdbcSqlScriptExecutor.URL_PREFIX + FILE + ";shutdown=true;hsqldb.lock_file=false");
 		Statement allExpensesQuery = connection.createStatement();
-		ResultSet result = allExpensesQuery.executeQuery("select id, amount, reason, category_id, account_id, day from expense where account_id = 1");
+		ResultSet result = allExpensesQuery.executeQuery(
+				"select id, amount, reason, category_id, account_id, day from expense where account_id = 1");
 		int countResults = 0;
 		while (result.next()) {
 			countResults++;
@@ -81,15 +82,12 @@ public class JdbcSqlScriptExecutorTest {
 			expense.setAmount(result.getDouble("amount"));
 			expense.setReason(result.getString("reason"));
 			expense.setId(result.getLong("id"));
-			Category category = new Category();
-			category.setName("<not read yet>");
-			category.setId(result.getInt("category_id"));
-			expense.setCategory(category);
-			System.out.println(expense);
+			expense.setCategoryId(result.getLong("category_id"));
 		}
 		assertEquals(3, countResults);
 
-		PreparedStatement insert = connection.prepareStatement("INSERT INTO expense(id, amount, reason, category_id, account_id, day) VALUES(104, 44.4, 'spezieller Test2s', 11, 1, ?)");
+		PreparedStatement insert = connection.prepareStatement(
+				"INSERT INTO expense(id, amount, reason, category_id, account_id, day) VALUES(104, 44.4, 'spezieller Test2s', 11, 1, ?)");
 		insert.setDate(1, new java.sql.Date(System.currentTimeMillis()), Calendar.getInstance(Locale.GERMANY));
 		insert.executeUpdate();
 		connection.commit();

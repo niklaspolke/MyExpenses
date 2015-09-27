@@ -1,10 +1,8 @@
 package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,10 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import vu.de.npolke.myexpenses.backend.DatabaseConnection;
 import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Expense;
-import vu.de.npolke.myexpenses.servlets.util.ExpenseComparator;
+import vu.de.npolke.myexpenses.services.DAOFactory;
+import vu.de.npolke.myexpenses.services.ExpenseDAO;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -39,27 +37,18 @@ public class ListExpensesServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private final DatabaseConnection DB_CONNECT = new DatabaseConnection();
+	private ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
 
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
-
 		HttpSession session = request.getSession();
+
 		Account account = (Account) session.getAttribute("account");
 
-		EntityManager dbConnection = DB_CONNECT.connect();
-		dbConnection.getTransaction().setRollbackOnly();
+		List<Expense> expenses = expenseDAO.readByAccountId(account.getId());
 
-		account = dbConnection.find(Account.class, account.getId());
-		Collections.sort(account.getExpenses(), new ExpenseComparator<Expense>());
-
-		DB_CONNECT.rollback();
-		DB_CONNECT.close();
-
-		session.setAttribute("account", account);
-		session.setAttribute("expenses", new ArrayList<Expense>(account.getExpenses()));
-
+		session.setAttribute("expenses", expenses);
 		response.sendRedirect("listexpenses.jsp");
 	}
 }

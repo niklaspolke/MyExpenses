@@ -1,12 +1,15 @@
 package vu.de.npolke.myexpenses.services;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -35,8 +38,8 @@ import vu.de.npolke.myexpenses.services.connections.JdbcInMemoryConnectionStrate
  */
 public class CategoryDAOTest {
 
-	private static CategoryDAO categoryDAO;
-	private static Connection connection;
+	private static CategoryDAO	categoryDAO;
+	private static Connection	connection;
 
 	@BeforeClass
 	public static void initialise() {
@@ -49,9 +52,11 @@ public class CategoryDAOTest {
 
 		try {
 			Statement createTable = connection.createStatement();
-			createTable.executeUpdate("CREATE TABLE category (id INTEGER PRIMARY KEY, name VARCHAR(40) NOT NULL, account_id INTEGER NOT NULL)");
+			createTable.executeUpdate(
+					"CREATE TABLE category (id INTEGER PRIMARY KEY, name VARCHAR(40) NOT NULL, account_id INTEGER NOT NULL)");
 			createTable = connection.createStatement();
-			createTable.executeUpdate("CREATE TABLE sequence (seq_name VARCHAR(40) PRIMARY KEY, seq_number INTEGER NOT NULL)");
+			createTable.executeUpdate(
+					"CREATE TABLE sequence (seq_name VARCHAR(40) PRIMARY KEY, seq_number INTEGER NOT NULL)");
 			connection.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -87,6 +92,13 @@ public class CategoryDAOTest {
 	}
 
 	@Test
+	public void readNotExisting() {
+		Category category = categoryDAO.read(1110);
+
+		assertNull(category);
+	}
+
+	@Test
 	public void create() {
 		Category category = categoryDAO.create("health", 1);
 
@@ -107,5 +119,47 @@ public class CategoryDAOTest {
 		category = categoryDAO.read(category.getId());
 		assertEquals(10, category.getId());
 		assertEquals("junk food", category.getName());
+	}
+
+	@Test
+	public void updateNotExisting() {
+		Category category = categoryDAO.read(10);
+		category.setId(1110);
+		category.setName("junk food");
+
+		boolean success = categoryDAO.update(category);
+
+		assertFalse(success);
+
+		category = categoryDAO.read(1110);
+		assertNull(category);
+	}
+
+	@Test
+	public void readByAccountId() {
+		categoryDAO.create("health", 2);
+		List<Category> categories = categoryDAO.readByAccountId(2);
+
+		assertNotNull(categories);
+		assertEquals(1, categories.size());
+		assertEquals("health", categories.get(0).getName());
+	}
+
+	@Test
+	public void delete() {
+		boolean success = categoryDAO.deleteById(10);
+		Category category = categoryDAO.read(10);
+
+		assertTrue(success);
+		assertNull(category);
+	}
+
+	@Test
+	public void deleteNotExisting() {
+		boolean success = categoryDAO.deleteById(1110);
+		Category category = categoryDAO.read(1110);
+
+		assertFalse(success);
+		assertNull(category);
 	}
 }

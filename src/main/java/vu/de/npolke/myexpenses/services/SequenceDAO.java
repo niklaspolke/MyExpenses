@@ -35,26 +35,27 @@ public class SequenceDAO extends AbstractConnectionDAO {
 	public synchronized long getNextPrimaryKey() {
 		long nextPrimaryKey = -1;
 
-		Connection connection = getConnection();
-		PreparedStatement updateStatement;
-		try {
+		try (Connection connection = getConnection()) {
+			PreparedStatement updateStatement;
 			updateStatement = connection.prepareStatement(SQL_UPDATE);
 			updateStatement.setLong(1, primaryKeyCache + 1);
 			updateStatement.setString(2, SEQ_PRIMARY_KEYS);
 			updateStatement.setLong(3, primaryKeyCache);
 			boolean updated = 1 == updateStatement.executeUpdate();
+			updateStatement.close();
 			if (updated) {
 				connection.commit();
 				primaryKeyCache += 1;
 				nextPrimaryKey = primaryKeyCache;
 			} else {
 				connection.rollback();
-				primaryKeyCache = readPrimaryKey();
+				primaryKeyCache = readPrimaryKey(connection);
 				updateStatement = connection.prepareStatement(SQL_UPDATE);
 				updateStatement.setLong(1, primaryKeyCache + 1);
 				updateStatement.setString(2, SEQ_PRIMARY_KEYS);
 				updateStatement.setLong(3, primaryKeyCache);
 				updated = 1 == updateStatement.executeUpdate();
+				updateStatement.close();
 				if (updated) {
 					primaryKeyCache += 1;
 					nextPrimaryKey = primaryKeyCache;
@@ -68,20 +69,15 @@ public class SequenceDAO extends AbstractConnectionDAO {
 		return nextPrimaryKey;
 	}
 
-	private long readPrimaryKey() {
+	private static long readPrimaryKey(final Connection connection) throws SQLException {
 		long primaryKey = -1;
 
-		Connection connection = getConnection();
 		PreparedStatement readStatement;
-		try {
-			readStatement = connection.prepareStatement(SQL_READ);
-			readStatement.setString(1, SEQ_PRIMARY_KEYS);
-			ResultSet result = readStatement.executeQuery();
-			if (result.next()) {
-				primaryKey = result.getLong("seq_number");
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		readStatement = connection.prepareStatement(SQL_READ);
+		readStatement.setString(1, SEQ_PRIMARY_KEYS);
+		ResultSet result = readStatement.executeQuery();
+		if (result.next()) {
+			primaryKey = result.getLong("seq_number");
 		}
 
 		return primaryKey;

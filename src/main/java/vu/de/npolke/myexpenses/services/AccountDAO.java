@@ -34,9 +34,8 @@ public class AccountDAO extends AbstractConnectionDAO {
 
 		String passwordHash = HashUtil.toMD5(password);
 
-		Connection connection = getConnection();
-		PreparedStatement validateLoginStatement;
-		try {
+		try (Connection connection = getConnection()) {
+			PreparedStatement validateLoginStatement;
 			validateLoginStatement = connection.prepareStatement(SQL_READ_BY_LOGIN);
 			validateLoginStatement.setString(1, login);
 			validateLoginStatement.setString(2, passwordHash);
@@ -49,10 +48,6 @@ public class AccountDAO extends AbstractConnectionDAO {
 			connection.rollback();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			try {
-				connection.rollback();
-			} catch (SQLException se) {
-			}
 		}
 
 		return account;

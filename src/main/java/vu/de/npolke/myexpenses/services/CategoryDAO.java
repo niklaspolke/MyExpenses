@@ -30,7 +30,7 @@ public class CategoryDAO extends AbstractConnectionDAO {
 
 	private static final String SQL_INSERT = "INSERT INTO Category (id, name, account_id) VALUES (?, ?, ?)";
 
-	private static final String SQL_READ_BY_ID = "SELECT name FROM Category WHERE id = ?";
+	private static final String SQL_READ_BY_ID = "SELECT name, account_id FROM Category WHERE id = ?";
 
 	private static final String SQL_READ_BY_ACCOUNT_ID = "SELECT id, name FROM Category WHERE account_id = ? ORDER BY name ASC";
 
@@ -48,9 +48,8 @@ public class CategoryDAO extends AbstractConnectionDAO {
 		Category category = null;
 		long newId = sequenceDAO.getNextPrimaryKey();
 
-		Connection connection = getConnection();
-		PreparedStatement createStatement;
-		try {
+		try (Connection connection = getConnection()) {
+			PreparedStatement createStatement;
 			createStatement = connection.prepareStatement(SQL_INSERT);
 			createStatement.setLong(1, newId);
 			createStatement.setString(2, name);
@@ -72,9 +71,8 @@ public class CategoryDAO extends AbstractConnectionDAO {
 	public Category read(final long id) {
 		Category category = null;
 
-		Connection connection = getConnection();
-		PreparedStatement readStatement;
-		try {
+		try (Connection connection = getConnection()) {
+			PreparedStatement readStatement;
 			readStatement = connection.prepareStatement(SQL_READ_BY_ID);
 			readStatement.setLong(1, id);
 			ResultSet result = readStatement.executeQuery();
@@ -82,6 +80,7 @@ public class CategoryDAO extends AbstractConnectionDAO {
 				category = new Category();
 				category.setId(id);
 				category.setName(result.getString("name"));
+				category.setAccountId(result.getLong("account_id"));
 			}
 			connection.rollback();
 		} catch (SQLException e) {
@@ -94,9 +93,8 @@ public class CategoryDAO extends AbstractConnectionDAO {
 	public boolean update(final Category category) {
 		boolean updated = false;
 
-		Connection connection = getConnection();
-		PreparedStatement updateStatement;
-		try {
+		try (Connection connection = getConnection()) {
+			PreparedStatement updateStatement;
 			updateStatement = connection.prepareStatement(SQL_UPDATE_BY_ID);
 			updateStatement.setString(1, category.getName());
 			updateStatement.setLong(2, category.getId());
@@ -112,9 +110,8 @@ public class CategoryDAO extends AbstractConnectionDAO {
 	public List<Category> readByAccountId(final long accountId) {
 		List<Category> categories = new ArrayList<Category>();
 
-		Connection connection = getConnection();
-		PreparedStatement readStatement;
-		try {
+		try (Connection connection = getConnection()) {
+			PreparedStatement readStatement;
 			readStatement = connection.prepareStatement(SQL_READ_BY_ACCOUNT_ID);
 			readStatement.setLong(1, accountId);
 			ResultSet result = readStatement.executeQuery();
@@ -122,6 +119,7 @@ public class CategoryDAO extends AbstractConnectionDAO {
 				Category category = new Category();
 				category.setId(result.getLong("id"));
 				category.setName(result.getString("name"));
+				category.setAccountId(accountId);
 				categories.add(category);
 			}
 			connection.rollback();
@@ -135,9 +133,8 @@ public class CategoryDAO extends AbstractConnectionDAO {
 	public boolean deleteById(final long categoryId) {
 		boolean deleted = false;
 
-		Connection connection = getConnection();
-		PreparedStatement deleteStatement;
-		try {
+		try (Connection connection = getConnection()) {
+			PreparedStatement deleteStatement;
 			deleteStatement = connection.prepareStatement(SQL_DELETE_BY_ID);
 			deleteStatement.setLong(1, categoryId);
 			deleted = 1 == deleteStatement.executeUpdate();

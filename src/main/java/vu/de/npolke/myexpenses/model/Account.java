@@ -1,17 +1,6 @@
 package vu.de.npolke.myexpenses.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -30,33 +19,15 @@ import javax.persistence.OrderBy;
  *
  * @author Niklas Polke
  */
-@Entity
-@NamedQueries(
-	value={
-	@NamedQuery(
-		name="Account.checkLogin",
-		query="SELECT a FROM Account a WHERE a.login = :login AND a.password = :password")
-	}
-)
 public class Account implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(generator = "ID_SEQ", strategy = GenerationType.TABLE)
 	private long id;
 
 	private String login;
 
 	private String password;
-
-	@OneToMany(mappedBy="account")
-	@OrderBy("name ASC")
-	List<Category> categories;
-
-	@OneToMany(mappedBy="account")
-	@OrderBy("day DESC")
-	List<Expense> expenses;
 
 	public long getId() {
 		return id;
@@ -80,46 +51,6 @@ public class Account implements Serializable {
 
 	public void setPassword(final String password) {
 		this.password = password;
-	}
-
-	public void add(final Category category) {
-		if (getCategories() == null) {
-			categories = new ArrayList<Category>();
-		}
-		category.setAccount(this);
-		getCategories().add(category);
-	}
-
-	public void remove(final Category category) {
-		if (getCategories() == null) {
-			categories = new ArrayList<Category>();
-		}
-		category.setAccount(null);
-		getCategories().remove(category);
-	}
-
-	public List<Category> getCategories() {
-		return categories;
-	}
-
-	public void add(final Expense expense) {
-		if (getExpenses() == null) {
-			expenses = new ArrayList<Expense>();
-		}
-		expense.setAccount(this);
-		getExpenses().add(expense);
-	}
-
-	public void remove(final Expense expense) {
-		if (getExpenses() == null) {
-			expenses = new ArrayList<Expense>();
-		}
-		expense.setAccount(null);
-		getExpenses().remove(expense);
-	}
-
-	public List<Expense> getExpenses() {
-		return expenses;
 	}
 
 	@Override

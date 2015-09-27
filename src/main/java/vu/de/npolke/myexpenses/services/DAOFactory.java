@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Category;
+import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.connections.ConnectionStrategy;
 import vu.de.npolke.myexpenses.services.connections.JdbcConnectionStrategy;
 
@@ -40,9 +41,13 @@ public class DAOFactory {
 		CategoryDAO categoryDAO = new CategoryDAO(sequenceDAO);
 		categoryDAO.setConnectionStrategy(connectionStrategy);
 
+		ExpenseDAO expenseDAO = new ExpenseDAO(sequenceDAO, categoryDAO);
+		expenseDAO.setConnectionStrategy(connectionStrategy);
+
 		daoRegistry.put(Long.class, sequenceDAO);
 		daoRegistry.put(Account.class, accountDAO);
 		daoRegistry.put(Category.class, categoryDAO);
+		daoRegistry.put(Expense.class, expenseDAO);
 	}
 
 	public static AbstractConnectionDAO getDAO(final Class<?> entity) {

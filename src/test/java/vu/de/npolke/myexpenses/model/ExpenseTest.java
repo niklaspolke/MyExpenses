@@ -24,11 +24,13 @@ import org.junit.Test;
  */
 public class ExpenseTest {
 
-	private static final int ID = 4;
-	private static final Double AMOUNT = 18.35;
-	private static final String REASON = "chicken";
-	private static final String DATABASE_DATE = "15.09.15";
-	private static final Account ACCOUNT = new Account();
+	private static final int	ID				= 4;
+	private static final Double	AMOUNT			= 18.35;
+	private static final String	REASON			= "chicken";
+	private static final String	DATABASE_DATE	= "15.09.15";
+	private static final long	ACCOUNTID		= 1;
+	private static final long	CATEGORYID		= 2;
+	private static final String	CATEGORYNAME	= "food";
 
 	private Expense expense;
 
@@ -44,15 +46,16 @@ public class ExpenseTest {
 		expense.setReadableDayAsString(DATABASE_DATE);
 		expense.setAmount(AMOUNT);
 		expense.setReason(REASON);
-		expense.setAccount(ACCOUNT);
-		Category cat = new Category();
-		cat.setName("food");
-		expense.setCategory(cat);
+		expense.setCategoryId(CATEGORYID);
+		expense.setCategoryName(CATEGORYNAME);
+		expense.setAccountId(ACCOUNTID);
 
 		assertEquals(ID, expense.getId());
 		assertEquals(AMOUNT, expense.getAmount(), 0.01);
 		assertEquals(REASON, expense.getReason());
-		assertEquals(ACCOUNT, expense.getAccount());
+		assertEquals(CATEGORYID, expense.getCategoryId());
+		assertEquals(CATEGORYNAME, expense.getCategoryName());
+		assertEquals(ACCOUNTID, expense.getAccountId());
 		assertEquals(DATABASE_DATE, expense.getReadableDayAsString());
 
 		assertEquals("Expense: (15.09.15) - 18,35 € - food for chicken", expense.toString());

@@ -2,17 +2,15 @@ package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
 
-import javax.persistence.EntityManager;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import vu.de.npolke.myexpenses.backend.DatabaseConnection;
-import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Expense;
+import vu.de.npolke.myexpenses.services.DAOFactory;
+import vu.de.npolke.myexpenses.services.ExpenseDAO;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -36,32 +34,18 @@ public class DeleteExpenseServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private final DatabaseConnection DB_CONNECT = new DatabaseConnection();
+	private ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
 
-		String id = request.getParameter("id");
+		long id = Long.parseLong(request.getParameter("id"));
 		String confirmed = request.getParameter("confirmed");
 
-		HttpSession session = request.getSession();
-		Account account = (Account) session.getAttribute("account");
-
 		if ("yes".equalsIgnoreCase(confirmed)) {
-			EntityManager dbConnection = DB_CONNECT.connect();
-
-			Expense expense = dbConnection.find(Expense.class, Long.parseLong(id));
-			account = dbConnection.find(Account.class, account.getId());
-			account.remove(expense);
-			expense.setAccount(account);
-			dbConnection.remove(expense);
-
-			DB_CONNECT.commit();
-			DB_CONNECT.close();
+			expenseDAO.deleteById(id);
 		}
-
-		session.setAttribute("account", account);
 
 		request.getRequestDispatcher("listexpenses").forward(request, response);;
 	}
