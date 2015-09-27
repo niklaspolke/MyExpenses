@@ -6,19 +6,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import vu.de.npolke.myexpenses.model.Category;
 import vu.de.npolke.myexpenses.model.Expense;
-import vu.de.npolke.myexpenses.services.connections.ConnectionStrategy;
-import vu.de.npolke.myexpenses.services.connections.JdbcInMemoryConnectionStrategy;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -37,60 +30,19 @@ import vu.de.npolke.myexpenses.services.connections.JdbcInMemoryConnectionStrate
  *
  * @author Niklas Polke
  */
-public class ExpenseDAOTest {
+public class ExpenseDAOTest extends AbstractDAOTest {
 
-	private static ExpenseDAO	expenseDAO;
-	private static Connection	connection;
+	private static ExpenseDAO expenseDAO;
+
+	private static long testCounter = 0;
+
+	public ExpenseDAOTest() {
+		super("ExpenseDAOTest" + ++testCounter);
+	}
 
 	@BeforeClass
 	public static void initialise() {
-		ConnectionStrategy connectionStrategy = new JdbcInMemoryConnectionStrategy(ExpenseDAOTest.class.getName());
-		connection = connectionStrategy.getConnection();
 		expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
-		expenseDAO.setConnectionStrategy(connectionStrategy);
-		CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
-		categoryDAO.setConnectionStrategy(connectionStrategy);
-		SequenceDAO sequenceDAO = (SequenceDAO) DAOFactory.getDAO(Long.class);
-		sequenceDAO.setConnectionStrategy(connectionStrategy);
-
-		try {
-			Statement createTable = connection.createStatement();
-			createTable.executeUpdate(
-					"CREATE TABLE expense (id INTEGER PRIMARY KEY, day DATE NOT NULL, amount DOUBLE NOT NULL, reason VARCHAR(40) NOT NULL, category_id INTEGER NOT NULL, account_id INTEGER NOT NULL)");
-			createTable = connection.createStatement();
-			createTable.executeUpdate(
-					"CREATE TABLE category (id INTEGER PRIMARY KEY, name VARCHAR(40) NOT NULL, account_id INTEGER NOT NULL)");
-			createTable = connection.createStatement();
-			createTable.executeUpdate(
-					"CREATE TABLE sequence (seq_name VARCHAR(40) PRIMARY KEY, seq_number INTEGER NOT NULL)");
-			Statement insertStatement = connection.createStatement();
-			insertStatement.executeUpdate("INSERT INTO category (id, name, account_id) VALUES (11, 'food', 1)");
-			insertStatement = connection.createStatement();
-			insertStatement.executeUpdate("INSERT INTO category (id, name, account_id) VALUES (12, 'health', 1)");
-			connection.commit();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Before
-	public void setup() {
-		try {
-			Statement clearTable = connection.createStatement();
-			clearTable.executeUpdate("DELETE FROM expense");
-			Statement insertStatement = connection.createStatement();
-			insertStatement.executeUpdate(
-					"INSERT INTO Expense (id, day, amount, reason, category_id, account_id) VALUES (101, '2015-09-27', 25.5, 'shopping', 11, 1)");
-
-			clearTable = connection.createStatement();
-			clearTable.executeUpdate("DELETE FROM sequence");
-			insertStatement = connection.createStatement();
-			insertStatement.executeUpdate("INSERT INTO sequence (seq_name, seq_number) VALUES ('ID_GENERATOR', 10)");
-
-			connection.commit();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Test
@@ -99,9 +51,9 @@ public class ExpenseDAOTest {
 
 		assertNotNull(expense);
 		assertEquals(101, expense.getId());
-		assertEquals("27.09.15", expense.getReadableDayAsString());
-		assertEquals(25.5, expense.getAmount(), 0.01);
-		assertEquals("shopping", expense.getReason());
+		assertEquals("01.05.15", expense.getReadableDayAsString());
+		assertEquals(5.5, expense.getAmount(), 0.01);
+		assertEquals("burger", expense.getReason());
 		assertEquals(11, expense.getCategoryId());
 		assertEquals("food", expense.getCategoryName());
 		assertEquals(1, expense.getAccountId());
@@ -109,7 +61,7 @@ public class ExpenseDAOTest {
 
 	@Test
 	public void readNotExisting() {
-		Expense expense = expenseDAO.read(1101);
+		Expense expense = expenseDAO.read(999);
 
 		assertNull(expense);
 	}
@@ -132,36 +84,36 @@ public class ExpenseDAOTest {
 	public void update() {
 		Expense expense = expenseDAO.read(101);
 		expense.setAmount(12.2);
-		expense.setCategoryId(12);
+		expense.setCategoryId(13);
 		expense.setReadableDayAsString("01.01.15");
 		expense.setReason("gone swimming");
 
 		boolean success = expenseDAO.update(expense);
 
 		assertTrue(success);
-		assertEquals("health", expense.getCategoryName());
+		assertEquals("sports", expense.getCategoryName());
 
 		expense = expenseDAO.read(expense.getId());
 		assertEquals(101, expense.getId());
 		assertEquals("01.01.15", expense.getReadableDayAsString());
 		assertEquals(12.2, expense.getAmount(), 0.01);
 		assertEquals("gone swimming", expense.getReason());
-		assertEquals(12, expense.getCategoryId());
-		assertEquals("health", expense.getCategoryName());
+		assertEquals(13, expense.getCategoryId());
+		assertEquals("sports", expense.getCategoryName());
 		assertEquals(1, expense.getAccountId());
 	}
 
 	@Test
 	public void updateNotExisting() {
 		Expense expense = expenseDAO.read(101);
-		expense.setId(1101);
+		expense.setId(999);
 		expense.setAmount(12.2);
-		expense.setCategoryId(12);
+		expense.setCategoryId(13);
 		expense.setReadableDayAsString("01.01.15");
 		expense.setReason("gone swimming");
 
 		boolean success = expenseDAO.update(expense);
-		expense = expenseDAO.read(1101);
+		expense = expenseDAO.read(999);
 
 		assertFalse(success);
 		assertNull(expense);
@@ -169,46 +121,34 @@ public class ExpenseDAOTest {
 
 	@Test
 	public void readByAccountId() {
-		expenseDAO.create("25.01.15", 17.3, "just4fun", 11, 2);
-		expenseDAO.create("25.01.15", 17.3, "just4fun", 11, 1);
-		expenseDAO.create("25.01.15", 17.3, "just4fun", 11, 2);
-		expenseDAO.create("25.01.15", 17.3, "just4fun", 11, 1);
-		expenseDAO.create("25.01.15", 17.3, "just4fun", 11, 2);
-
-		List<Expense> expenses = expenseDAO.readByAccountId(2);
+		List<Expense> expenses = expenseDAO.readByAccountId(1);
 
 		assertNotNull(expenses);
-		assertEquals(3, expenses.size());
+		assertEquals(4, expenses.size());
 		for (Expense expense : expenses) {
 			assertTrue(expense.getId() > 0);
-			assertEquals("25.01.15", expense.getReadableDayAsString());
-			assertEquals(17.3, expense.getAmount(), 0.01);
-			assertEquals("just4fun", expense.getReason());
-			assertEquals(11, expense.getCategoryId());
-			assertEquals("food", expense.getCategoryName());
-			assertEquals(2, expense.getAccountId());
+			assertTrue(expense.getReadableDayAsString().length() == 8);
+			assertTrue(expense.getAmount() > 0);
+			assertTrue(expense.getReason().trim().length() > 0);
+			assertTrue(expense.getCategoryId() == 11 || expense.getCategoryId() == 12);
+			assertTrue("food".equals(expense.getCategoryName()) || "luxury".equals(expense.getCategoryName()));
+			assertEquals(1, expense.getAccountId());
 		}
 	}
 
 	@Test
 	public void readByCategoryId() {
-		expenseDAO.create("25.01.15", 17.3, "just4fun", 12, 1);
-		expenseDAO.create("25.01.15", 17.3, "just4fun", 11, 1);
-		expenseDAO.create("25.01.15", 17.3, "just4fun", 12, 1);
-		expenseDAO.create("25.01.15", 17.3, "just4fun", 11, 1);
-		expenseDAO.create("25.01.15", 17.3, "just4fun", 12, 1);
-
 		List<Expense> expenses = expenseDAO.readByCategoryId(12);
 
 		assertNotNull(expenses);
-		assertEquals(3, expenses.size());
+		assertEquals(2, expenses.size());
 		for (Expense expense : expenses) {
 			assertTrue(expense.getId() > 0);
-			assertEquals("25.01.15", expense.getReadableDayAsString());
-			assertEquals(17.3, expense.getAmount(), 0.01);
-			assertEquals("just4fun", expense.getReason());
+			assertTrue(expense.getReadableDayAsString().length() == 8);
+			assertTrue(expense.getAmount() > 0);
+			assertTrue(expense.getReason().trim().length() > 0);
 			assertEquals(12, expense.getCategoryId());
-			assertEquals("health", expense.getCategoryName());
+			assertEquals("luxury", expense.getCategoryName());
 			assertEquals(1, expense.getAccountId());
 		}
 	}
@@ -224,7 +164,7 @@ public class ExpenseDAOTest {
 
 	@Test
 	public void deleteNotExisting() {
-		boolean success = expenseDAO.deleteById(1101);
+		boolean success = expenseDAO.deleteById(999);
 
 		assertFalse(success);
 	}

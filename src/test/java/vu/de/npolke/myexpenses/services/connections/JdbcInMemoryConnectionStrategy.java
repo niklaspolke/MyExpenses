@@ -23,9 +23,9 @@ import java.sql.SQLException;
  */
 public class JdbcInMemoryConnectionStrategy implements ConnectionStrategy {
 
-	public static final String DRIVER = "org.hsqldb.jdbc.JDBCDriver";
-	public static final String URL_PREFIX = "jdbc:hsqldb:mem:";
-	public static final String URL_SUFFIX = ";user=SA;shutdown=true";
+	public static final String	DRIVER		= "org.hsqldb.jdbc.JDBCDriver";
+	public static final String	URL_PREFIX	= "jdbc:hsqldb:mem:";
+	public static final String	URL_SUFFIX	= ";user=SA";
 
 	static {
 		try {

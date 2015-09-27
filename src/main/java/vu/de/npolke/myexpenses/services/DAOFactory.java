@@ -31,34 +31,33 @@ public class DAOFactory {
 	private static HashMap<Class<?>, AbstractConnectionDAO> daoRegistry = new HashMap<Class<?>, AbstractConnectionDAO>();
 
 	static {
-		ConnectionStrategy connectionStrategy = new JdbcConnectionStrategy();
-
-		SequenceDAO sequenceDAO = new SequenceDAO();
-		sequenceDAO.setConnectionStrategy(connectionStrategy);
-
-		AccountDAO accountDAO = new AccountDAO();
-		accountDAO.setConnectionStrategy(connectionStrategy);
-
-		CategoryDAO categoryDAO = new CategoryDAO(sequenceDAO);
-		categoryDAO.setConnectionStrategy(connectionStrategy);
-
-		ExpenseDAO expenseDAO = new ExpenseDAO(sequenceDAO);
-		expenseDAO.setConnectionStrategy(connectionStrategy);
-
+		//@formatter:off
+		  SequenceDAO   sequenceDAO = new   SequenceDAO();
+		   AccountDAO    accountDAO = new    AccountDAO();
+		  CategoryDAO   categoryDAO = new   CategoryDAO(sequenceDAO);
+		   ExpenseDAO    expenseDAO = new    ExpenseDAO(sequenceDAO);
 		StatisticsDAO statisticsDAO = new StatisticsDAO();
-		statisticsDAO.setConnectionStrategy(connectionStrategy);
 
 		categoryDAO.setExpenseDAO(expenseDAO);
 		expenseDAO.setCategoryDAO(categoryDAO);
 
-		daoRegistry.put(Long.class, sequenceDAO);
-		daoRegistry.put(Account.class, accountDAO);
-		daoRegistry.put(Category.class, categoryDAO);
-		daoRegistry.put(Expense.class, expenseDAO);
+		daoRegistry.put(          Long.class, sequenceDAO);
+		daoRegistry.put(       Account.class, accountDAO);
+		daoRegistry.put(      Category.class, categoryDAO);
+		daoRegistry.put(       Expense.class, expenseDAO);
 		daoRegistry.put(StatisticsPair.class, statisticsDAO);
+		//@formatter:off
+
+		changeConnectionStrategy(new JdbcConnectionStrategy());
 	}
 
 	public static AbstractConnectionDAO getDAO(final Class<?> entity) {
 		return daoRegistry.get(entity);
+	}
+
+	public static void changeConnectionStrategy(final ConnectionStrategy connectionStrategy) {
+		for (AbstractConnectionDAO dao : daoRegistry.values()) {
+			dao.setConnectionStrategy(connectionStrategy);
+		}
 	}
 }

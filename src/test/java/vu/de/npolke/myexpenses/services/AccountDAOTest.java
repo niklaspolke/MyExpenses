@@ -1,19 +1,13 @@
 package vu.de.npolke.myexpenses.services;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import vu.de.npolke.myexpenses.model.Account;
-import vu.de.npolke.myexpenses.services.connections.ConnectionStrategy;
-import vu.de.npolke.myexpenses.services.connections.JdbcInMemoryConnectionStrategy;
-import vu.de.npolke.myexpenses.util.HashUtil;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -32,52 +26,33 @@ import vu.de.npolke.myexpenses.util.HashUtil;
  *
  * @author Niklas Polke
  */
-public class AccountDAOTest {
+public class AccountDAOTest extends AbstractDAOTest {
 
 	private static AccountDAO accountDAO;
-	private static Connection connection;
+
+	private static long testCounter = 0;
+
+	public AccountDAOTest() {
+		super("AccountDAOTest" + ++testCounter);
+	}
 
 	@BeforeClass
 	public static void initialise() {
-		ConnectionStrategy connectionStrategy = new JdbcInMemoryConnectionStrategy(AccountDAOTest.class.getName());
-		connection = connectionStrategy.getConnection();
 		accountDAO = (AccountDAO) DAOFactory.getDAO(Account.class);
-		accountDAO.setConnectionStrategy(connectionStrategy);
-
-		try {
-			Statement createTable = connection.createStatement();
-			createTable.executeUpdate("CREATE TABLE account (id INTEGER PRIMARY KEY, login VARCHAR(40) NOT NULL UNIQUE, password VARCHAR(40) NOT NULL)");
-			connection.commit();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Before
-	public void setup() {
-		try {
-			Statement clearTable = connection.createStatement();
-			clearTable.executeUpdate("DELETE FROM account");
-			Statement insertAccount = connection.createStatement();
-			insertAccount.executeUpdate("INSERT INTO account (id, login, password) VALUES (1, 'user', '" + HashUtil.toMD5("password") + "')");
-			connection.commit();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Test
 	public void readAccountFromLogin_ValidLogin() {
-		Account account = accountDAO.readByLogin("user", "password");
+		Account account = accountDAO.readByLogin("test1", "password");
 
 		assertNotNull(account);
 		assertEquals(1, account.getId());
-		assertEquals("user", account.getLogin());
+		assertEquals("test1", account.getLogin());
 	}
 
 	@Test
 	public void readAccountFromLogin_InvalidPassword() {
-		Account account = accountDAO.readByLogin("user", "wrong password");
+		Account account = accountDAO.readByLogin("test1", "wrong password");
 
 		assertNull(account);
 	}
