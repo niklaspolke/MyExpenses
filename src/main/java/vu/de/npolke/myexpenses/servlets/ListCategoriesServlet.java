@@ -7,7 +7,6 @@ import java.util.Collections;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -35,18 +34,15 @@ import vu.de.npolke.myexpenses.servlets.util.CategoryComparator;
  * @author Niklas Polke
  */
 @WebServlet("/listcategories")
-public class ListCategoriesServlet extends HttpServlet {
+public class ListCategoriesServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
 	private final DatabaseConnection DB_CONNECT = new DatabaseConnection();
 
 	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html;charset=UTF-8");
-
-		HttpSession session = request.getSession();
-		Account account = (Account) session.getAttribute("account");
+	public void doGet(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
+			Account account) throws ServletException, IOException {
 
 		EntityManager dbConnection = DB_CONNECT.connect();
 		dbConnection.getTransaction().setRollbackOnly();

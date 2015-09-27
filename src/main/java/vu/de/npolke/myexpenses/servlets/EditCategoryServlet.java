@@ -5,12 +5,12 @@ import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import vu.de.npolke.myexpenses.backend.DatabaseConnection;
+import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Category;
 
 /**
@@ -31,15 +31,15 @@ import vu.de.npolke.myexpenses.model.Category;
  * @author Niklas Polke
  */
 @WebServlet("/editcategory")
-public class EditCategoryServlet extends HttpServlet {
+public class EditCategoryServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
 	private final DatabaseConnection DB_CONNECT = new DatabaseConnection();
 
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html;charset=UTF-8");
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response,
+			final HttpSession session, Account account) throws ServletException, IOException {
 
 		final String id = request.getParameter("id");
 
@@ -50,20 +50,16 @@ public class EditCategoryServlet extends HttpServlet {
 		DB_CONNECT.rollback();
 		DB_CONNECT.close();
 
-		HttpSession session = request.getSession();
 		session.setAttribute("category", category);
 
 		response.sendRedirect("editcategory.jsp");
 	}
 
 	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html;charset=UTF-8");
+	public void doPost(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
+			Account account) throws ServletException, IOException {
 
 		final String name = request.getParameter("name");
-
-		HttpSession session = request.getSession();
 
 		Category category = (Category) session.getAttribute("category");
 		category.setName(name);

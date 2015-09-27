@@ -8,7 +8,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -36,10 +35,11 @@ import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
  * @author Niklas Polke
  */
 @WebServlet("/showstatistics")
-public class ShowStatisticsServlet extends HttpServlet {
+public class ShowStatisticsServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
+	//@formatter:off
 	private static final String SELECT_DISTINCT_MONTHS =
 		"SELECT DISTINCT year(e.day)+'.'+lpad(month(e.day),2,'0') AS month " +
 				"FROM expense e " +
@@ -57,10 +57,12 @@ public class ShowStatisticsServlet extends HttpServlet {
 		"WHERE c.account_id = ?2 " +
 		"GROUP BY c.name " +
 		"ORDER BY c.name ASC";
+	//@formatter:on
 
 	private final DatabaseConnection DB_CONNECT = new DatabaseConnection();
 
-	private static void readStatisticsForMonth(final String month, final HttpServletRequest request, final EntityManager dbConnection, final Account account) {
+	private static void readStatisticsForMonth(final String month, final HttpServletRequest request,
+			final EntityManager dbConnection, final Account account) {
 		Query statisticsQuery = dbConnection.createNativeQuery(SELECT_STATISTICS_FOR_MONTH);
 		statisticsQuery.setParameter(1, month);
 		statisticsQuery.setParameter(2, account.getId());
@@ -90,11 +92,8 @@ public class ShowStatisticsServlet extends HttpServlet {
 	}
 
 	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html;charset=UTF-8");
-
-		HttpSession session = request.getSession();
-		Account account = (Account) session.getAttribute("account");
+	public void doGet(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
+			Account account) throws ServletException, IOException {
 
 		EntityManager dbConnection = DB_CONNECT.connect();
 		dbConnection.getTransaction().setRollbackOnly();
@@ -119,13 +118,10 @@ public class ShowStatisticsServlet extends HttpServlet {
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html;charset=UTF-8");
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response,
+			final HttpSession session, Account account) throws ServletException, IOException {
 
 		String month = request.getParameter("month");
-
-		HttpSession session = request.getSession();
-		Account account = (Account) session.getAttribute("account");
 
 		EntityManager dbConnection = DB_CONNECT.connect();
 		dbConnection.getTransaction().setRollbackOnly();

@@ -7,7 +7,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -34,16 +33,15 @@ import vu.de.npolke.myexpenses.servlets.util.HashUtil;
  * @author Niklas Polke
  */
 @WebServlet("/login")
-public class LoginServlet extends HttpServlet {
+public class LoginServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
 	private final DatabaseConnection DB_CONNECT = new DatabaseConnection();
 
 	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html;charset=UTF-8");
+	public void doPost(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
+			Account account) throws ServletException, IOException {
 
 		final String login = request.getParameter("login");
 		final String password = request.getParameter("password");
@@ -55,8 +53,7 @@ public class LoginServlet extends HttpServlet {
 		checkLoginQuery.setParameter("login", login);
 		checkLoginQuery.setParameter("password", passwordHash);
 
-		Account account;
-		try  {
+		try {
 			account = checkLoginQuery.getSingleResult();
 		} catch (NoResultException nre) {
 			account = null;
@@ -66,7 +63,6 @@ public class LoginServlet extends HttpServlet {
 		DB_CONNECT.close();
 
 		if (account != null) {
-			HttpSession session = request.getSession();
 			session.setAttribute("account", account);
 			response.sendRedirect("listexpenses");
 		} else {

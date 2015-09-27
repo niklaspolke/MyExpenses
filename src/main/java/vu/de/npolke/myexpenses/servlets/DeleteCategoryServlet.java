@@ -5,7 +5,6 @@ import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -32,21 +31,18 @@ import vu.de.npolke.myexpenses.model.Category;
  * @author Niklas Polke
  */
 @WebServlet("/deletecategory")
-public class DeleteCategoryServlet extends HttpServlet {
+public class DeleteCategoryServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
 	private final DatabaseConnection DB_CONNECT = new DatabaseConnection();
 
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html;charset=UTF-8");
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response,
+			final HttpSession session, Account account) throws ServletException, IOException {
 
 		String id = request.getParameter("id");
 		String confirmed = request.getParameter("confirmed");
-
-		HttpSession session = request.getSession();
-		Account account = (Account) session.getAttribute("account");
 
 		if ("yes".equalsIgnoreCase(confirmed)) {
 			EntityManager dbConnection = DB_CONNECT.connect();
@@ -65,6 +61,7 @@ public class DeleteCategoryServlet extends HttpServlet {
 
 		session.setAttribute("account", account);
 
-		request.getRequestDispatcher("listcategories").forward(request, response);;
+		request.getRequestDispatcher("listcategories").forward(request, response);
+		;
 	}
 }
