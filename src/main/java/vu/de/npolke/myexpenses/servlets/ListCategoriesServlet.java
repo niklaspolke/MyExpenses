@@ -1,20 +1,18 @@
 package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import vu.de.npolke.myexpenses.backend.DatabaseConnection;
 import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Category;
-import vu.de.npolke.myexpenses.servlets.util.CategoryComparator;
+import vu.de.npolke.myexpenses.services.CategoryDAO;
+import vu.de.npolke.myexpenses.services.DAOFactory;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -38,24 +36,15 @@ public class ListCategoriesServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private final DatabaseConnection DB_CONNECT = new DatabaseConnection();
+	private CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
 
 	@Override
 	public void doGet(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
 			Account account) throws ServletException, IOException {
 
-		EntityManager dbConnection = DB_CONNECT.connect();
-		dbConnection.getTransaction().setRollbackOnly();
+		List<Category> categories = categoryDAO.readByAccountId(account.getId());
 
-		account = dbConnection.find(Account.class, account.getId());
-		Collections.sort(account.getCategories(), new CategoryComparator<Category>());
-
-		DB_CONNECT.rollback();
-		DB_CONNECT.close();
-
-		session.setAttribute("account", account);
-		session.setAttribute("categories", new ArrayList<Category>(account.getCategories()));
-
+		session.setAttribute("categories", categories);
 		response.sendRedirect("listcategories.jsp");
 	}
 }

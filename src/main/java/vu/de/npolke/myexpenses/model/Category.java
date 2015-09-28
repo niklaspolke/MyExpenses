@@ -1,16 +1,6 @@
 package vu.de.npolke.myexpenses.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -29,23 +19,15 @@ import javax.persistence.Table;
  *
  * @author Niklas Polke
  */
-@Entity
-@Table(name="category")
 public class Category implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(generator = "ID_SEQ", strategy = GenerationType.TABLE)
 	private long id;
 
 	private String name;
 
-	@OneToMany(mappedBy="category")
-	List<Expense> expenses;
-
-	@ManyToOne
-	private Account account;
+	private long accountId;
 
 	public long getId() {
 		return id;
@@ -63,32 +45,12 @@ public class Category implements Serializable {
 		this.name = name;
 	}
 
-	public void add(final Expense expense) {
-		if (getExpenses() == null) {
-			expenses = new ArrayList<Expense>();
-		}
-		expense.setCategory(this);
-		getExpenses().add(expense);
+	public long getAccountId() {
+		return accountId;
 	}
 
-	public void remove(final Expense expense) {
-		if (getExpenses() == null) {
-			expenses = new ArrayList<Expense>();
-		}
-		expense.setCategory(null);
-		getExpenses().remove(expense);
-	}
-
-	public List<Expense> getExpenses() {
-		return expenses;
-	}
-
-	public Account getAccount() {
-		return account;
-	}
-
-	public void setAccount(final Account account) {
-		this.account = account;
+	public void setAccountId(final long accountId) {
+		this.accountId = accountId;
 	}
 
 	@Override

@@ -67,7 +67,7 @@ the License.
                             title="month - 1-12"
                             placeholder="12"
                             required="required"
-                            value="${sessionScope.expense.getDay().get(2)}">
+                            value="${sessionScope.expense.getDay().get(2)+1}">
                     </td>
                     <td>
                         <input
@@ -94,7 +94,7 @@ the License.
                             required="required"
                             autofocus>
                             <c:forEach items="${sessionScope.categories}" var="singlecategory">
-                                <option value="${singlecategory.id}" selected="${singlecategory.id eq sessionScope.expense.category.id ? 'selected' : ''}">${singlecategory.name}</option>
+                                <option value="${singlecategory.id}" selected="${singlecategory.id eq sessionScope.expense.categoryId ? 'selected' : ''}">${singlecategory.name}</option>
                             </c:forEach>
                         </select>
                     </td>

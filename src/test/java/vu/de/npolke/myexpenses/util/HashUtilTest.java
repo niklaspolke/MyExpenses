@@ -1,9 +1,10 @@
-package vu.de.npolke.myexpenses.model;
+package vu.de.npolke.myexpenses.util;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
 import org.junit.Test;
+
+import vu.de.npolke.myexpenses.util.HashUtil;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -22,29 +23,20 @@ import org.junit.Test;
  *
  * @author Niklas Polke
  */
-public class CategoryTest {
+public class HashUtilTest {
 
-	private static final int	ID			= 4;
-	private static final String	NAME		= "food";
-	private static final long	ACCOUNTID	= 1;
-
-	private Category category;
-
-	@Before
-	public void setup() {
-		category = new Category();
+	@Test
+	public void testMD5_password() {
+		assertEquals("5f4dcc3b5aa765d61d8327deb882cf99", HashUtil.toMD5("password"));
 	}
 
 	@Test
-	public void normalValues() {
-		category.setId(ID);
-		category.setName(NAME);
-		category.setAccountId(ACCOUNTID);
+	public void testMD5_password1() {
+		assertEquals("7c6a180b36896a0a8c02787eeafb0e4c", HashUtil.toMD5("password1"));
+	}
 
-		assertEquals(ID, category.getId());
-		assertEquals(NAME, category.getName());
-		assertEquals(ACCOUNTID, category.getAccountId());
-
-		assertEquals("Category: food", category.toString());
+	@Test
+	public void testMD5_admin() {
+		assertEquals("21232f297a57a5a743894a0e4a801fc3", HashUtil.toMD5("admin"));
 	}
 }

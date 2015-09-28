@@ -1,8 +1,8 @@
-package vu.de.npolke.myexpenses.servlets.util;
+package vu.de.npolke.myexpenses.services;
 
-import java.util.Comparator;
+import java.sql.Connection;
 
-import vu.de.npolke.myexpenses.model.Expense;
+import vu.de.npolke.myexpenses.services.connections.ConnectionStrategy;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -21,17 +21,15 @@ import vu.de.npolke.myexpenses.model.Expense;
  *
  * @author Niklas Polke
  */
-public class ExpenseComparator<T> implements Comparator<T> {
+public abstract class AbstractConnectionDAO {
 
-	@Override
-	public int compare(T o1, T o2) {
-		Expense expense1 = (Expense) o1;
-		Expense expense2 = (Expense) o2;
+	private ConnectionStrategy connectionStrategy;
 
-		int result = -1 * expense1.getDay().compareTo(expense2.getDay());
-		if (result == 0) {
-			result = expense1.getCategory().getName().compareTo(expense2.getCategory().getName());
-		}
-		return result;
+	public void setConnectionStrategy(final ConnectionStrategy connectionStrategy) {
+		this.connectionStrategy = connectionStrategy;
+	}
+
+	protected Connection getConnection() {
+		return connectionStrategy.getConnection();
 	}
 }

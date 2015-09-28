@@ -92,13 +92,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <!-- JPA Provider EclipseLink -->
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
-            <version>2.6.1-RC1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <!-- JDBC Driver for hsqldb -->
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>

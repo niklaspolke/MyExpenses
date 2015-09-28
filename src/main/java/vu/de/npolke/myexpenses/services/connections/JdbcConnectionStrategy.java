@@ -1,8 +1,7 @@
-package vu.de.npolke.myexpenses.servlets.util;
+package vu.de.npolke.myexpenses.services.connections;
 
-import java.util.Comparator;
-
-import vu.de.npolke.myexpenses.model.Category;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -21,13 +20,16 @@ import vu.de.npolke.myexpenses.model.Category;
  *
  * @author Niklas Polke
  */
-public class CategoryComparator<T> implements Comparator<T> {
+public class JdbcConnectionStrategy implements ConnectionStrategy {
 
 	@Override
-	public int compare(T o1, T o2) {
-		Category category1 = (Category) o1;
-		Category category2 = (Category) o2;
-
-		return category1.getName().compareTo(category2.getName());
+	public Connection getConnection() {
+		Connection connection = JdbcConnector.getConnection();
+		try {
+			connection.setAutoCommit(false);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return connection;
 	}
 }

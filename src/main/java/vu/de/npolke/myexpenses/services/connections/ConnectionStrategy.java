@@ -1,8 +1,6 @@
-package vu.de.npolke.myexpenses.servlets.util;
+package vu.de.npolke.myexpenses.services.connections;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
+import java.sql.Connection;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -21,20 +19,6 @@ import org.junit.Test;
  *
  * @author Niklas Polke
  */
-public class HashUtilTest {
-
-	@Test
-	public void testMD5_password() {
-		assertEquals("5f4dcc3b5aa765d61d8327deb882cf99", HashUtil.toMD5("password"));
-	}
-
-	@Test
-	public void testMD5_password1() {
-		assertEquals("7c6a180b36896a0a8c02787eeafb0e4c", HashUtil.toMD5("password1"));
-	}
-
-	@Test
-	public void testMD5_admin() {
-		assertEquals("21232f297a57a5a743894a0e4a801fc3", HashUtil.toMD5("admin"));
-	}
+public interface ConnectionStrategy {
+	Connection getConnection();
 }

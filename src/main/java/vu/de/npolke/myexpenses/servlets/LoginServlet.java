@@ -2,18 +2,15 @@ package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import vu.de.npolke.myexpenses.backend.DatabaseConnection;
 import vu.de.npolke.myexpenses.model.Account;
-import vu.de.npolke.myexpenses.servlets.util.HashUtil;
+import vu.de.npolke.myexpenses.services.AccountDAO;
+import vu.de.npolke.myexpenses.services.DAOFactory;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -37,7 +34,7 @@ public class LoginServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private final DatabaseConnection DB_CONNECT = new DatabaseConnection();
+	private AccountDAO accountDAO = (AccountDAO) DAOFactory.getDAO(Account.class);
 
 	@Override
 	public void doPost(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
@@ -45,22 +42,8 @@ public class LoginServlet extends AbstractBasicServlet {
 
 		final String login = request.getParameter("login");
 		final String password = request.getParameter("password");
-		final String passwordHash = HashUtil.toMD5(password);
 
-		EntityManager dbConnection = DB_CONNECT.connect();
-
-		TypedQuery<Account> checkLoginQuery = dbConnection.createNamedQuery("Account.checkLogin", Account.class);
-		checkLoginQuery.setParameter("login", login);
-		checkLoginQuery.setParameter("password", passwordHash);
-
-		try {
-			account = checkLoginQuery.getSingleResult();
-		} catch (NoResultException nre) {
-			account = null;
-		}
-
-		DB_CONNECT.commit();
-		DB_CONNECT.close();
+		account = accountDAO.readByLogin(login, password);
 
 		if (account != null) {
 			session.setAttribute("account", account);

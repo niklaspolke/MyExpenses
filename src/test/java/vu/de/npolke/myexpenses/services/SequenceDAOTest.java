@@ -1,8 +1,8 @@
-package vu.de.npolke.myexpenses.model;
+package vu.de.npolke.myexpenses.services;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -22,29 +22,26 @@ import org.junit.Test;
  *
  * @author Niklas Polke
  */
-public class CategoryTest {
+public class SequenceDAOTest extends AbstractDAOTest {
 
-	private static final int	ID			= 4;
-	private static final String	NAME		= "food";
-	private static final long	ACCOUNTID	= 1;
+	private static SequenceDAO sequenceDAO;
 
-	private Category category;
+	private static long testCounter = 0;
 
-	@Before
-	public void setup() {
-		category = new Category();
+	public SequenceDAOTest() {
+		super("SequenceDAOTest" + ++testCounter);
+	}
+
+	@BeforeClass
+	public static void initialise() {
+		sequenceDAO = (SequenceDAO) DAOFactory.getDAO(Long.class);
 	}
 
 	@Test
-	public void normalValues() {
-		category.setId(ID);
-		category.setName(NAME);
-		category.setAccountId(ACCOUNTID);
-
-		assertEquals(ID, category.getId());
-		assertEquals(NAME, category.getName());
-		assertEquals(ACCOUNTID, category.getAccountId());
-
-		assertEquals("Category: food", category.toString());
+	public void getNextPrimaryKey() {
+		long seq_value = sequenceDAO.getNextPrimaryKey();
+		assertEquals(seq_value + 1, sequenceDAO.getNextPrimaryKey());
+		assertEquals(seq_value + 2, sequenceDAO.getNextPrimaryKey());
+		assertEquals(seq_value + 3, sequenceDAO.getNextPrimaryKey());
 	}
 }

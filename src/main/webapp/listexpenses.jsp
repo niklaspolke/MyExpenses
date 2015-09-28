@@ -40,7 +40,7 @@ the License.
             <tr>
                 <td class="number"><c:out value="${expense.id}"/></td>
                 <td><c:out value="${expense.getReadableDayAsString()}"/></td>
-                <td><c:out value="${expense.category.name}"/></td>
+                <td><c:out value="${expense.categoryName}"/></td>
                 <td class="number"><fmt:formatNumber value="${expense.amount}" type="currency"/></td>
                 <td><c:out value="${expense.reason}"/></td>
                 <td style="border:none">

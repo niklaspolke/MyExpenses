@@ -5,16 +5,8 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -33,38 +25,25 @@ import javax.persistence.Transient;
  *
  * @author Niklas Polke
  */
-@Entity
 public class Expense implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Transient
-	private final NumberFormat NUMBER_FORMATTER = NumberFormat.getCurrencyInstance(Locale.GERMANY);
-	@Transient
-	private final DateFormat DATA_FORMATTER = DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMANY);
+	private final NumberFormat	NUMBER_FORMATTER	= NumberFormat.getCurrencyInstance(Locale.GERMANY);
+	private final DateFormat	DATA_FORMATTER		= DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMANY);
 
-	@Id
-	@GeneratedValue(generator = "ID_SEQ", strategy = GenerationType.TABLE)
-	@TableGenerator(name="ID_SEQ",
-		table="sequence",
-		pkColumnName="SEQ_NAME", // Specify the name of the column of the primary key
-		valueColumnName="SEQ_NUMBER", // Specify the name of the column that stores the last value generated
-		pkColumnValue="ID_GENERATOR", // Specify the primary key column value that would be considered as a primary key generator
-		allocationSize=1)
 	private long id;
 
-	@Column(name="DAY")
 	private Calendar day;
 
-	private Double amount;
+	private double amount;
 
 	private String reason;
 
-	@ManyToOne
-	private Category category;
+	private long	categoryId;
+	private String	categoryName;
 
-	@ManyToOne
-	private Account account;
+	private long accountId;
 
 	public long getId() {
 		return id;
@@ -76,6 +55,11 @@ public class Expense implements Serializable {
 
 	public Calendar getDay() {
 		return day;
+	}
+
+	public void setDay(final Date dayAsDate) {
+		initialiseDay();
+		day.setTime(dayAsDate);
 	}
 
 	private void setDay(final Calendar day) {
@@ -101,11 +85,11 @@ public class Expense implements Serializable {
 		return DATA_FORMATTER.format(getDay().getTime());
 	}
 
-	public Double getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(final Double amount) {
+	public void setAmount(final double amount) {
 		this.amount = amount;
 	}
 
@@ -117,20 +101,28 @@ public class Expense implements Serializable {
 		this.reason = reason;
 	}
 
-	public Category getCategory() {
-		return category;
+	public long getCategoryId() {
+		return categoryId;
 	}
 
-	public void setCategory(final Category category) {
-		this.category = category;
+	public void setCategoryId(final long categoryId) {
+		this.categoryId = categoryId;
 	}
 
-	public Account getAccount() {
-		return account;
+	public String getCategoryName() {
+		return categoryName;
 	}
 
-	public void setAccount(final Account account) {
-		this.account = account;
+	public void setCategoryName(final String categoryName) {
+		this.categoryName = categoryName;
+	}
+
+	public long getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(final long accountId) {
+		this.accountId = accountId;
 	}
 
 	@Override
@@ -138,8 +130,8 @@ public class Expense implements Serializable {
 		//@formatter:off
 		StringBuilder text = new StringBuilder().append("Expense: ")
 				.append("(").append(getReadableDayAsString()).append(") - ")
-				.append(NUMBER_FORMATTER.format(getAmount().doubleValue())).append(" - ")
-				.append(getCategory() != null ? getCategory().getName() : "null").append(" for ")
+				.append(NUMBER_FORMATTER.format(getAmount())).append(" - ")
+				.append(getCategoryName()).append(" for ")
 				.append(getReason() != null ? getReason() : "");
 		return text.toString();
 		//@formatter:on
