@@ -29,13 +29,20 @@ the License.
     <body>
         <header>
             <div style="background-color:lightgray;display:table;width:100%">
-                <div style="display:table-cell;vertical-align:middle;align:center">
+                <div style="display:table-cell;vertical-align:middle;align:center;width:100%;padding:5px 30px 5px 30px;">
                     <h1 class="title" style="width:100%;margin:auto">MyExpenses</h1>
                 </div>
-                <div style="display:table-cell;text-align:center;height:130px">
+                <div style="display:table-cell;text-align:center;height:130px;padding:5px 30px 5px 30px;">
                     <div style="display:inline-block;width:96px">
                         <c:if test="${not disabled}">
                             <img src="img/user-id_96.png" alt="user profile" title="user profile"/><br/><span style="font-weight:bold"><c:out value="${sessionScope.account.login}"/></span>
+                        </c:if>
+                    </div>
+                </div>
+                <div style="display:table-cell;text-align:center;height:130px;padding:5px 30px 5px 30px;">
+                    <div style="display:inline-block;width:96px">
+                        <c:if test="${not disabled}">
+                            <a ${disabled ? '' : 'href="logout"'} title="logout"><img src="img/flag-alt_96.png" alt="logout" title="logout"/><br/><span style="font-weight:bold">logout</span></a>
                         </c:if>
                     </div>
                 </div>
