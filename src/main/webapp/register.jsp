@@ -15,15 +15,17 @@ the License.
 --%>
 <%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <jsp:include page="header.jsp">
     <jsp:param value="true" name="disabled"/>
 </jsp:include>
 
-<h3>Login</h3>
+
+<h3>Register new user</h3>
 
 <div style="margin: auto; width:400px">
-    <form action="login" method="post">
+    <form action="register" method="post">
         <fieldset>
             <legend>User</legend>
             <table>
@@ -47,16 +49,33 @@ the License.
                     </tr>
                     <tr>
                         <th class="right">
-                            <label for="password">Password:</label>
+                            <label for="password1">Password:</label>
                         </th>
                         <td>
                             <input
                                 type="password"
-                                name="password"
+                                name="password1"
                                 size="40"
                                 maxlength="30"
-                                title="login password"
+                                title="password"
                                 placeholder="<password>"
+                                pattern=".{4,}"
+                                required="required">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="right">
+                            <label for="password2">Repeat Password:</label>
+                        </th>
+                        <td>
+                            <input
+                                type="password"
+                                name="password2"
+                                size="40"
+                                maxlength="30"
+                                title="repeat password"
+                                placeholder="<password>"
+                                pattern=".{4,}"
                                 required="required">
                         </td>
                     </tr>
@@ -65,15 +84,27 @@ the License.
                             <input type="reset" value="Reset">
                         </td>
                         <td>
-                            <input type="submit" value="Login">
+                            <input type="submit" value="Register" onclick="return checkPasswords()">
                         </td>
                     </tr>
                 </tbody>
             </table>
         </fieldset>
     </form>
-    <a href="register.jsp">Register new user</a>
 </div>
+
+<script type="text/javascript">
+function checkPasswords() {
+	var passwd1 = document.forms[0]["password1"].value;
+	var passwd2 = document.forms[0]["password2"].value;
+	if (passwd1 != passwd2) {
+	    alert("Error: Passwords aren't equal!");
+	    return false;
+	} else {
+		return true;
+	}
+}
+</script>
 
 
 <jsp:include page="footer.jsp"/>

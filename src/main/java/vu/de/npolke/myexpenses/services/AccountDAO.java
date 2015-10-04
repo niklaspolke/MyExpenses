@@ -27,7 +27,42 @@ import vu.de.npolke.myexpenses.util.HashUtil;
  */
 public class AccountDAO extends AbstractConnectionDAO {
 
+	private static final String SQL_INSERT = "INSERT INTO Account (id, login, password) VALUES (?, ?, ?)";
+
 	private static final String SQL_READ_BY_LOGIN = "SELECT id, login FROM Account WHERE login = ? AND password = ?";
+
+	private SequenceDAO sequenceDAO;
+
+	public AccountDAO(final SequenceDAO sequenceDAO) {
+		this.sequenceDAO = sequenceDAO;
+	}
+
+	public Account create(final String login, final String password) {
+		Account account = null;
+		String passwordHash = HashUtil.toMD5(password);
+
+		long newId = sequenceDAO.getNextPrimaryKey();
+
+		try (Connection connection = getConnection()) {
+			PreparedStatement createStatement;
+			createStatement = connection.prepareStatement(SQL_INSERT);
+			createStatement.setLong(1, newId);
+			createStatement.setString(2, login);
+			createStatement.setString(3, passwordHash);
+			boolean created = 1 == createStatement.executeUpdate();
+			if (created) {
+				account = new Account();
+				account.setId(newId);
+				account.setLogin(login);
+				account.setPassword(passwordHash);
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return account;
+	}
 
 	public Account readByLogin(final String login, final String password) {
 		Account account = null;

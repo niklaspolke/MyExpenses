@@ -33,7 +33,7 @@ public class DAOFactory {
 	static {
 		//@formatter:off
 		  SequenceDAO   sequenceDAO = new   SequenceDAO();
-		   AccountDAO    accountDAO = new    AccountDAO();
+		   AccountDAO    accountDAO = new    AccountDAO(sequenceDAO);
 		  CategoryDAO   categoryDAO = new   CategoryDAO(sequenceDAO);
 		   ExpenseDAO    expenseDAO = new    ExpenseDAO(sequenceDAO);
 		StatisticsDAO statisticsDAO = new StatisticsDAO();

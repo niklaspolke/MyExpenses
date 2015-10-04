@@ -34,10 +34,13 @@ import javax.servlet.http.HttpSession;
 @WebFilter("/*")
 public class LoginFilter implements Filter {
 
-	public static final String LOGIN_PAGE = "index.jsp";
-	public static final String LOGIN_URL = "login";
-	public static final String LOGIN_METHOD = "POST";
-	public static final String[] POSTFIX_RESSOURCES = { ".css", ".js", ".png" };
+	public static final String		LOGIN_PAGE			= "index.jsp";
+	public static final String		LOGIN_URL			= "login";
+	public static final String		LOGIN_METHOD		= "POST";
+	public static final String[]	POSTFIX_RESSOURCES	= { ".css", ".js", ".png" };
+	public static final String		REGISTER_PAGE		= "register.jsp";
+	public static final String		REGISTER_URL		= "register";
+	public static final String		REGISTER_METHOD		= "POST";
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
@@ -56,8 +59,11 @@ public class LoginFilter implements Filter {
 				&& LOGIN_METHOD.equalsIgnoreCase(httpRequest.getMethod());
 		boolean resourceRequest = requestURI.startsWith(contextPath) && (requestURI.endsWith(POSTFIX_RESSOURCES[0])
 				|| requestURI.endsWith(POSTFIX_RESSOURCES[1]) || requestURI.endsWith(POSTFIX_RESSOURCES[2]));
+		boolean registerPage = requestURI.startsWith(contextPath + "/" + REGISTER_PAGE);
+		boolean registerRequest = requestURI.startsWith(contextPath + "/" + REGISTER_URL)
+				&& REGISTER_METHOD.equalsIgnoreCase(httpRequest.getMethod());
 
-		if (isLoggedIn || loginPage || loginRequest || resourceRequest) {
+		if (isLoggedIn || loginPage || loginRequest || resourceRequest || registerPage || registerRequest) {
 			filterChain.doFilter(request, response);
 		} else {
 			logger.info("redirect to login page (original target: " + requestURI + ")");

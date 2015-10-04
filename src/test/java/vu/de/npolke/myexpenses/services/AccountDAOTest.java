@@ -3,11 +3,13 @@ package vu.de.npolke.myexpenses.services;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import vu.de.npolke.myexpenses.model.Account;
+import vu.de.npolke.myexpenses.util.HashUtil;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -62,5 +64,15 @@ public class AccountDAOTest extends AbstractDAOTest {
 		Account account = accountDAO.readByLogin("non existing user", "password");
 
 		assertNull(account);
+	}
+
+	@Test
+	public void create() {
+		Account account = accountDAO.create("user1", "password1");
+
+		assertNotNull(account);
+		assertTrue(account.getId() > 0);
+		assertEquals("user1", account.getLogin());
+		assertEquals(HashUtil.toMD5("password1"), account.getPassword());
 	}
 }
