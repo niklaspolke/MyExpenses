@@ -48,7 +48,7 @@ the License.
                         <input type="reset" value="Reset">
                     </td>
                     <td>
-                        <input type="submit" value="Create Expense">
+                        <input type="submit" value="Create Category">
                     </td>
                 </tr>
             </tbody>
