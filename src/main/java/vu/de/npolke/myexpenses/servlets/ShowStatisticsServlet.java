@@ -47,10 +47,13 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 
 		List<String> labels = new ArrayList<String>();
 		List<Double> values = new ArrayList<Double>();
+		Double sum = new Double(0);
 		for (StatisticsPair pair : statistics) {
 			labels.add(pair.getName());
 			values.add(pair.getValue());
+			sum += pair.getValue();
 		}
+		statistics.add(new StatisticsPair("Summe", sum));
 
 		JsonObject json = new JsonObject();
 		json.addParameter("labels", labels);
