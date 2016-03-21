@@ -33,6 +33,7 @@ public class DAOFactory {
 	static {
 		//@formatter:off
 		  SequenceDAO   sequenceDAO = new   SequenceDAO();
+		    SystemDAO     systemDAO = new     SystemDAO();
 		   AccountDAO    accountDAO = new    AccountDAO(sequenceDAO);
 		  CategoryDAO   categoryDAO = new   CategoryDAO(sequenceDAO);
 		   ExpenseDAO    expenseDAO = new    ExpenseDAO(sequenceDAO);
@@ -46,6 +47,7 @@ public class DAOFactory {
 		daoRegistry.put(      Category.class, categoryDAO);
 		daoRegistry.put(       Expense.class, expenseDAO);
 		daoRegistry.put(StatisticsPair.class, statisticsDAO);
+		daoRegistry.put(                null, systemDAO);
 		//@formatter:off
 
 		changeConnectionStrategy(new JdbcConnectionStrategy());
