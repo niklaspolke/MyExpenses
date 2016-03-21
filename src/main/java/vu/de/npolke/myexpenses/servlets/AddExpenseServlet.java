@@ -46,13 +46,22 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 	@Override
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
-
+		
 		List<Category> categories = categoryDAO.readByAccountId(account.getId());
 		Calendar now = Calendar.getInstance(Locale.GERMANY);
 		now.setTimeInMillis(System.currentTimeMillis());
 
+		try {
+			long id = Long.parseLong(request.getParameter("id"));
+			Expense expense = expenseDAO.read(id);
+			session.setAttribute("expense", expense);
+		} catch (NumberFormatException nfe) {
+			Expense defaultExpense = new Expense();
+			defaultExpense.setDay(now.getTime());
+			session.setAttribute("expense", defaultExpense);
+		}
+		
 		session.setAttribute("categories", categories);
-		session.setAttribute("defaultDate", now);
 		response.sendRedirect("addexpense.jsp");
 	}
 

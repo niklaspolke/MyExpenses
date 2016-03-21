@@ -53,8 +53,8 @@ the License.
                             max="31"
                             title="day - 1-31"
                             placeholder="31"
-                            value="${sessionScope.defaultDate.get(5)}"
-                            required="required">
+                            value="${sessionScope.expense.getDay().get(5)}"
+                            required="required" >
                     </td>
                     <td>
                         <input
@@ -66,7 +66,7 @@ the License.
                             max="12"
                             title="month - 1-12"
                             placeholder="12"
-                            value="${sessionScope.defaultDate.get(2)+1}"
+                            value="${sessionScope.expense.getDay().get(2)+1}"
                             required="required">
                     </td>
                     <td>
@@ -79,7 +79,7 @@ the License.
                             max="2100"
                             title="year - yyyy"
                             placeholder="2015"
-                            value="${sessionScope.defaultDate.get(1)}"
+                            value="${sessionScope.expense.getDay().get(1)}"
                             required="required">
                     </td>
                 </tr>
@@ -94,7 +94,7 @@ the License.
                             required="required"
                             autofocus>
                             <c:forEach items="${sessionScope.categories}" var="singlecategory">
-                                <option value="${singlecategory.id}">${singlecategory.name}</option>
+                                <option value="${singlecategory.id}" ${singlecategory.id eq sessionScope.expense.categoryId ? 'selected' : ''}>${singlecategory.name}</option>
                             </c:forEach>
                         </select>
                     </td>
@@ -112,7 +112,8 @@ the License.
                             title="amount of expense - #0.00"
                             placeholder="0.00"
                             pattern="[-+]?[0-9]*[,.]?[0-9]{0,2}"
-                            required="required">
+                            required="required"
+                            value="${sessionScope.expense.amount != 0.0 ? sessionScope.expense.amount : ''}">
                     </td>
                 </tr>
                 <tr>
@@ -128,7 +129,8 @@ the License.
                             title="reason for expense - at least 3 characters"
                             placeholder="gone shopping"
                             pattern=".{3,}"
-                            required="required">
+                            required="required"
+                            value="${sessionScope.expense.reason}">
                     </td>
                 </tr>
                 <tr>
