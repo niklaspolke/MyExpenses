@@ -54,6 +54,8 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 		try {
 			long id = Long.parseLong(request.getParameter("id"));
 			Expense expense = expenseDAO.read(id);
+			expense.setId(0);
+			expense.setDay(now.getTime());
 			session.setAttribute("expense", expense);
 		} catch (NumberFormatException nfe) {
 			Expense defaultExpense = new Expense();
