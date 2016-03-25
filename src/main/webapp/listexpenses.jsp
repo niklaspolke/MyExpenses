@@ -27,6 +27,27 @@ the License.
 <table class="tableList bordered">
     <thead>
         <tr>
+            <th colspan="5"></th>
+            <th>
+                <c:choose>
+                <c:when test="${requestScope.page eq 1}">
+                    <img src="img/sign-left_24_inactive.png" alt="inactive arrow left" title="no previous results" width="24" height="24"/>
+                </c:when>
+                <c:otherwise>
+                    <a href="listexpenses?page=${requestScope.page - 1}"><img src="img/sign-left_24.png" alt="active arrow left" title="go to previous results" width="24" height="24"/></a>
+                </c:otherwise>
+                </c:choose>
+                <c:choose>
+                <c:when test="${requestScope.page >= requestScope.pageMax}">
+                    <img src="img/sign-right_24_inactive.png" alt="inactive arrow right" title="no further results" width="24" height="24"/>
+                </c:when>
+                <c:otherwise>
+                    <a href="listexpenses?page=${requestScope.page + 1}"><img src="img/sign-right_24.png" alt="active arrow right" title="go to further results" width="24" height="24"/></a>
+                </c:otherwise>
+                </c:choose>
+            </th>
+        </tr>
+        <tr>
             <th>Id</th>
             <th>Date</th>
             <th>Category</th>

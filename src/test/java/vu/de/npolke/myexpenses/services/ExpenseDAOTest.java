@@ -121,7 +121,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void readByAccountId() {
-		List<Expense> expenses = expenseDAO.readByAccountId(1);
+		List<Expense> expenses = expenseDAO.readByAccountId(1, 1, 10);
 
 		assertNotNull(expenses);
 		assertEquals(4, expenses.size());
@@ -134,6 +134,38 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 			assertTrue("food".equals(expense.getCategoryName()) || "luxury".equals(expense.getCategoryName()));
 			assertEquals(1, expense.getAccountId());
 		}
+	}
+
+	@Test
+	public void readByAccountId_NotAllEntries() {
+		List<Expense> expenses = expenseDAO.readByAccountId(1, 2, 3);
+
+		assertNotNull(expenses);
+		assertEquals(2, expenses.size());
+		for (Expense expense : expenses) {
+			assertTrue(expense.getId() == 102 || expense.getId() == 103);
+			assertTrue(expense.getReadableDayAsString().length() == 8);
+			assertTrue(expense.getAmount() > 0);
+			assertTrue(expense.getReason().equals("jewels") || expense.getReason().equals("french fries"));
+			assertTrue(expense.getCategoryId() == 11 || expense.getCategoryId() == 12);
+			assertTrue("food".equals(expense.getCategoryName()) || "luxury".equals(expense.getCategoryName()));
+			assertEquals(1, expense.getAccountId());
+		}
+	}
+
+	@Test
+	public void readAmountOfExpenses() {
+		assertEquals(4, expenseDAO.readAmountOfExpenses(1));
+
+		expenseDAO.create("25.05.15", 13.3, "junk food", 11, 1);
+		expenseDAO.create("25.05.15", 13.3, "junk food", 11, 1);
+		Expense expense = expenseDAO.create("25.05.15", 13.3, "junk food", 11, 1);
+
+		assertEquals(7, expenseDAO.readAmountOfExpenses(1));
+
+		expenseDAO.deleteById(expense.getId());
+
+		assertEquals(6, expenseDAO.readAmountOfExpenses(1));
 	}
 
 	@Test

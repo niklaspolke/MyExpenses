@@ -32,7 +32,9 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 
 	private static final String SQL_READ_BY_ID = "SELECT e.day, e.amount, e.reason, e.category_id, e.account_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE e.id = ?";
 
-	private static final String SQL_READ_BY_ACCOUNT_ID = "SELECT e.id, e.day, e.amount, e.reason, e.category_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE account_id = ? ORDER BY day DESC, id DESC";
+	private static final String SQL_READ_BY_ACCOUNT_ID = "SELECT * FROM (SELECT e.id, e.day, e.amount, e.reason, e.category_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE account_id = ? ORDER BY day DESC, id DESC) WHERE rownum() <= ?";
+
+	private static final String SQL_READ_AMOUNT_BY_ACCOUNT_ID = "SELECT COUNT(id) as amountofexpenses FROM Expense WHERE account_id = ?";
 
 	private static final String SQL_READ_BY_CATEGORY_ID = "SELECT e.id, e.day, e.amount, e.reason, e.account_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE category_id = ? ORDER BY day DESC";
 
@@ -133,24 +135,27 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 		return updated;
 	}
 
-	public List<Expense> readByAccountId(final long accountId) {
+	public List<Expense> readByAccountId(final long accountId, final long startIndex, final long endIndex) {
 		List<Expense> expenses = new ArrayList<Expense>();
 
 		try (Connection connection = getConnection()) {
 			PreparedStatement readStatement;
 			readStatement = connection.prepareStatement(SQL_READ_BY_ACCOUNT_ID);
 			readStatement.setLong(1, accountId);
+			readStatement.setLong(2, endIndex);
 			ResultSet result = readStatement.executeQuery();
 			while (result.next()) {
-				Expense expense = new Expense();
-				expense.setId(result.getLong("id"));
-				expense.setDay(result.getDate("day"));
-				expense.setAmount(result.getDouble("amount"));
-				expense.setReason(result.getString("reason"));
-				expense.setCategoryId(result.getLong("category_id"));
-				expense.setAccountId(accountId);
-				expense.setCategoryName(result.getString("name"));
-				expenses.add(expense);
+				if (result.getRow() >= startIndex) {
+					Expense expense = new Expense();
+					expense.setId(result.getLong("id"));
+					expense.setDay(result.getDate("day"));
+					expense.setAmount(result.getDouble("amount"));
+					expense.setReason(result.getString("reason"));
+					expense.setCategoryId(result.getLong("category_id"));
+					expense.setAccountId(accountId);
+					expense.setCategoryName(result.getString("name"));
+					expenses.add(expense);
+				}
 			}
 			connection.rollback();
 		} catch (SQLException e) {
@@ -158,6 +163,25 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 		}
 
 		return expenses;
+	}
+
+	public long readAmountOfExpenses(final long accountId) {
+		long amountOfExpenses = -1;
+
+		try (Connection connection = getConnection()) {
+			PreparedStatement readStatement;
+			readStatement = connection.prepareStatement(SQL_READ_AMOUNT_BY_ACCOUNT_ID);
+			readStatement.setLong(1, accountId);
+			ResultSet result = readStatement.executeQuery();
+			if (result.next()) {
+				amountOfExpenses = result.getLong("amountofexpenses");
+			}
+			connection.rollback();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return amountOfExpenses;
 	}
 
 	public List<Expense> readByCategoryId(final long categoryId) {
