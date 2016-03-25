@@ -34,7 +34,6 @@ the License.
 <table class="tableList bordered">
     <thead>
         <tr>
-            <th>Id</th>
             <th>Name</th>
             <th>Modify</th>
         </tr>
@@ -42,7 +41,6 @@ the License.
     <tbody>
         <c:forEach var="category" items="${sessionScope.categories}">
             <tr>
-                <td class="number"><c:out value="${category.id}"/></td>
                 <td><c:out value="${category.name}"/></td>
                 <td style="border:none">
                     <a href="editcategory?id=${category.id}"><img src="img/pencil_24.png" alt="edit category" title="edit category" width="24" height="24"/></a>

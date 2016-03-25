@@ -47,7 +47,6 @@ the License.
             </th>
         </tr>
         <tr>
-            <th>Id</th>
             <th>Date</th>
             <th>Category</th>
             <th>Amount</th>
@@ -58,7 +57,6 @@ the License.
     <tbody>
         <c:forEach var="expense" items="${sessionScope.expenses}">
             <tr>
-                <td class="number"><c:out value="${expense.id}"/></td>
                 <td><c:out value="${expense.getReadableDayAsString()}"/></td>
                 <td><c:out value="${expense.categoryName}"/></td>
                 <td class="number"><fmt:formatNumber value="${expense.amount}" type="currency"/></td>
