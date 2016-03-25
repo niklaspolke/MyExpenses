@@ -40,31 +40,43 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private ExpenseDAO	expenseDAO	= (ExpenseDAO) DAOFactory.getDAO(Expense.class);
-	private CategoryDAO	categoryDAO	= (CategoryDAO) DAOFactory.getDAO(Category.class);
+	private ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
+	private CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
 
 	@Override
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
-		
+
 		List<Category> categories = categoryDAO.readByAccountId(account.getId());
 		Calendar now = Calendar.getInstance(Locale.GERMANY);
 		now.setTimeInMillis(System.currentTimeMillis());
 
+		boolean errorOccured = false;
+
 		try {
 			long id = Long.parseLong(request.getParameter("id"));
 			Expense expense = expenseDAO.read(id);
-			expense.setId(0);
-			expense.setDay(now.getTime());
-			session.setAttribute("expense", expense);
+			if (expense == null || expense.getAccountId() != account.getId()) {
+				errorOccured = true;
+			} else {
+				expense.setId(0);
+				expense.setDay(now.getTime());
+				session.setAttribute("expense", expense);
+			}
 		} catch (NumberFormatException nfe) {
 			Expense defaultExpense = new Expense();
 			defaultExpense.setDay(now.getTime());
 			session.setAttribute("expense", defaultExpense);
 		}
-		
-		session.setAttribute("categories", categories);
-		response.sendRedirect("addexpense.jsp");
+
+		if (errorOccured) {
+			request.setAttribute("errorMessage",
+					"You tried to clone a non existing expense or an expense that isn't yours!");
+			request.getRequestDispatcher("error.jsp").forward(request, response);
+		} else {
+			session.setAttribute("categories", categories);
+			response.sendRedirect("addexpense.jsp");
+		}
 	}
 
 	@Override

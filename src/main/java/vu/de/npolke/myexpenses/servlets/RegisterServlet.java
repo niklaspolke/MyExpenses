@@ -52,7 +52,8 @@ public class RegisterServlet extends AbstractBasicServlet {
 			session.setAttribute("account", account);
 			response.sendRedirect("listexpenses");
 		} else {
-			response.sendRedirect("register.jsp");
+			request.setAttribute("errorMessage", "password1 wasn't equal to password2");
+			request.getRequestDispatcher("register.jsp").forward(request, response);
 		}
 	}
 }

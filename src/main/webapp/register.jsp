@@ -80,6 +80,9 @@ the License.
                         </td>
                     </tr>
                     <tr>
+                        <td class="error" colspan="2">${requestScope.errorMessage}</td>
+                    </tr>
+                    <tr>
                         <td>
                             <input type="reset" value="Reset">
                         </td>

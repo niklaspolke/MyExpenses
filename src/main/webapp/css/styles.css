@@ -21,6 +21,9 @@ the License.
     margin: auto;
     height: 40px;
 }
+.error {
+	color: red;
+}
 div.inline-block {
      display: inline-block;
      vertical-align: top;

@@ -49,7 +49,8 @@ public class LoginServlet extends AbstractBasicServlet {
 			session.setAttribute("account", account);
 			response.sendRedirect("listexpenses");
 		} else {
-			response.sendRedirect("index.jsp");
+			request.setAttribute("errorMessage", "unknown login or wrong password");
+			request.getRequestDispatcher("index.jsp").forward(request, response);
 		}
 	}
 }

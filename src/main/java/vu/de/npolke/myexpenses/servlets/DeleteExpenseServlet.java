@@ -44,10 +44,23 @@ public class DeleteExpenseServlet extends AbstractBasicServlet {
 		long id = Long.parseLong(request.getParameter("id"));
 		String confirmed = request.getParameter("confirmed");
 
+		boolean errorOccured = false;
+
 		if ("yes".equalsIgnoreCase(confirmed)) {
-			expenseDAO.deleteById(id);
+			Expense expense = expenseDAO.read(id);
+			if (expense != null && expense.getAccountId() == account.getId()) {
+				expenseDAO.deleteById(id);
+			} else {
+				errorOccured = true;
+			}
 		}
 
-		request.getRequestDispatcher("listexpenses").forward(request, response);
+		if (errorOccured) {
+			request.setAttribute("errorMessage",
+					"You tried to delete a non existing expense or an expense that isn't yours!");
+			request.getRequestDispatcher("error.jsp").forward(request, response);
+		} else {
+			request.getRequestDispatcher("listexpenses").forward(request, response);
+		}
 	}
 }

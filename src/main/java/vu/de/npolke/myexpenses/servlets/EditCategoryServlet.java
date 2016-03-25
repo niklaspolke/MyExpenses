@@ -45,8 +45,20 @@ public class EditCategoryServlet extends AbstractBasicServlet {
 
 		Category category = categoryDAO.read(id);
 
-		session.setAttribute("category", category);
-		response.sendRedirect("editcategory.jsp");
+		boolean errorOccured = false;
+
+		if (category == null || category.getAccountId() != account.getId()) {
+			errorOccured = true;
+		}
+
+		if (errorOccured) {
+			request.setAttribute("errorMessage",
+					"You tried to edit a non existing category or a category that isn't yours!");
+			request.getRequestDispatcher("error.jsp").forward(request, response);
+		} else {
+			session.setAttribute("category", category);
+			response.sendRedirect("editcategory.jsp");
+		}
 	}
 
 	@Override

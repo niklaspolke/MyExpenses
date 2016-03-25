@@ -44,10 +44,23 @@ public class DeleteCategoryServlet extends AbstractBasicServlet {
 		long categoryId = Long.parseLong(request.getParameter("id"));
 		String isDeleteConfirmed = request.getParameter("confirmed");
 
+		boolean errorOccured = false;
+
 		if ("yes".equalsIgnoreCase(isDeleteConfirmed)) {
-			categoryDAO.deleteById(categoryId);
+			Category category = categoryDAO.read(categoryId);
+			if (category != null && category.getAccountId() == account.getId()) {
+				categoryDAO.deleteById(categoryId);
+			} else {
+				errorOccured = true;
+			}
 		}
 
-		request.getRequestDispatcher("listcategories").forward(request, response);
+		if (errorOccured) {
+			request.setAttribute("errorMessage",
+					"You tried to delete a non existing category or a category that isn't yours!");
+			request.getRequestDispatcher("error.jsp").forward(request, response);
+		} else {
+			request.getRequestDispatcher("listcategories").forward(request, response);
+		}
 	}
 }

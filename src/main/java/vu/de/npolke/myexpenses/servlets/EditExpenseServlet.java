@@ -38,8 +38,8 @@ public class EditExpenseServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private ExpenseDAO	expenseDAO	= (ExpenseDAO) DAOFactory.getDAO(Expense.class);
-	private CategoryDAO	categoryDAO	= (CategoryDAO) DAOFactory.getDAO(Category.class);
+	private ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
+	private CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
 
 	@Override
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response,
@@ -50,9 +50,21 @@ public class EditExpenseServlet extends AbstractBasicServlet {
 		List<Category> categories = categoryDAO.readByAccountId(account.getId());
 		Expense expense = expenseDAO.read(id);
 
-		session.setAttribute("expense", expense);
-		session.setAttribute("categories", categories);
-		response.sendRedirect("editexpense.jsp");
+		boolean errorOccured = false;
+
+		if (expense == null || expense.getAccountId() != account.getId()) {
+			errorOccured = true;
+		}
+
+		if (errorOccured) {
+			request.setAttribute("errorMessage",
+					"You tried to edit a non existing expense or an expense that isn't yours!");
+			request.getRequestDispatcher("error.jsp").forward(request, response);
+		} else {
+			session.setAttribute("expense", expense);
+			session.setAttribute("categories", categories);
+			response.sendRedirect("editexpense.jsp");
+		}
 	}
 
 	@Override
