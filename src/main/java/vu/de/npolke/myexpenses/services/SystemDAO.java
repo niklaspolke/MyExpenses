@@ -23,7 +23,7 @@ import java.sql.SQLException;
  */
 public class SystemDAO extends AbstractConnectionDAO {
 
-	private static final String SQL_CHECKPOINT = "CHECKPOINT";
+	private static final String SQL_CHECKPOINT = "CHECKPOINT DEFRAG";
 
 	public SystemDAO() {
 	}
