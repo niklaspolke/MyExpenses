@@ -27,7 +27,6 @@ the License.
 <table class="tableList bordered">
     <thead>
         <tr>
-            <th colspan="5"></th>
             <th>
                 <c:choose>
                 <c:when test="${requestScope.page eq 1}">
