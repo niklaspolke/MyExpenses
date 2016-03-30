@@ -113,6 +113,7 @@ the License.
                             placeholder="0.00"
                             pattern="[-+]?[0-9]*[,.]?[0-9]{0,2}"
                             required="required"
+                            autocomplete="off"
                             value="${sessionScope.expense.amount}">
                     </td>
                 </tr>
