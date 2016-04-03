@@ -27,6 +27,7 @@ public class Account implements Serializable {
 
 	private String login;
 
+	// MD5-Hashvalue
 	private String password;
 
 	public long getId() {

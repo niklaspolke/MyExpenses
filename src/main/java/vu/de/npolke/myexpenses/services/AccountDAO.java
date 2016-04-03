@@ -29,6 +29,8 @@ public class AccountDAO extends AbstractConnectionDAO {
 
 	private static final String SQL_INSERT = "INSERT INTO Account (id, login, password) VALUES (?, ?, ?)";
 
+	private static final String SQL_UPDATE_BY_ID = "UPDATE Account SET login = ?, password = ? WHERE id = ?";
+
 	private static final String SQL_READ_BY_LOGIN = "SELECT id, login FROM Account WHERE login = ? AND password = ?";
 
 	private SequenceDAO sequenceDAO;
@@ -64,6 +66,24 @@ public class AccountDAO extends AbstractConnectionDAO {
 		return account;
 	}
 
+	public boolean update(final Account account) {
+		boolean updated = false;
+
+		try (Connection connection = getConnection()) {
+			PreparedStatement updateStatement;
+			updateStatement = connection.prepareStatement(SQL_UPDATE_BY_ID);
+			updateStatement.setString(1, account.getLogin());
+			updateStatement.setString(2, account.getPassword());
+			updateStatement.setLong(3, account.getId());
+			updated = 1 == updateStatement.executeUpdate();
+			connection.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return updated;
+	}
+
 	public Account readByLogin(final String login, final String password) {
 		Account account = null;
 
@@ -79,6 +99,7 @@ public class AccountDAO extends AbstractConnectionDAO {
 				account = new Account();
 				account.setId(result.getLong("id"));
 				account.setLogin(result.getString("login"));
+				account.setPassword(passwordHash);
 			}
 			connection.rollback();
 		} catch (SQLException e) {

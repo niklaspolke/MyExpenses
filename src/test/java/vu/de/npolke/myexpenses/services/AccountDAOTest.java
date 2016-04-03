@@ -50,6 +50,7 @@ public class AccountDAOTest extends AbstractDAOTest {
 		assertNotNull(account);
 		assertEquals(1, account.getId());
 		assertEquals("test1", account.getLogin());
+		assertEquals(HashUtil.toMD5("password"), account.getPassword());
 	}
 
 	@Test
@@ -74,5 +75,22 @@ public class AccountDAOTest extends AbstractDAOTest {
 		assertTrue(account.getId() > 0);
 		assertEquals("user1", account.getLogin());
 		assertEquals(HashUtil.toMD5("password1"), account.getPassword());
+	}
+
+	@Test
+	public void update() {
+		Account account = accountDAO.readByLogin("test1", "password");
+		account.setLogin("user111");
+		account.setPassword(HashUtil.toMD5("password2"));
+		long oldId = account.getId();
+
+		accountDAO.update(account);
+
+		account = accountDAO.readByLogin("user111", "password2");
+
+		assertNotNull(account);
+		assertEquals(oldId, account.getId());
+		assertEquals("user111", account.getLogin());
+		assertEquals(HashUtil.toMD5("password2"), account.getPassword());
 	}
 }
