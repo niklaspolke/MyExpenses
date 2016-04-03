@@ -52,13 +52,14 @@ the License.
                     <td>
                         <input
                             type="password"
-                            name="password"
+                            name="oldpassword"
                             size="40"
                             maxlength="30"
                             title="login password"
                             placeholder="<password>"
                             required="required"
-                            value="">
+                            value=""
+                            autofocus>
                     </td>
                 </tr>
                 <tr>
@@ -75,8 +76,7 @@ the License.
                             placeholder="<password>"
                             pattern=".{4,}"
                             required="required"
-                            value=""
-                            autofocus>
+                            value="">
                     </td>
                 </tr>
                 <tr>

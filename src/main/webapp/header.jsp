@@ -42,7 +42,7 @@ the License.
                 <div style="display:table-cell;text-align:center;height:130px;padding:5px 30px 5px 30px;">
                     <div style="display:inline-block;width:96px">
                         <c:if test="${not disabled}">
-                            <a href="logout" title="logout"><img src="img/flag-alt_96.png" alt="logout" title="logout"/><br/><span style="font-weight:bold">logout</span></a>
+                            <a href="logout" title="logout"><img src="img/flag-alt_96.png" alt="logout" title="logout"/><br/><span style="font-weight:bold">Logout</span></a>
                         </c:if>
                     </div>
                 </div>

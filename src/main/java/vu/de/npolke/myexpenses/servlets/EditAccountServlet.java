@@ -49,7 +49,7 @@ public class EditAccountServlet extends AbstractBasicServlet {
 	public void doPost(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
 			Account account) throws ServletException, IOException {
 
-		final String oldpassword = request.getParameter("password");
+		final String oldpassword = request.getParameter("oldpassword");
 		final String newpassword1 = request.getParameter("newpassword1");
 		final String newpassword2 = request.getParameter("newpassword2");
 
