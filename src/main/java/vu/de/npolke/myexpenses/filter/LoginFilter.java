@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import vu.de.npolke.myexpenses.model.Account;
+
 /**
  * Copyright 2015 Niklas Polke
  *
@@ -34,42 +36,52 @@ import javax.servlet.http.HttpSession;
 @WebFilter("/*")
 public class LoginFilter implements Filter {
 
-	public static final String		LOGIN_PAGE			= "index.jsp";
-	public static final String		LOGIN_URL			= "login";
-	public static final String		LOGIN_METHOD		= "POST";
-	public static final String[]	POSTFIX_RESSOURCES	= { ".css", ".js", ".png" };
-	public static final String		REGISTER_PAGE		= "register.jsp";
-	public static final String		REGISTER_URL		= "register";
-	public static final String		REGISTER_METHOD		= "POST";
+	//@formatter:off
+	public static final String LOGIN_PAGE           = "index.jsp";
+	public static final String LOGIN_URL            = "login";
+	public static final String LOGIN_METHOD         = "POST";
+	public static final String[] POSTFIX_RESSOURCES = { ".css", ".js", ".png" };
+	public static final String REGISTER_PAGE        = "register.jsp";
+	public static final String REGISTER_URL         = "register";
+	public static final String REGISTER_METHOD      = "POST";
+	//@formatter:on
+
+	final Logger logger = Logger.getLogger(LoginFilter.class.getName());
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
 			throws IOException, ServletException {
-		Logger logger = Logger.getLogger(LoginFilter.class.getName());
+		//@formatter:off
+		final HttpServletRequest httpRequest = (HttpServletRequest) request;
+		final String requestURI              = httpRequest.getRequestURI();
+		final String contextPath             = httpRequest.getContextPath();
+		final String method                  = httpRequest.getMethod();
+		final HttpSession session            = httpRequest.getSession();
+		final Account account                = (Account) session.getAttribute("account");
+		//@formatter:on
 
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		final String requestURI = httpRequest.getRequestURI();
-		final String contextPath = httpRequest.getContextPath();
+		if (redirectToLoginPage(requestURI, contextPath, method, account)) {
+			logger.info("redirect to login page (original target: " + requestURI + ")");
+			HttpServletResponse httpResponse = (HttpServletResponse) response;
+			httpResponse.sendRedirect(LOGIN_PAGE);
+		} else {
+			filterChain.doFilter(request, response);
+		}
+	}
 
-		HttpSession session = httpRequest.getSession();
-
-		boolean isLoggedIn = session.getAttribute("account") != null;
+	public boolean redirectToLoginPage(final String requestURI, final String contextPath, final String method,
+			final Account account) {
+		boolean isLoggedIn = account != null;
 		boolean loginPage = requestURI.startsWith(contextPath + "/" + LOGIN_PAGE);
 		boolean loginRequest = requestURI.startsWith(contextPath + "/" + LOGIN_URL)
-				&& LOGIN_METHOD.equalsIgnoreCase(httpRequest.getMethod());
+				&& LOGIN_METHOD.equalsIgnoreCase(method);
 		boolean resourceRequest = requestURI.startsWith(contextPath) && (requestURI.endsWith(POSTFIX_RESSOURCES[0])
 				|| requestURI.endsWith(POSTFIX_RESSOURCES[1]) || requestURI.endsWith(POSTFIX_RESSOURCES[2]));
 		boolean registerPage = requestURI.startsWith(contextPath + "/" + REGISTER_PAGE);
 		boolean registerRequest = requestURI.startsWith(contextPath + "/" + REGISTER_URL)
-				&& REGISTER_METHOD.equalsIgnoreCase(httpRequest.getMethod());
+				&& REGISTER_METHOD.equalsIgnoreCase(method);
 
-		if (isLoggedIn || loginPage || loginRequest || resourceRequest || registerPage || registerRequest) {
-			filterChain.doFilter(request, response);
-		} else {
-			logger.info("redirect to login page (original target: " + requestURI + ")");
-			HttpServletResponse httpResponse = (HttpServletResponse) response;
-			httpResponse.sendRedirect(LOGIN_PAGE);
-		}
+		return !(isLoggedIn || loginPage || loginRequest || resourceRequest || registerPage || registerRequest);
 	}
 
 	@Override
