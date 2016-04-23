@@ -12,6 +12,7 @@ import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Category;
 import vu.de.npolke.myexpenses.services.CategoryDAO;
 import vu.de.npolke.myexpenses.services.DAOFactory;
+import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -35,17 +36,25 @@ public class AddCategoryServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
+	CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
 
 	@Override
-	public void doPost(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
-			Account account) throws ServletException, IOException {
+	public ServletReaction doPost(final HttpServletRequest request, final HttpServletResponse response,
+			final HttpSession session, Account account) throws ServletException, IOException {
 
 		final String name = request.getParameter("name");
 
+		return addCategory(account, name);
+	}
+
+	public ServletReaction addCategory(final Account account, final String name) {
 		categoryDAO.create(name, account.getId());
 
-		session.setAttribute("account", account);
-		response.sendRedirect("listcategories");
+		final ServletReaction reaction = new ServletReaction();
+		reaction.setDoRedirect();
+		reaction.setNextLocation("listcategories");
+		reaction.setSessionAttribute("account", account);
+
+		return reaction;
 	}
 }

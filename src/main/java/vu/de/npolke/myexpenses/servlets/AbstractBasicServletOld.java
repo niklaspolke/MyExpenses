@@ -1,7 +1,6 @@
 package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -10,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import vu.de.npolke.myexpenses.model.Account;
-import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -29,7 +27,7 @@ import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
  *
  * @author Niklas Polke
  */
-public class AbstractBasicServlet extends HttpServlet {
+public class AbstractBasicServletOld extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
@@ -43,31 +41,6 @@ public class AbstractBasicServlet extends HttpServlet {
 		return (Account) session.getAttribute("account");
 	}
 
-	private void handleServletTask(final ServletReaction task, final HttpServletRequest request,
-			final HttpServletResponse response, final HttpSession session) throws ServletException, IOException {
-		if (task != null) {
-			for (Entry<String, Object> entry : task.getSessionAttributes().entrySet()) {
-				if (entry.getValue() != null) {
-					session.setAttribute(entry.getKey(), entry.getValue());
-				} else {
-					session.removeAttribute(entry.getKey());
-				}
-			}
-			for (Entry<String, Object> entry : task.getRequestAttributes().entrySet()) {
-				if (entry.getValue() != null) {
-					request.setAttribute(entry.getKey(), entry.getValue());
-				} else {
-					request.removeAttribute(entry.getKey());
-				}
-			}
-			if (task.getDoRedirect()) {
-				response.sendRedirect(task.getNextLocation());
-			} else {
-				request.getRequestDispatcher(task.getNextLocation()).forward(request, response);
-			}
-		}
-	}
-
 	@Override
 	protected final void doGet(final HttpServletRequest request, final HttpServletResponse response)
 			throws ServletException, IOException {
@@ -75,14 +48,12 @@ public class AbstractBasicServlet extends HttpServlet {
 
 		HttpSession session = request.getSession();
 
-		ServletReaction task = doGet(request, response, session, getAccount(session));
-		handleServletTask(task, request, response, session);
+		doGet(request, response, session, getAccount(session));
 	}
 
-	protected ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
 		super.doGet(request, response);
-		return null;
 	}
 
 	@Override
@@ -92,13 +63,11 @@ public class AbstractBasicServlet extends HttpServlet {
 
 		HttpSession session = request.getSession();
 
-		ServletReaction task = doPost(request, response, session, getAccount(session));
-		handleServletTask(task, request, response, session);
+		doPost(request, response, session, getAccount(session));
 	}
 
-	protected ServletReaction doPost(final HttpServletRequest request, final HttpServletResponse response,
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
 		super.doPost(request, response);
-		return null;
 	}
 }

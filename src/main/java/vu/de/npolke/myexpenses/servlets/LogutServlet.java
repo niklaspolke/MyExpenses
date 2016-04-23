@@ -28,7 +28,7 @@ import vu.de.npolke.myexpenses.model.Account;
  * @author Niklas Polke
  */
 @WebServlet("/logout")
-public class LogutServlet extends AbstractBasicServlet {
+public class LogutServlet extends AbstractBasicServletOld {
 
 	private static final long serialVersionUID = 1L;
 

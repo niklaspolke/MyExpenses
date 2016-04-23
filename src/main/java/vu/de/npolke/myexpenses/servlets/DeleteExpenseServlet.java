@@ -31,7 +31,7 @@ import vu.de.npolke.myexpenses.services.ExpenseDAO;
  * @author Niklas Polke
  */
 @WebServlet("/deleteexpense")
-public class DeleteExpenseServlet extends AbstractBasicServlet {
+public class DeleteExpenseServlet extends AbstractBasicServletOld {
 
 	private static final long serialVersionUID = 1L;
 

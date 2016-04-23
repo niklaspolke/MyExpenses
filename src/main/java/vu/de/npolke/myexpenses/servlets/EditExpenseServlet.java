@@ -34,7 +34,7 @@ import vu.de.npolke.myexpenses.services.ExpenseDAO;
  * @author Niklas Polke
  */
 @WebServlet("/editexpense")
-public class EditExpenseServlet extends AbstractBasicServlet {
+public class EditExpenseServlet extends AbstractBasicServletOld {
 
 	private static final long serialVersionUID = 1L;
 

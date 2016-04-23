@@ -31,7 +31,7 @@ import vu.de.npolke.myexpenses.services.DAOFactory;
  * @author Niklas Polke
  */
 @WebServlet("/deletecategory")
-public class DeleteCategoryServlet extends AbstractBasicServlet {
+public class DeleteCategoryServlet extends AbstractBasicServletOld {
 
 	private static final long serialVersionUID = 1L;
 

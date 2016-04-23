@@ -34,7 +34,7 @@ import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
  * @author Niklas Polke
  */
 @WebServlet("/showstatistics")
-public class ShowStatisticsServlet extends AbstractBasicServlet {
+public class ShowStatisticsServlet extends AbstractBasicServletOld {
 
 	private static final long serialVersionUID = 1L;
 

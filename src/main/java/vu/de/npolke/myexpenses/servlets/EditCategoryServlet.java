@@ -31,7 +31,7 @@ import vu.de.npolke.myexpenses.services.DAOFactory;
  * @author Niklas Polke
  */
 @WebServlet("/editcategory")
-public class EditCategoryServlet extends AbstractBasicServlet {
+public class EditCategoryServlet extends AbstractBasicServletOld {
 
 	private static final long serialVersionUID = 1L;
 

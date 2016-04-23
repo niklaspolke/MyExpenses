@@ -17,6 +17,7 @@ import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.CategoryDAO;
 import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.ExpenseDAO;
+import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -40,59 +41,82 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
-	private CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
+	ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
+	CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
 
 	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response,
+	protected ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
 
+		String id = request.getParameter("id");
+
+		return prepareAddExpense(account, id);
+	}
+
+	public ServletReaction prepareAddExpense(final Account account, final String expenseId) {
 		List<Category> categories = categoryDAO.readByAccountId(account.getId());
 		Calendar now = Calendar.getInstance(Locale.GERMANY);
 		now.setTimeInMillis(System.currentTimeMillis());
 
 		boolean errorOccured = false;
+		ServletReaction reaction = new ServletReaction();
 
 		try {
-			long id = Long.parseLong(request.getParameter("id"));
+			long id = Long.parseLong(expenseId);
 			Expense expense = expenseDAO.read(id);
 			if (expense == null || expense.getAccountId() != account.getId()) {
 				errorOccured = true;
 			} else {
 				expense.setId(0);
 				expense.setDay(now.getTime());
-				session.setAttribute("expense", expense);
+				reaction.setSessionAttribute("expense", expense);
 			}
 		} catch (NumberFormatException nfe) {
 			Expense defaultExpense = new Expense();
 			defaultExpense.setDay(now.getTime());
-			session.setAttribute("expense", defaultExpense);
+			reaction.setSessionAttribute("expense", defaultExpense);
 		}
 
 		if (errorOccured) {
-			request.setAttribute("errorMessage",
+			reaction.setRequestAttribute("errorMessage",
 					"You tried to clone a non existing expense or an expense that isn't yours!");
-			request.getRequestDispatcher("error.jsp").forward(request, response);
+			reaction.setDoForward();
+			reaction.setNextLocation("error.jsp");
 		} else {
-			session.setAttribute("categories", categories);
-			response.sendRedirect("addexpense.jsp");
+			reaction.setSessionAttribute("categories", categories);
+			reaction.setDoRedirect();
+			reaction.setNextLocation("addexpense.jsp");
 		}
+
+		return reaction;
 	}
 
 	@Override
-	public void doPost(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
-			Account account) throws ServletException, IOException {
+	public ServletReaction doPost(final HttpServletRequest request, final HttpServletResponse response,
+			final HttpSession session, Account account) throws ServletException, IOException {
 
-		double amount = Double.parseDouble(request.getParameter("amount").replaceAll(",", "."));
+		String amount = request.getParameter("amount").replaceAll(",", ".");
 		String reason = request.getParameter("reason");
 		String day = request.getParameter("day");
 		String month = request.getParameter("month");
 		String year = request.getParameter("year");
-		long categoryId = Long.valueOf(request.getParameter("category"));
+		String categoryId = request.getParameter("category");
 
+		return addExpense(account, amount, reason, day, month, year, categoryId);
+	}
+
+	public ServletReaction addExpense(final Account account, final String amountAsString, final String reason,
+			final String day, final String month, final String year, final String categoryIdAsString) {
+		double amount = Double.parseDouble(amountAsString);
+		long categoryId = Long.valueOf(categoryIdAsString);
 		String readableDate = day + "." + month + "." + year;
+
 		expenseDAO.create(readableDate, amount, reason, categoryId, account.getId());
 
-		response.sendRedirect("listexpenses");
+		ServletReaction reaction = new ServletReaction();
+		reaction.setDoRedirect();
+		reaction.setNextLocation("listexpenses");
+
+		return reaction;
 	}
 }

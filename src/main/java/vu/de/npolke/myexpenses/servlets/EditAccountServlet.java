@@ -31,7 +31,7 @@ import vu.de.npolke.myexpenses.util.HashUtil;
  * @author Niklas Polke
  */
 @WebServlet("/editaccount")
-public class EditAccountServlet extends AbstractBasicServlet {
+public class EditAccountServlet extends AbstractBasicServletOld {
 
 	private static final long serialVersionUID = 1L;
 

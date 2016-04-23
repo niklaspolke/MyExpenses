@@ -30,7 +30,7 @@ import vu.de.npolke.myexpenses.services.DAOFactory;
  * @author Niklas Polke
  */
 @WebServlet("/register")
-public class RegisterServlet extends AbstractBasicServlet {
+public class RegisterServlet extends AbstractBasicServletOld {
 
 	private static final long serialVersionUID = 1L;
 

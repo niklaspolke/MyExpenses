@@ -32,7 +32,7 @@ import vu.de.npolke.myexpenses.services.DAOFactory;
  * @author Niklas Polke
  */
 @WebServlet("/listcategories")
-public class ListCategoriesServlet extends AbstractBasicServlet {
+public class ListCategoriesServlet extends AbstractBasicServletOld {
 
 	private static final long serialVersionUID = 1L;
 
