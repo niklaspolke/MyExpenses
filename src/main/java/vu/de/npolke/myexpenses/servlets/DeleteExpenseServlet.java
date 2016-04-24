@@ -12,6 +12,7 @@ import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.ExpenseDAO;
+import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -31,36 +32,40 @@ import vu.de.npolke.myexpenses.services.ExpenseDAO;
  * @author Niklas Polke
  */
 @WebServlet("/deleteexpense")
-public class DeleteExpenseServlet extends AbstractBasicServletOld {
+public class DeleteExpenseServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
+	ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
 
 	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response,
+	protected ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
 
-		long id = Long.parseLong(request.getParameter("id"));
-		String confirmed = request.getParameter("confirmed");
+		String expenseId = request.getParameter("id");
+		String isDeleteConfirmed = request.getParameter("confirmed");
 
-		boolean errorOccured = false;
+		return deleteExpense(account, expenseId, isDeleteConfirmed);
+	}
+
+	public ServletReaction deleteExpense(final Account account, final String idAsString, final String confirmed) {
+		long expenseId = Long.parseLong(idAsString);
+
+		ServletReaction reaction = new ServletReaction();
+		reaction.setDoForward();
+		reaction.setNextLocation("listexpenses");
 
 		if ("yes".equalsIgnoreCase(confirmed)) {
-			Expense expense = expenseDAO.read(id);
+			Expense expense = expenseDAO.read(expenseId);
 			if (expense != null && expense.getAccountId() == account.getId()) {
-				expenseDAO.deleteById(id);
+				expenseDAO.deleteById(expenseId);
 			} else {
-				errorOccured = true;
+				reaction.setRequestAttribute("errorMessage",
+						"You tried to delete a non existing expense or an expense that isn't yours!");
+				reaction.setNextLocation("error.jsp");
 			}
 		}
 
-		if (errorOccured) {
-			request.setAttribute("errorMessage",
-					"You tried to delete a non existing expense or an expense that isn't yours!");
-			request.getRequestDispatcher("error.jsp").forward(request, response);
-		} else {
-			request.getRequestDispatcher("listexpenses").forward(request, response);
-		}
+		return reaction;
 	}
 }

@@ -43,27 +43,27 @@ public class AbstractBasicServlet extends HttpServlet {
 		return (Account) session.getAttribute("account");
 	}
 
-	private void handleServletTask(final ServletReaction task, final HttpServletRequest request,
+	void handleServletTask(final ServletReaction reaction, final HttpServletRequest request,
 			final HttpServletResponse response, final HttpSession session) throws ServletException, IOException {
-		if (task != null) {
-			for (Entry<String, Object> entry : task.getSessionAttributes().entrySet()) {
+		if (reaction != null) {
+			for (Entry<String, Object> entry : reaction.getSessionAttributes().entrySet()) {
 				if (entry.getValue() != null) {
 					session.setAttribute(entry.getKey(), entry.getValue());
 				} else {
 					session.removeAttribute(entry.getKey());
 				}
 			}
-			for (Entry<String, Object> entry : task.getRequestAttributes().entrySet()) {
+			for (Entry<String, Object> entry : reaction.getRequestAttributes().entrySet()) {
 				if (entry.getValue() != null) {
 					request.setAttribute(entry.getKey(), entry.getValue());
 				} else {
 					request.removeAttribute(entry.getKey());
 				}
 			}
-			if (task.getDoRedirect()) {
-				response.sendRedirect(task.getNextLocation());
+			if (reaction.getDoRedirect()) {
+				response.sendRedirect(reaction.getNextLocation());
 			} else {
-				request.getRequestDispatcher(task.getNextLocation()).forward(request, response);
+				request.getRequestDispatcher(reaction.getNextLocation()).forward(request, response);
 			}
 		}
 	}

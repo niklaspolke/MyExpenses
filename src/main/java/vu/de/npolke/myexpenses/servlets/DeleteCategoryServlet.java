@@ -12,6 +12,7 @@ import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Category;
 import vu.de.npolke.myexpenses.services.CategoryDAO;
 import vu.de.npolke.myexpenses.services.DAOFactory;
+import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -31,36 +32,40 @@ import vu.de.npolke.myexpenses.services.DAOFactory;
  * @author Niklas Polke
  */
 @WebServlet("/deletecategory")
-public class DeleteCategoryServlet extends AbstractBasicServletOld {
+public class DeleteCategoryServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
+	CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
 
 	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response,
+	protected ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
 
-		long categoryId = Long.parseLong(request.getParameter("id"));
+		String categoryId = request.getParameter("id");
 		String isDeleteConfirmed = request.getParameter("confirmed");
 
-		boolean errorOccured = false;
+		return deleteCategory(account, categoryId, isDeleteConfirmed);
+	}
 
-		if ("yes".equalsIgnoreCase(isDeleteConfirmed)) {
+	public ServletReaction deleteCategory(final Account account, final String idAsString, final String confirmed) {
+		long categoryId = Long.parseLong(idAsString);
+
+		ServletReaction reaction = new ServletReaction();
+		reaction.setDoForward();
+		reaction.setNextLocation("listcategories");
+
+		if ("yes".equalsIgnoreCase(confirmed)) {
 			Category category = categoryDAO.read(categoryId);
 			if (category != null && category.getAccountId() == account.getId()) {
 				categoryDAO.deleteById(categoryId);
 			} else {
-				errorOccured = true;
+				reaction.setRequestAttribute("errorMessage",
+						"You tried to delete a non existing category or a category that isn't yours!");
+				reaction.setNextLocation("error.jsp");
 			}
 		}
 
-		if (errorOccured) {
-			request.setAttribute("errorMessage",
-					"You tried to delete a non existing category or a category that isn't yours!");
-			request.getRequestDispatcher("error.jsp").forward(request, response);
-		} else {
-			request.getRequestDispatcher("listcategories").forward(request, response);
-		}
+		return reaction;
 	}
 }
