@@ -26,20 +26,18 @@ public class ServletReactionTest {
 
 	@Test
 	public void redirect() {
-		reaction.setDoRedirect();
-		reaction.setNextLocation("addexpense");
+		reaction.setRedirect("addexpense");
 
-		assertTrue(reaction.getDoRedirect());
-		assertEquals("addexpense", reaction.getNextLocation());
+		assertEquals("addexpense", reaction.getRedirect());
+		assertNull(reaction.getForward());
 	}
 
 	@Test
 	public void forward() {
-		reaction.setDoForward();
-		reaction.setNextLocation("listexpenses");
+		reaction.setForward("listexpenses");
 
-		assertFalse(reaction.getDoRedirect());
-		assertEquals("listexpenses", reaction.getNextLocation());
+		assertNull(reaction.getRedirect());
+		assertEquals("listexpenses", reaction.getForward());
 	}
 
 	@Test

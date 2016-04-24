@@ -31,8 +31,7 @@ public class AddCategoryServletTest {
 
 		verify(servlet.categoryDAO).create(categoryName, account.getId());
 		assertNotNull(reaction);
-		assertTrue(reaction.getDoRedirect());
-		assertEquals("listcategories", reaction.getNextLocation());
+		assertEquals("listcategories", reaction.getRedirect());
 		assertEquals(1, reaction.getSessionAttributes().size());
 		assertEquals(account, reaction.getSessionAttributes().get("account"));
 	}

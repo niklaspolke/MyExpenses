@@ -25,28 +25,30 @@ public class ServletReaction {
 	private Map<String, Object> sessionAttributes = new HashMap<String, Object>();
 	private Map<String, Object> requestAttributes = new HashMap<String, Object>();
 
-	private String nextLocation = null;
+	private String location = null;
 
 	private boolean doRedirect = true;
-
-	public void setDoRedirect() {
-		this.doRedirect = true;
-	}
-
-	public void setDoForward() {
-		this.doRedirect = false;
-	}
 
 	public boolean getDoRedirect() {
 		return doRedirect;
 	}
 
-	public void setNextLocation(final String nextLocation) {
-		this.nextLocation = nextLocation;
+	public void setRedirect(final String location) {
+		doRedirect = true;
+		this.location = location;
 	}
 
-	public String getNextLocation() {
-		return nextLocation;
+	public void setForward(final String location) {
+		doRedirect = false;
+		this.location = location;
+	}
+
+	public String getRedirect() {
+		return doRedirect ? this.location : null;
+	}
+
+	public String getForward() {
+		return !doRedirect ? this.location : null;
 	}
 
 	public Map<String, Object> getSessionAttributes() {

@@ -68,8 +68,7 @@ public class AddExpenseServletTest {
 		// correct session attribute: categories
 		assertSame(categories, reaction.getSessionAttributes().get("categories"));
 		// correct navigation
-		assertTrue(reaction.getDoRedirect());
-		assertEquals("addexpense.jsp", reaction.getNextLocation());
+		assertEquals("addexpense.jsp", reaction.getRedirect());
 	}
 
 	@Test
@@ -94,8 +93,7 @@ public class AddExpenseServletTest {
 		// correct session attribute: categories
 		assertSame(categories, reaction.getSessionAttributes().get("categories"));
 		// correct navigation
-		assertTrue(reaction.getDoRedirect());
-		assertEquals("addexpense.jsp", reaction.getNextLocation());
+		assertEquals("addexpense.jsp", reaction.getRedirect());
 	}
 
 	@Test
@@ -116,8 +114,7 @@ public class AddExpenseServletTest {
 		assertEquals("You tried to clone a non existing expense or an expense that isn't yours!",
 				reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
-		assertFalse(reaction.getDoRedirect());
-		assertEquals("error.jsp", reaction.getNextLocation());
+		assertEquals("error.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -142,8 +139,7 @@ public class AddExpenseServletTest {
 		assertEquals("You tried to clone a non existing expense or an expense that isn't yours!",
 				reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
-		assertFalse(reaction.getDoRedirect());
-		assertEquals("error.jsp", reaction.getNextLocation());
+		assertEquals("error.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -162,8 +158,7 @@ public class AddExpenseServletTest {
 
 		assertNotNull(reaction);
 		// correct navigation
-		assertTrue(reaction.getDoRedirect());
-		assertEquals("listexpenses", reaction.getNextLocation());
+		assertEquals("listexpenses", reaction.getRedirect());
 		// correct creation of Expense
 		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, categoryId, account.getId());
 	}

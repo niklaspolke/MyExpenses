@@ -52,8 +52,7 @@ public class DeleteExpenseServlet extends AbstractBasicServlet {
 		long expenseId = Long.parseLong(idAsString);
 
 		ServletReaction reaction = new ServletReaction();
-		reaction.setDoForward();
-		reaction.setNextLocation("listexpenses");
+		reaction.setForward("listexpenses");
 
 		if ("yes".equalsIgnoreCase(confirmed)) {
 			Expense expense = expenseDAO.read(expenseId);
@@ -62,7 +61,7 @@ public class DeleteExpenseServlet extends AbstractBasicServlet {
 			} else {
 				reaction.setRequestAttribute("errorMessage",
 						"You tried to delete a non existing expense or an expense that isn't yours!");
-				reaction.setNextLocation("error.jsp");
+				reaction.setForward("error.jsp");
 			}
 		}
 

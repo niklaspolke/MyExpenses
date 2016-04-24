@@ -64,8 +64,7 @@ public class AbstractBasicServletTest {
 	public void handleServletTask_redirectNoAttributes() throws ServletException, IOException {
 		final String URL = "LOCATION";
 		ServletReaction reaction = new ServletReaction();
-		reaction.setDoRedirect();
-		reaction.setNextLocation(URL);
+		reaction.setRedirect(URL);
 
 		try {
 			servlet.handleServletTask(reaction, request, response, session);
@@ -87,8 +86,7 @@ public class AbstractBasicServletTest {
 	public void handleServletTask_requestWithSessionAttributes() throws ServletException, IOException {
 		final String URL = "LOCATION";
 		ServletReaction reaction = new ServletReaction();
-		reaction.setDoRedirect();
-		reaction.setNextLocation(URL);
+		reaction.setRedirect(URL);
 
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("1", new Integer(1));
@@ -125,8 +123,7 @@ public class AbstractBasicServletTest {
 	public void handleServletTask_forwardWithRequestAttributes() throws ServletException, IOException {
 		final String URL = "LOCATION";
 		ServletReaction reaction = new ServletReaction();
-		reaction.setDoForward();
-		reaction.setNextLocation(URL);
+		reaction.setForward(URL);
 
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("1", new Integer(1));

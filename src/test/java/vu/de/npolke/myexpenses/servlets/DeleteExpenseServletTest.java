@@ -1,7 +1,6 @@
 package vu.de.npolke.myexpenses.servlets;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -64,8 +63,7 @@ public class DeleteExpenseServletTest {
 		// correct deletion
 		verify(servlet.expenseDAO).deleteById(expenseId);
 		// correct navigation
-		assertFalse(reaction.getDoRedirect());
-		assertEquals("listexpenses", reaction.getNextLocation());
+		assertEquals("listexpenses", reaction.getForward());
 	}
 
 	@Test
@@ -82,8 +80,7 @@ public class DeleteExpenseServletTest {
 		// no deletion
 		verify(servlet.expenseDAO, never()).deleteById(anyLong());
 		// correct navigation
-		assertFalse(reaction.getDoRedirect());
-		assertEquals("listexpenses", reaction.getNextLocation());
+		assertEquals("listexpenses", reaction.getForward());
 	}
 
 	@Test
@@ -100,8 +97,7 @@ public class DeleteExpenseServletTest {
 		// no deletion
 		verify(servlet.expenseDAO, never()).deleteById(anyLong());
 		// correct navigation
-		assertFalse(reaction.getDoRedirect());
-		assertEquals("error.jsp", reaction.getNextLocation());
+		assertEquals("error.jsp", reaction.getForward());
 		assertEquals(1, reaction.getRequestAttributes().size());
 		assertEquals("You tried to delete a non existing expense or an expense that isn't yours!",
 				reaction.getRequestAttributes().get("errorMessage"));
@@ -121,8 +117,7 @@ public class DeleteExpenseServletTest {
 		// no deletion
 		verify(servlet.expenseDAO, never()).deleteById(anyLong());
 		// correct navigation
-		assertFalse(reaction.getDoRedirect());
-		assertEquals("error.jsp", reaction.getNextLocation());
+		assertEquals("error.jsp", reaction.getForward());
 		assertEquals(1, reaction.getRequestAttributes().size());
 		assertEquals("You tried to delete a non existing expense or an expense that isn't yours!",
 				reaction.getRequestAttributes().get("errorMessage"));

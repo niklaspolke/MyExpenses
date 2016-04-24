@@ -51,8 +51,7 @@ public class AddCategoryServlet extends AbstractBasicServlet {
 		categoryDAO.create(name, account.getId());
 
 		final ServletReaction reaction = new ServletReaction();
-		reaction.setDoRedirect();
-		reaction.setNextLocation("listcategories");
+		reaction.setRedirect("listcategories");
 		reaction.setSessionAttribute("account", account);
 
 		return reaction;

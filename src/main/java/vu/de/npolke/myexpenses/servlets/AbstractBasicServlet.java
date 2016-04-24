@@ -61,9 +61,9 @@ public class AbstractBasicServlet extends HttpServlet {
 				}
 			}
 			if (reaction.getDoRedirect()) {
-				response.sendRedirect(reaction.getNextLocation());
+				response.sendRedirect(reaction.getRedirect());
 			} else {
-				request.getRequestDispatcher(reaction.getNextLocation()).forward(request, response);
+				request.getRequestDispatcher(reaction.getForward()).forward(request, response);
 			}
 		}
 	}

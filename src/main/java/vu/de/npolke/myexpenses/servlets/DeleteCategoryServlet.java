@@ -52,8 +52,7 @@ public class DeleteCategoryServlet extends AbstractBasicServlet {
 		long categoryId = Long.parseLong(idAsString);
 
 		ServletReaction reaction = new ServletReaction();
-		reaction.setDoForward();
-		reaction.setNextLocation("listcategories");
+		reaction.setForward("listcategories");
 
 		if ("yes".equalsIgnoreCase(confirmed)) {
 			Category category = categoryDAO.read(categoryId);
@@ -62,7 +61,7 @@ public class DeleteCategoryServlet extends AbstractBasicServlet {
 			} else {
 				reaction.setRequestAttribute("errorMessage",
 						"You tried to delete a non existing category or a category that isn't yours!");
-				reaction.setNextLocation("error.jsp");
+				reaction.setForward("error.jsp");
 			}
 		}
 

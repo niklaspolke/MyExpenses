@@ -80,12 +80,10 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 		if (errorOccured) {
 			reaction.setRequestAttribute("errorMessage",
 					"You tried to clone a non existing expense or an expense that isn't yours!");
-			reaction.setDoForward();
-			reaction.setNextLocation("error.jsp");
+			reaction.setForward("error.jsp");
 		} else {
 			reaction.setSessionAttribute("categories", categories);
-			reaction.setDoRedirect();
-			reaction.setNextLocation("addexpense.jsp");
+			reaction.setRedirect("addexpense.jsp");
 		}
 
 		return reaction;
@@ -114,8 +112,7 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 		expenseDAO.create(readableDate, amount, reason, categoryId, account.getId());
 
 		ServletReaction reaction = new ServletReaction();
-		reaction.setDoRedirect();
-		reaction.setNextLocation("listexpenses");
+		reaction.setRedirect("listexpenses");
 
 		return reaction;
 	}
