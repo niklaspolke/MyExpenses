@@ -40,7 +40,7 @@ public class LoginFilter implements Filter {
 	public static final String LOGIN_PAGE           = "index.jsp";
 	public static final String LOGIN_URL            = "login";
 	public static final String LOGIN_METHOD         = "POST";
-	public static final String[] POSTFIX_RESSOURCES = { ".css", ".js", ".png" };
+	public static final String[] POSTFIX_RESSOURCES = { ".css", ".js", ".png", ".ico" };
 	public static final String REGISTER_PAGE        = "register.jsp";
 	public static final String REGISTER_URL         = "register";
 	public static final String REGISTER_METHOD      = "POST";
