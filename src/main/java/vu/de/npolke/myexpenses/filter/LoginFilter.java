@@ -75,8 +75,15 @@ public class LoginFilter implements Filter {
 		boolean loginPage = requestURI.startsWith(contextPath + "/" + LOGIN_PAGE);
 		boolean loginRequest = requestURI.startsWith(contextPath + "/" + LOGIN_URL)
 				&& LOGIN_METHOD.equalsIgnoreCase(method);
-		boolean resourceRequest = requestURI.startsWith(contextPath) && (requestURI.endsWith(POSTFIX_RESSOURCES[0])
-				|| requestURI.endsWith(POSTFIX_RESSOURCES[1]) || requestURI.endsWith(POSTFIX_RESSOURCES[2]));
+		boolean resourceRequest = false;
+		if (requestURI.startsWith(contextPath)) {
+			for (int index = 0; index < POSTFIX_RESSOURCES.length; index++) {
+				if (requestURI.endsWith(POSTFIX_RESSOURCES[index])) {
+					resourceRequest = true;
+					break;
+				}
+			}
+		}
 		boolean registerPage = requestURI.startsWith(contextPath + "/" + REGISTER_PAGE);
 		boolean registerRequest = requestURI.startsWith(contextPath + "/" + REGISTER_URL)
 				&& REGISTER_METHOD.equalsIgnoreCase(method);

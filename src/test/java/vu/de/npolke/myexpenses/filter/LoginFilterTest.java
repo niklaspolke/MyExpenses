@@ -54,6 +54,7 @@ public class LoginFilterTest {
 		assertFalse(filter.redirectToLoginPage("/myexpenses/img/sign-add_24.png", "/myexpenses", "GET", null));
 		assertFalse(filter.redirectToLoginPage("/myexpenses/css/styles.css", "/myexpenses", "GET", null));
 		assertFalse(filter.redirectToLoginPage("/myexpenses/js/chartist.min.js", "/myexpenses", "GET", null));
+		assertFalse(filter.redirectToLoginPage("/myexpenses/favicon.ico", "/myexpenses", "GET", null));
 	}
 
 	@Test
