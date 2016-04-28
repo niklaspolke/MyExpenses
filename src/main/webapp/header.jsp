@@ -20,7 +20,7 @@ the License.
     <head>
         <meta charset="UTF-8" />
         <link rel="stylesheet" href="css/styles.css">
-        <link rel="icon" href="favicon.ico">
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
         <title>MyExpenses</title>
     </head>
 
