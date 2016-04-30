@@ -12,6 +12,7 @@ import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Category;
 import vu.de.npolke.myexpenses.services.CategoryDAO;
 import vu.de.npolke.myexpenses.services.DAOFactory;
+import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -31,47 +32,55 @@ import vu.de.npolke.myexpenses.services.DAOFactory;
  * @author Niklas Polke
  */
 @WebServlet("/editcategory")
-public class EditCategoryServlet extends AbstractBasicServletOld {
+public class EditCategoryServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
+	CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
 
 	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response,
+	protected ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
 
-		long id = Long.parseLong(request.getParameter("id"));
+		String id = request.getParameter("id");
 
+		return prepareEditCategory(account, id);
+	}
+
+	public ServletReaction prepareEditCategory(final Account account, final String idAsString) {
+		ServletReaction reaction = new ServletReaction();
+
+		long id = Long.parseLong(idAsString);
 		Category category = categoryDAO.read(id);
 
-		boolean errorOccured = false;
-
 		if (category == null || category.getAccountId() != account.getId()) {
-			errorOccured = true;
+			reaction.setRequestAttribute("errorMessage",
+					"You tried to edit a non existing category or a category that isn't yours!");
+			reaction.setForward("error.jsp");
+		} else {
+			reaction.setSessionAttribute("category", category);
+			reaction.setRedirect("editcategory.jsp");
 		}
 
-		if (errorOccured) {
-			request.setAttribute("errorMessage",
-					"You tried to edit a non existing category or a category that isn't yours!");
-			request.getRequestDispatcher("error.jsp").forward(request, response);
-		} else {
-			session.setAttribute("category", category);
-			response.sendRedirect("editcategory.jsp");
-		}
+		return reaction;
 	}
 
 	@Override
-	public void doPost(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
-			Account account) throws ServletException, IOException {
+	public ServletReaction doPost(final HttpServletRequest request, final HttpServletResponse response,
+			final HttpSession session, Account account) throws ServletException, IOException {
 
 		final String name = request.getParameter("name");
-
 		Category category = (Category) session.getAttribute("category");
 
+		return editCategory(category, name);
+	}
+
+	public ServletReaction editCategory(final Category category, final String name) {
 		category.setName(name);
 		categoryDAO.update(category);
 
-		response.sendRedirect("listcategories");
+		ServletReaction reaction = new ServletReaction();
+		reaction.setRedirect("listcategories");
+		return reaction;
 	}
 }
