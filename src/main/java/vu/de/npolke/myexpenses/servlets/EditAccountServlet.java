@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.services.AccountDAO;
 import vu.de.npolke.myexpenses.services.DAOFactory;
+import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 import vu.de.npolke.myexpenses.util.HashUtil;
 
 /**
@@ -31,38 +32,55 @@ import vu.de.npolke.myexpenses.util.HashUtil;
  * @author Niklas Polke
  */
 @WebServlet("/editaccount")
-public class EditAccountServlet extends AbstractBasicServletOld {
+public class EditAccountServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private AccountDAO accountDAO = (AccountDAO) DAOFactory.getDAO(Account.class);
+	AccountDAO accountDAO = (AccountDAO) DAOFactory.getDAO(Account.class);
 
 	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response,
+	protected ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
 
-		session.setAttribute("account", account);
-		response.sendRedirect("editaccount.jsp");
+		return prepareEditAccount(account);
+	}
+
+	public ServletReaction prepareEditAccount(final Account account) {
+		ServletReaction reaction = new ServletReaction();
+		reaction.setRedirect("editaccount.jsp");
+		reaction.setSessionAttribute("account", account);
+		return reaction;
 	}
 
 	@Override
-	public void doPost(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
-			Account account) throws ServletException, IOException {
+	public ServletReaction doPost(final HttpServletRequest request, final HttpServletResponse response,
+			final HttpSession session, Account account) throws ServletException, IOException {
 
 		final String oldpassword = request.getParameter("oldpassword");
 		final String newpassword1 = request.getParameter("newpassword1");
 		final String newpassword2 = request.getParameter("newpassword2");
 
-		if (!account.getPassword().equals(HashUtil.toMD5(oldpassword))) {
-			request.setAttribute("errorMessage", "oldpassword wasn't correct");
-			request.getRequestDispatcher("editaccount.jsp").forward(request, response);
-		} else if (newpassword1 != null && newpassword1.trim().length() > 3 && newpassword1.equals(newpassword2)) {
-			account.setPassword(HashUtil.toMD5(newpassword1));
+		return editAccount(account, oldpassword, newpassword1, newpassword2);
+	}
+
+	public ServletReaction editAccount(final Account account, final String oldPassword, final String newPassword1,
+			final String newPassword2) {
+		ServletReaction reaction = new ServletReaction();
+		if (!account.getPassword().equals(HashUtil.toMD5(oldPassword))) {
+			handleIncorrectInput(reaction, "oldpassword wasn't correct");
+		} else if (newPassword1 != null && newPassword1.trim().length() > 3 && newPassword1.equals(newPassword2)) {
+			account.setPassword(HashUtil.toMD5(newPassword1));
 			accountDAO.update(account);
-			response.sendRedirect("listexpenses");
+			reaction.setRedirect("listexpenses");
 		} else {
-			request.setAttribute("errorMessage", "password1 wasn't equal to password2");
-			request.getRequestDispatcher("editaccount.jsp").forward(request, response);
+			handleIncorrectInput(reaction, "password1 wasn't equal to password2");
 		}
+
+		return reaction;
+	}
+
+	private void handleIncorrectInput(final ServletReaction reaction, final String errorMessage) {
+		reaction.setRequestAttribute("errorMessage", errorMessage);
+		reaction.setForward("editaccount.jsp");
 	}
 }
