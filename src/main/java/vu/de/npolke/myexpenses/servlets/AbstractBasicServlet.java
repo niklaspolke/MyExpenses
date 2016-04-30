@@ -43,7 +43,7 @@ public class AbstractBasicServlet extends HttpServlet {
 		return (Account) session.getAttribute("account");
 	}
 
-	void handleServletTask(final ServletReaction reaction, final HttpServletRequest request,
+	void handleServletReaction(final ServletReaction reaction, final HttpServletRequest request,
 			final HttpServletResponse response, final HttpSession session) throws ServletException, IOException {
 		if (reaction != null) {
 			for (Entry<String, Object> entry : reaction.getSessionAttributes().entrySet()) {
@@ -75,8 +75,8 @@ public class AbstractBasicServlet extends HttpServlet {
 
 		HttpSession session = request.getSession();
 
-		ServletReaction task = doGet(request, response, session, getAccount(session));
-		handleServletTask(task, request, response, session);
+		ServletReaction reaction = doGet(request, response, session, getAccount(session));
+		handleServletReaction(reaction, request, response, session);
 	}
 
 	protected ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
@@ -92,8 +92,8 @@ public class AbstractBasicServlet extends HttpServlet {
 
 		HttpSession session = request.getSession();
 
-		ServletReaction task = doPost(request, response, session, getAccount(session));
-		handleServletTask(task, request, response, session);
+		ServletReaction reaction = doPost(request, response, session, getAccount(session));
+		handleServletReaction(reaction, request, response, session);
 	}
 
 	protected ServletReaction doPost(final HttpServletRequest request, final HttpServletResponse response,

@@ -67,7 +67,7 @@ public class AbstractBasicServletTest {
 		reaction.setRedirect(URL);
 
 		try {
-			servlet.handleServletTask(reaction, request, response, session);
+			servlet.handleServletReaction(reaction, request, response, session);
 		} catch (Exception e) {
 			fail();
 		}
@@ -97,7 +97,7 @@ public class AbstractBasicServletTest {
 		}
 
 		try {
-			servlet.handleServletTask(reaction, request, response, session);
+			servlet.handleServletReaction(reaction, request, response, session);
 		} catch (Exception e) {
 			fail();
 		}
@@ -136,7 +136,7 @@ public class AbstractBasicServletTest {
 		when(request.getRequestDispatcher(URL)).thenReturn(dispatcher);
 
 		try {
-			servlet.handleServletTask(reaction, request, response, session);
+			servlet.handleServletReaction(reaction, request, response, session);
 		} catch (Exception e) {
 			fail();
 		}
