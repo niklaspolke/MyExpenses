@@ -15,6 +15,7 @@ import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.CategoryDAO;
 import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.ExpenseDAO;
+import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -34,57 +35,70 @@ import vu.de.npolke.myexpenses.services.ExpenseDAO;
  * @author Niklas Polke
  */
 @WebServlet("/editexpense")
-public class EditExpenseServlet extends AbstractBasicServletOld {
+public class EditExpenseServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
-	private CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
+	ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
+	CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
 
 	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response,
+	protected ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
 
-		long id = Long.parseLong(request.getParameter("id"));
+		String expenseId = request.getParameter("id");
+
+		return prepareEditExpense(account, expenseId);
+	}
+
+	public ServletReaction prepareEditExpense(final Account account, final String expenseId) {
+		ServletReaction reaction = new ServletReaction();
+		long id = Long.parseLong(expenseId);
 
 		List<Category> categories = categoryDAO.readByAccountId(account.getId());
 		Expense expense = expenseDAO.read(id);
 
-		boolean errorOccured = false;
-
 		if (expense == null || expense.getAccountId() != account.getId()) {
-			errorOccured = true;
-		}
-
-		if (errorOccured) {
-			request.setAttribute("errorMessage",
+			reaction.setRequestAttribute("errorMessage",
 					"You tried to edit a non existing expense or an expense that isn't yours!");
-			request.getRequestDispatcher("error.jsp").forward(request, response);
+			reaction.setForward("error.jsp");
 		} else {
-			session.setAttribute("expense", expense);
-			session.setAttribute("categories", categories);
-			response.sendRedirect("editexpense.jsp");
+			reaction.setSessionAttribute("expense", expense);
+			reaction.setSessionAttribute("categories", categories);
+			reaction.setRedirect("editexpense.jsp");
 		}
+		return reaction;
 	}
 
 	@Override
-	public void doPost(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
-			Account account) throws ServletException, IOException {
+	public ServletReaction doPost(final HttpServletRequest request, final HttpServletResponse response,
+			final HttpSession session, Account account) throws ServletException, IOException {
 
-		double amount = Double.parseDouble(request.getParameter("amount").replaceAll(",", "."));
+		String amount = request.getParameter("amount");
 		String reason = request.getParameter("reason");
 		String day = request.getParameter("day");
 		String month = request.getParameter("month");
 		String year = request.getParameter("year");
-		long categoryId = Long.parseLong(request.getParameter("category"));
+		String categoryId = request.getParameter("category");
 
 		Expense expense = (Expense) session.getAttribute("expense");
+
+		return editExpense(expense, amount, reason, day, month, year, categoryId);
+	}
+
+	public ServletReaction editExpense(final Expense expense, final String amountAsString, final String reason,
+			final String day, final String month, final String year, final String categoryIdAsString) {
+		double amount = Double.parseDouble(amountAsString.replaceAll(",", "."));
+		long categoryId = Long.parseLong(categoryIdAsString);
+
 		expense.setAmount(amount);
 		expense.setReason(reason);
 		expense.setReadableDayAsString(day + "." + month + "." + year);
 		expense.setCategoryId(categoryId);
 		expenseDAO.update(expense);
 
-		response.sendRedirect("listexpenses");
+		ServletReaction reaction = new ServletReaction();
+		reaction.setRedirect("listexpenses");
+		return reaction;
 	}
 }
