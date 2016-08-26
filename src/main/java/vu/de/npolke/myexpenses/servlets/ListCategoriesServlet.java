@@ -13,6 +13,7 @@ import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Category;
 import vu.de.npolke.myexpenses.services.CategoryDAO;
 import vu.de.npolke.myexpenses.services.DAOFactory;
+import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -32,19 +33,27 @@ import vu.de.npolke.myexpenses.services.DAOFactory;
  * @author Niklas Polke
  */
 @WebServlet("/listcategories")
-public class ListCategoriesServlet extends AbstractBasicServletOld {
+public class ListCategoriesServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
+	CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
 
 	@Override
-	public void doGet(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
-			Account account) throws ServletException, IOException {
+	public ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
+			final HttpSession session, Account account) throws ServletException, IOException {
+
+		return prepareListCategories(account);
+	}
+
+	public ServletReaction prepareListCategories(final Account account) {
+		ServletReaction reaction = new ServletReaction();
 
 		List<Category> categories = categoryDAO.readByAccountId(account.getId());
 
-		session.setAttribute("categories", categories);
-		response.sendRedirect("listcategories.jsp");
+		reaction.setSessionAttribute("categories", categories);
+		reaction.setRedirect("listcategories.jsp");
+
+		return reaction;
 	}
 }
