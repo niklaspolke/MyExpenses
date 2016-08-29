@@ -13,6 +13,7 @@ import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.ExpenseDAO;
+import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -32,29 +33,40 @@ import vu.de.npolke.myexpenses.services.ExpenseDAO;
  * @author Niklas Polke
  */
 @WebServlet("/listexpenses")
-public class ListExpensesServlet extends AbstractBasicServletOld {
+public class ListExpensesServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final int AMOUNT_OF_ENTRIES_PER_PAGE = 10;
 
-	private ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
+	ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
 
 	@Override
-	public void doGet(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
-			Account account) throws ServletException, IOException {
+	public ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
+			final HttpSession session, Account account) throws ServletException, IOException {
+
+		final String requestedPage = request.getParameter("page");
+
+		return prepareListExpenses(account, requestedPage);
+	}
+
+	public ServletReaction prepareListExpenses(final Account account, final String requestedPage) {
+		ServletReaction reaction = new ServletReaction();
 
 		final long amountOfExpenses = expenseDAO.readAmountOfExpenses(account.getId());
 
 		final int pageMax = calcAmountOfPages(amountOfExpenses, AMOUNT_OF_ENTRIES_PER_PAGE);
-		final int page = parseRequestedPage(request.getParameter("page"), pageMax);
+		final int page = parseRequestedPage(requestedPage, pageMax);
 
-		final List<Expense> expenses = expenseDAO.readByAccountId(account.getId(), (page-1)*AMOUNT_OF_ENTRIES_PER_PAGE+1, page*AMOUNT_OF_ENTRIES_PER_PAGE);
+		final List<Expense> expenses = expenseDAO.readByAccountId(account.getId(),
+				(page - 1) * AMOUNT_OF_ENTRIES_PER_PAGE + 1, page * AMOUNT_OF_ENTRIES_PER_PAGE);
 
-		request.setAttribute("page", page);
-		request.setAttribute("pageMax", pageMax);
-		session.setAttribute("expenses", expenses);
-		request.getRequestDispatcher("listexpenses.jsp").forward(request, response);
+		reaction.setRequestAttribute("page", page);
+		reaction.setRequestAttribute("pageMax", pageMax);
+		reaction.setSessionAttribute("expenses", expenses);
+		reaction.setForward("listexpenses.jsp");
+
+		return reaction;
 	}
 
 	public int parseRequestedPage(final String requestedPage, final int pageMax) {
@@ -73,6 +85,6 @@ public class ListExpensesServlet extends AbstractBasicServletOld {
 	}
 
 	public int calcAmountOfPages(final long amountOfEntries, final int amountOfEntriesPerPage) {
-		return (int) Math.max(1, Math.ceil((double)amountOfEntries / amountOfEntriesPerPage));
+		return (int) Math.max(1, Math.ceil((double) amountOfEntries / amountOfEntriesPerPage));
 	}
 }
