@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.services.AccountDAO;
 import vu.de.npolke.myexpenses.services.DAOFactory;
+import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -30,30 +31,39 @@ import vu.de.npolke.myexpenses.services.DAOFactory;
  * @author Niklas Polke
  */
 @WebServlet("/register")
-public class RegisterServlet extends AbstractBasicServletOld {
+public class RegisterServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private AccountDAO accountDAO = (AccountDAO) DAOFactory.getDAO(Account.class);
+	AccountDAO accountDAO = (AccountDAO) DAOFactory.getDAO(Account.class);
 
 	@Override
-	public void doPost(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
-			Account account) throws ServletException, IOException {
+	public ServletReaction doPost(final HttpServletRequest request, final HttpServletResponse response,
+			final HttpSession session, Account account) throws ServletException, IOException {
 
 		final String login = request.getParameter("login");
 		final String password1 = request.getParameter("password1");
 		final String password2 = request.getParameter("password2");
+
+		return registerUser(login, password1, password2);
+	}
+
+	public ServletReaction registerUser(final String login, final String password1, final String password2) {
+		ServletReaction reaction = new ServletReaction();
+		Account account = null;
 
 		if (password1.equals(password2)) {
 			account = accountDAO.create(login, password1);
 		}
 
 		if (account != null) {
-			session.setAttribute("account", account);
-			response.sendRedirect("listexpenses");
+			reaction.setSessionAttribute("account", account);
+			reaction.setRedirect("listexpenses");
 		} else {
-			request.setAttribute("errorMessage", "password1 wasn't equal to password2");
-			request.getRequestDispatcher("register.jsp").forward(request, response);
+			reaction.setRequestAttribute("errorMessage", "password1 wasn't equal to password2");
+			reaction.setForward("register.jsp");
 		}
+
+		return reaction;
 	}
 }
