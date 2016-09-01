@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import vu.de.npolke.myexpenses.model.Account;
+import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -28,16 +29,24 @@ import vu.de.npolke.myexpenses.model.Account;
  * @author Niklas Polke
  */
 @WebServlet("/logout")
-public class LogutServlet extends AbstractBasicServletOld {
+public class LogoutServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void doGet(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
-			Account account) throws ServletException, IOException {
+	public ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
+			final HttpSession session, Account account) throws ServletException, IOException {
 
 		session.invalidate();
 
-		response.sendRedirect("index.jsp");
+		return logout();
+	}
+
+	public ServletReaction logout() {
+		ServletReaction reaction = new ServletReaction();
+
+		reaction.setRedirect("index.jsp");
+
+		return reaction;
 	}
 }
