@@ -61,6 +61,24 @@ public class ShowStatisticsServletTest {
 	}
 
 	@Test
+	public void prepareStatistics_noMonths() {
+		final List<StatisticsPair> statistic = new ArrayList<StatisticsPair>();
+		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
+		when(servlet.statisticsDAO.readStatisticsByMonthsAndAccountId(null, ACCOUNT_ID)).thenReturn(statistic);
+
+		final ServletReaction reaction = servlet.prepareStatistics(account);
+
+		assertNotNull(reaction);
+		// correct values in session
+		assertEquals(months, reaction.getSessionAttributes().get("months"));
+		assertEquals(null, reaction.getSessionAttributes().get("month"));
+		assertEquals(statistic, reaction.getSessionAttributes().get("statistics"));
+		assertEquals("{\"labels\":[],\"series\":[]}", reaction.getSessionAttributes().get("chart"));
+		// correct navigation
+		assertEquals("showstatistics.jsp", reaction.getRedirect());
+	}
+
+	@Test
 	public void showStatistics() {
 		final String MONTH = "2015.06";
 		final List<StatisticsPair> statistic = new ArrayList<StatisticsPair>();
