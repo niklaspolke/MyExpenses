@@ -14,6 +14,7 @@ import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.JsonObject;
+import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 
 /**
@@ -34,15 +35,13 @@ import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
  * @author Niklas Polke
  */
 @WebServlet("/showstatistics")
-public class ShowStatisticsServlet extends AbstractBasicServletOld {
+public class ShowStatisticsServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsPair.class);
+	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsPair.class);
 
-	private void readStatisticsForMonth(final HttpServletRequest request, final String month, final Account account) {
-		HttpSession session = request.getSession();
-
+	private void readStatisticsForMonth(final ServletReaction reaction, final String month, final Account account) {
 		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthsAndAccountId(month, account.getId());
 
 		List<String> labels = new ArrayList<String>();
@@ -59,30 +58,46 @@ public class ShowStatisticsServlet extends AbstractBasicServletOld {
 		json.addParameter("labels", labels);
 		json.addParameter("series", values);
 
-		session.setAttribute("chart", json.toString());
-		session.setAttribute("statistics", statistics);
-		session.setAttribute("month", month);
+		reaction.setSessionAttribute("chart", json.toString());
+		reaction.setSessionAttribute("statistics", statistics);
+		reaction.setSessionAttribute("month", month);
 	}
 
 	@Override
-	public void doGet(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session,
-			Account account) throws ServletException, IOException {
-
-		List<String> months = statisticsDAO.readDistinctMonthsByAccountId(account.getId());
-		readStatisticsForMonth(request, months.get(0), account);
-
-		session.setAttribute("months", months);
-		response.sendRedirect("showstatistics.jsp");
-	}
-
-	@Override
-	protected void doPost(final HttpServletRequest request, final HttpServletResponse response,
+	public ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
 
-		String month = request.getParameter("month");
+		return prepareStatistics(account);
+	}
 
-		readStatisticsForMonth(request, month, account);
+	public ServletReaction prepareStatistics(final Account account) {
+		ServletReaction reaction = new ServletReaction();
 
-		response.sendRedirect("showstatistics.jsp");
+		List<String> months = statisticsDAO.readDistinctMonthsByAccountId(account.getId());
+		readStatisticsForMonth(reaction, months.get(0), account);
+
+		reaction.setSessionAttribute("months", months);
+		reaction.setRedirect("showstatistics.jsp");
+
+		return reaction;
+	}
+
+	@Override
+	public ServletReaction doPost(final HttpServletRequest request, final HttpServletResponse response,
+			final HttpSession session, Account account) throws ServletException, IOException {
+
+		final String month = request.getParameter("month");
+
+		return showStatistics(account, month);
+	}
+
+	public ServletReaction showStatistics(final Account account, final String month) {
+		ServletReaction reaction = new ServletReaction();
+
+		readStatisticsForMonth(reaction, month, account);
+
+		reaction.setRedirect("showstatistics.jsp");
+
+		return reaction;
 	}
 }
