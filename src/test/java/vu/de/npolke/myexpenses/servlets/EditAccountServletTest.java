@@ -83,7 +83,7 @@ public class EditAccountServletTest {
 		// correct persisting
 		verify(servlet.accountDAO, never()).update(account);
 		// correct error message
-		assertEquals("oldpassword wasn't correct", reaction.getRequestAttributes().get("errorMessage"));
+		assertEquals("old password wasn't correct", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
 		assertEquals("editaccount.jsp", reaction.getForward());
 	}
@@ -96,7 +96,7 @@ public class EditAccountServletTest {
 		// correct persisting
 		verify(servlet.accountDAO, never()).update(account);
 		// correct error message
-		assertEquals("password1 wasn't equal to password2", reaction.getRequestAttributes().get("errorMessage"));
+		assertEquals("new password 1 wasn't equal to new password 2", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
 		assertEquals("editaccount.jsp", reaction.getForward());
 	}
