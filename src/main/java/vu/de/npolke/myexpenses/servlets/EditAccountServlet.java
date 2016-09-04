@@ -67,13 +67,13 @@ public class EditAccountServlet extends AbstractBasicServlet {
 			final String newPassword2) {
 		ServletReaction reaction = new ServletReaction();
 		if (!account.getPassword().equals(HashUtil.toMD5(oldPassword))) {
-			handleIncorrectInput(reaction, "oldpassword wasn't correct");
+			handleIncorrectInput(reaction, "old password wasn't correct");
 		} else if (newPassword1 != null && newPassword1.trim().length() > 3 && newPassword1.equals(newPassword2)) {
 			account.setPassword(HashUtil.toMD5(newPassword1));
 			accountDAO.update(account);
 			reaction.setRedirect("listexpenses");
 		} else {
-			handleIncorrectInput(reaction, "password1 wasn't equal to password2");
+			handleIncorrectInput(reaction, "new password 1 wasn't equal to new password 2");
 		}
 
 		return reaction;
