@@ -27,7 +27,6 @@ the License.
 </head>
 
 <c:set var="disabled" value="${param.disabled eq 'true'}" scope="page"/>
-<c:set var="disabled" value="false" scope="page"/>
 
 <body>
     <div class="w3-row w3-grey">
