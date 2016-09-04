@@ -23,37 +23,23 @@ the License.
 <h3>Add Category</h3>
 
 <form action="addcategory" method="post">
-    <fieldset>
-        <legend>Category</legend>
-        <table>
-            <tbody>
-                <tr>
-                    <th>
-                        <label for="name">name</label>
-                    </th>
-                    <td>
-                        <input
-                            type="text"
-                            name="name"
-                            size="40"
-                            maxlength="30"
-                            title="name of category"
-                            placeholder="category"
-                            required="required"
-                            autofocus>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="reset" value="Reset">
-                    </td>
-                    <td>
-                        <input type="submit" value="Create Category">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </fieldset>
+<div class="w3-panel">
+    <input class="w3-input w3-border w3-round-large"
+        type="text"
+        name="name"
+        size="40"
+        maxlength="30"
+        title="name of category"
+        placeholder="category"
+        required="required"
+        autofocus>
+    <label class="w3-label" for="name">Name</label>
+</div><div class="w3-panel">
+    <div class="w3-row">
+        <input class="w3-btn w3-green w3-xlarge w3-round-xxlarge" type="submit" value="Create Category">
+        <input class="w3-btn w3-red w3-tiny w3-round-xxlarge" type="reset" value="Reset">
+    </div>
+</div>
 </form>
 
 

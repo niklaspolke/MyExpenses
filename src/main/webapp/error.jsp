@@ -20,10 +20,11 @@ the License.
 <jsp:include page="header.jsp"/>
 
 
-<h3>An error occured:</h3>
+<h3>An error occured</h3>
 
-<img src="img/sign-ban_96.png" alt="error sign" title="an error occured" />
-
-<div class="error">${requestScope.errorMessage}</div>
+<div class="w3-panel w3-leftbar w3-pale-red w3-border-red">
+    <img src="img/sign-ban_96.png" alt="error sign" title="an error occured" />
+    ${requestScope.errorMessage}
+</div>
 
 <jsp:include page="footer.jsp"/>

@@ -21,13 +21,14 @@ the License.
 <jsp:include page="header.jsp"/>
 
 
-<h3>List Expenses:</h3>
+<h3>List Expenses</h3>
 
+<div class="w3-panel w3-padding-8">
 <fmt:setLocale value="de_DE"/>
-<table class="tableList bordered">
+<table class="w3-table-all">
     <thead>
         <tr>
-            <th>
+            <c:if test="${requestScope.pageMax gt 1}"><th class="w3-light-grey">
                 <c:choose>
                 <c:when test="${requestScope.page eq 1}">
                     <img src="img/sign-left_24_inactive.png" alt="inactive arrow left" title="no previous results" width="24" height="24"/>
@@ -44,7 +45,7 @@ the License.
                     <a href="listexpenses?page=${requestScope.page + 1}"><img src="img/sign-right_24.png" alt="active arrow right" title="go to further results" width="24" height="24"/></a>
                 </c:otherwise>
                 </c:choose>
-            </th>
+            </th></c:if>
         </tr>
         <tr>
             <th>Date</th>
@@ -70,6 +71,7 @@ the License.
         </c:forEach>
     </tbody>
 </table>
+</div>
 
 <script type="text/javascript">
 function prompt(id, expense) {

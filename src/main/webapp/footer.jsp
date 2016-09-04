@@ -14,6 +14,7 @@ License for the specific language governing permissions and limitations under
 the License.
 --%>
 <%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
+            </section>
         </div>
     </body>
 </html>

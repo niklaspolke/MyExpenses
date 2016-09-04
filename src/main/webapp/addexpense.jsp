@@ -23,129 +23,91 @@ the License.
 <h3>Add Expense</h3>
 
 <form action="addexpense" method="post">
-    <fieldset>
-        <legend>Expense</legend>
-        <table>
-            <tbody>
-                <tr>
-                    <th></th>
-                    <th>
-                        <label for="day">day</label>
-                    </th>
-                    <th>
-                        <label for="month">month</label>
-                    </th>
-                    <th>
-                        <label for="year">year</label>
-                    </th>
-                </tr>
-                <tr>
-                    <th class="right">
-                        <label>date:</label>
-                    </th>
-                    <td>
-                        <input
-                            type="number"
-                            name="day"
-                            size="4"
-                            maxlength="2"
-                            min="1"
-                            max="31"
-                            title="day - 1-31"
-                            placeholder="31"
-                            value="${sessionScope.expense.getDay().get(5)}"
-                            required="required" >
-                    </td>
-                    <td>
-                        <input
-                            type="number"
-                            name="month"
-                            size="4"
-                            maxlength="2"
-                            min="1"
-                            max="12"
-                            title="month - 1-12"
-                            placeholder="12"
-                            value="${sessionScope.expense.getDay().get(2)+1}"
-                            required="required">
-                    </td>
-                    <td>
-                        <input
-                            type="number"
-                            name="year"
-                            size="6"
-                            maxlength="4"
-                            min="2000"
-                            max="2100"
-                            title="year - yyyy"
-                            placeholder="2015"
-                            value="${sessionScope.expense.getDay().get(1)}"
-                            required="required">
-                    </td>
-                </tr>
-                <tr>
-                    <th class="right">
-                        <label for="category">category:</label>
-                    </th>
-                    <td colspan="3">
-                        <select
-                            name="category"
-                            title="category of expense"
-                            required="required"
-                            autofocus>
-                            <c:forEach items="${sessionScope.categories}" var="singlecategory">
-                                <option value="${singlecategory.id}" ${singlecategory.id eq sessionScope.expense.categoryId ? 'selected' : ''}>${singlecategory.name}</option>
-                            </c:forEach>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="right">
-                        <label for="amount">amount (€):</label>
-                    </th>
-                    <td colspan="3">
-                        <input
-                            type="text"
-                            name="amount"
-                            size="40"
-                            maxlength="40"
-                            title="amount of expense - #0.00"
-                            placeholder="0.00"
-                            pattern="[-+]?[0-9]*[,.]?[0-9]{0,2}"
-                            required="required"
-                            autocomplete="off"
-                            value="${sessionScope.expense.amount != 0.0 ? sessionScope.expense.amount : ''}">
-                    </td>
-                </tr>
-                <tr>
-                    <th class="right">
-                        <label for="reason">reason:</label>
-                    </th>
-                    <td colspan="3">
-                        <input
-                            type="text"
-                            name="reason"
-                            size="40"
-                            maxlength="40"
-                            title="reason for expense - at least 3 characters"
-                            placeholder="gone shopping"
-                            pattern=".{3,}"
-                            required="required"
-                            value="${sessionScope.expense.reason}">
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <input type="reset" value="Reset">
-                    </td>
-                    <td colspan="2">
-                        <input type="submit" value="Create Expense">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </fieldset>
+<div class="w3-panel">
+    <div class="w3-row-padding">
+        <div class="w3-third">
+            <input class="w3-input w3-border w3-round-large"
+                type="number"
+                name="day"
+                size="4"
+                maxlength="2"
+                min="1"
+                max="31"
+                title="day - 1-31"
+                placeholder="31"
+                value="${sessionScope.expense.getDay().get(5)}"
+                required="required" >
+            <label class="w3-label">Day</label>
+        </div><div class="w3-third">
+            <input class="w3-input w3-border w3-round-large"
+                type="number"
+                name="month"
+                size="4"
+                maxlength="2"
+                min="1"
+                max="12"
+                title="month - 1-12"
+                placeholder="12"
+                value="${sessionScope.expense.getDay().get(2)+1}"
+                required="required">
+            <label class="w3-label">Month</label>
+        </div><div class="w3-third">
+            <input class="w3-input w3-border w3-round-large"
+                type="number"
+                name="year"
+                size="6"
+                maxlength="4"
+                min="2000"
+                max="2100"
+                title="year - yyyy"
+                placeholder="2015"
+                value="${sessionScope.expense.getDay().get(1)}"
+                required="required">
+            <label class="w3-label" for="year">Year</label>
+        </div>
+    </div>
+</div><div class="w3-panel">
+    <select class="w3-input w3-border w3-round-large"
+        name="category"
+        title="category of expense"
+        required="required"
+        autofocus>
+        <c:forEach items="${sessionScope.categories}" var="singlecategory">
+            <option value="${singlecategory.id}" ${singlecategory.id eq sessionScope.expense.categoryId ? 'selected' : ''}>${singlecategory.name}</option>
+        </c:forEach>
+    </select>
+    <label class="w3-label" for="category">Category</label>
+</div><div class="w3-panel">
+    <input class="w3-input w3-border w3-round-large"
+        type="text"
+        name="amount"
+        size="40"
+        maxlength="40"
+        title="amount of expense - #0.00"
+        placeholder="0.00"
+        pattern="[-+]?[0-9]*[,.]?[0-9]{0,2}"
+        required="required"
+        autocomplete="off"
+        value="${sessionScope.expense.amount != 0.0 ? sessionScope.expense.amount : ''}">
+    <label class="w3-label" for="amount">Amount (€)</label>
+</div><div class="w3-panel">
+    <input class="w3-input w3-border w3-round-large"
+        type="text"
+        name="reason"
+        size="40"
+        maxlength="40"
+        title="reason for expense - at least 3 characters"
+        placeholder="gone shopping"
+        pattern=".{3,}"
+        required="required"
+        value="${sessionScope.expense.reason}">
+    <label class="w3-label" for="reason">Reason</label>
+</div><div class="w3-panel">
+    <div class="w3-row">
+        <input class="w3-btn w3-green w3-xlarge w3-round-xxlarge" type="submit" value="Create Expense">
+        <input class="w3-btn w3-red w3-tiny w3-round-xxlarge" type="reset" value="Reset">
+    </div>
+</div>
 </form>
 
 

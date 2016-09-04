@@ -17,57 +17,68 @@ the License.
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="css/styles.css">
-        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-        <title>MyExpenses</title>
-    </head>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/w3.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>MyExpenses</title>
+</head>
 
 <c:set var="disabled" value="${param.disabled eq 'true'}" scope="page"/>
+<c:set var="disabled" value="false" scope="page"/>
 
-    <body>
-        <header>
-            <div style="background-color:lightgray;display:table;width:100%">
-                <div style="display:table-cell;vertical-align:middle;align:center;width:100%;padding:5px 30px 5px 30px;">
-                    <h1 class="title" style="width:100%;margin:auto">MyExpenses</h1>
-                </div>
-                <div style="display:table-cell;text-align:center;height:130px;padding:5px 30px 5px 30px;">
-                    <div style="display:inline-block;width:96px">
-                        <c:if test="${not disabled}">
-                            <a href="editaccount" title="edit account"><img src="img/user-id_96.png" alt="user profile" title="user profile"/><br/><span style="font-weight:bold"><c:out value="${sessionScope.account.login}"/></span></a>
-                        </c:if>
-                    </div>
-                </div>
-                <div style="display:table-cell;text-align:center;height:130px;padding:5px 30px 5px 30px;">
-                    <div style="display:inline-block;width:96px">
-                        <c:if test="${not disabled}">
-                            <a href="logout" title="logout"><img src="img/flag-alt_96.png" alt="logout" title="logout"/><br/><span style="font-weight:bold">Logout</span></a>
-                        </c:if>
-                    </div>
-                </div>
-            </div>
+<body>
+    <div class="w3-row w3-grey">
+        <header class="w3-col m6">
+            <h1 style="text-align:center">MyExpenses</h1>
         </header>
-
-        <div class="inline-block" style="background-color:lightgray;margin:0px;padding:15px;padding-top:0px">
-            <ul class="menu">
-                <li class="menu-item" style="${disabled ? '' : 'background-color:white'}"><a ${disabled ? '' : 'href="addexpense"'} title="add expense">
-                    <img src="img/sign-add_96.png" alt="add expense" title="add expense"/>
-                    <br/>Add Expense
-                </a></li>
-                <li class="menu-item" style="${disabled ? '' : 'background-color:white'}"><a ${disabled ? '' : 'href="listexpenses"'} title="list expenses">
-                    <img src="img/folder_96.png" alt="list expenses" title="list expenses"/>
-                    <br/>List Expenses
-                </a></li>
-                <li class="menu-item" style="${disabled ? '' : 'background-color:white'}"><a ${disabled ? '' : 'href="listcategories"'} title="list categories">
-                    <img src="img/layers_96.png" alt="list categories" title="list categories"/>
-                    <br/>List Categories
-                </a></li>
-                <li class="menu-item" style="${disabled ? '' : 'background-color:white'}"><a ${disabled ? '' : 'href="showstatistics"'} title="show statistics">
-                    <img src="img/file-powerpoint_96.png" alt="show statistics" title="show statistics"/>
-                    <br/>Show Statistics
-                </a></li>
+        <c:if test="${not disabled}"><nav class="w3-col m3">
+            <ul class="w3-ul">
+                <li class="w3-hover-yellow">
+                    <a href="editaccount" title="edit account">
+                        <img class="w3-left w3-margin-right" src="img/user-id_96.png" alt="user profile" title="user profile" style="width:40px">
+                        <span class="w3-xlarge">test<c:out value="${sessionScope.account.login}"/></span>
+                    </a>
+                </li>
             </ul>
-        </div>
-
-        <div class="inline-block">
+        </nav>
+        <nav class="w3-col m3">
+            <ul class="w3-ul">
+                <li class="w3-hover-yellow">
+                    <a href="logout" title="logout">
+                        <img class="w3-left w3-margin-right" src="img/flag-alt_96.png" alt="logout" title="logout" style="width:40px">
+                        <span class="w3-xlarge">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav></c:if>
+    </div>
+    <div class="w3-row">
+        <nav class="w3-col m3 w3-grey">
+            <ul class="w3-ul">
+                <li class="${disabled ? '' : 'w3-hover-yellow'}">
+                    <a ${disabled ? '' : 'href="addexpense"'} title="add expense">
+                        <img class="w3-left w3-margin-right" src="img/sign-add_96.png" alt="add expense" title="add expense" style="width:40px">
+                        <span class="w3-xlarge">Add Expense</span>
+                    </a>
+                </li><li class="${disabled ? '' : 'w3-hover-yellow'}">
+                    <a ${disabled ? '' : 'href="listexpenses"'} title="list expenses">
+                        <img class="w3-left w3-margin-right" src="img/folder_96.png" alt="list expenses" title="list expenses" style="width:40px">
+                        <span class="w3-xlarge">List Expenses</span>
+                    </a>
+                </li><li class="${disabled ? '' : 'w3-hover-yellow'}">
+                    <a ${disabled ? '' : 'href="listcategories"'} title="list categories">
+                        <img class="w3-left w3-margin-right" src="img/layers_96.png" alt="list categories" title="list categories" style="width:40px">
+                        <span class="w3-xlarge">List Categories</span>
+                    </a>
+                </li><li class="${disabled ? '' : 'w3-hover-yellow'}">
+                    <a ${disabled ? '' : 'href="showstatistics"'} title="show statistics">
+                        <img class="w3-left w3-margin-right" src="img/file-powerpoint_96.png" alt="show statistics" title="show statistics" style="width:40px">
+                        <span class="w3-xlarge">Show Statistics</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <section class="w3-col m9 w3-light-grey w3-container w3-card-4">

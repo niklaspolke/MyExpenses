@@ -22,44 +22,46 @@ the License.
 <link rel="stylesheet" href="css/chartist.min.css">
 <script type="text/javascript" src="js/chartist.min.js"></script>
 
-<h3>Test Statistics:</h3>
+<h3>Statistics</h3>
 
-<div class="inline-block">
+<div class="w3-panel">
     <form action="showstatistics" method="post">
-        <select
+        <select class="w3-input w3-border w3-round-large"
             name="month"
             title="month of expense"
-            style="height:30px;font-size:1.5em;margin-bottom: 30px"
             required="required" onchange="this.form.submit()"
             autofocus>
             <c:forEach var="month" items="${sessionScope.months}">
                 <option value="${month}" ${sessionScope.month eq month ? 'selected' : ''}>${month}</option>
             </c:forEach>
         </select>
+        <label class="w3-label" for="month">Month</label>
     </form>
-
-    <div id="myChart" style="height: 300px;width: 300px;"></div>
 </div>
 
-<div class="inline-block">
-    <fmt:setLocale value="de_DE"/>
-    <table class="tableList bordered">
-        <tr>
-            <th>Category</th>
-            <th style="width:100px">Value</th>
-        </tr>
-        <c:forEach var="category" items="${sessionScope.statistics}">
+<div class="w3-panel w3-row-padding">
+    <div class="w3-col m6" id="myChart" style="height: 300px"></div>
+
+    <div class="w3-col m6">
+        <fmt:setLocale value="de_DE"/>
+        <table class="w3-table-all">
             <tr>
-                <td>
-                    ${category.name}
-                </td><td class="number">
-                    <fmt:formatNumber value="${category.value}" type="currency"/>
-                </td>
+                <th>Category</th>
+                <th style="width:100px">Value</th>
             </tr>
-        </c:forEach>
-        <tr>
-        </tr>
-    </table>
+            <c:forEach var="category" items="${sessionScope.statistics}">
+                <tr>
+                    <td>
+                        ${category.name}
+                    </td><td class="number">
+                        <fmt:formatNumber value="${category.value}" type="currency"/>
+                    </td>
+                </tr>
+            </c:forEach>
+            <tr>
+            </tr>
+        </table>
+    </div>
 </div>
 
 <script type="text/javascript">

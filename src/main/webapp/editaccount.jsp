@@ -23,93 +23,65 @@ the License.
 <h3>Edit Account</h3>
 
 <form action="editaccount" method="post">
-    <fieldset>
-        <legend>Account</legend>
-        <table>
-            <tbody>
-                <tr>
-                    <th class="right">
-                        <label>Username:</label>
-                    </th>
-                    <td>
-                        <input
-                            type="text"
-                            name="login"
-                            size="40"
-                            maxlength="20"
-                            title="username - at least 4 characters"
-                            placeholder="<username>"
-                            pattern=".{4,}"
-                            required="required"
-                            value="${sessionScope.account.login}"
-                            disabled>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="right">
-                        <label for="password">Old Password:</label>
-                    </th>
-                    <td>
-                        <input
-                            type="password"
-                            name="oldpassword"
-                            size="40"
-                            maxlength="30"
-                            title="login password"
-                            placeholder="<password>"
-                            required="required"
-                            value=""
-                            autofocus>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="right">
-                        <label for="password2">New Password:</label>
-                    </th>
-                    <td>
-                        <input
-                            type="password"
-                            name="newpassword1"
-                            size="40"
-                            maxlength="30"
-                            title="repeat new password"
-                            placeholder="<password>"
-                            pattern=".{4,}"
-                            required="required"
-                            value="">
-                    </td>
-                </tr>
-                <tr>
-                    <th class="right">
-                        <label for="password2">Repeat New Password:</label>
-                    </th>
-                    <td>
-                        <input
-                            type="password"
-                            name="newpassword2"
-                            size="40"
-                            maxlength="30"
-                            title="repeat new password"
-                            placeholder="<password>"
-                            pattern=".{4,}"
-                            required="required"
-                            value="">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="error" colspan="2">${requestScope.errorMessage}</td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="reset" value="Reset">
-                    </td>
-                    <td>
-                        <input type="submit" value="Update Account" onclick="return checkPasswords()">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </fieldset>
+<c:if test="${not empty requestScope.errorMessage}"><div class="w3-panel w3-leftbar w3-pale-red w3-border-red">
+    ${requestScope.errorMessage}
+</div></c:if>
+<div class="w3-panel">
+    <input class="w3-input w3-border w3-round-large"
+        type="text"
+        name="login"
+        size="40"
+        maxlength="20"
+        title="username - at least 4 characters"
+        placeholder="<username>"
+        pattern=".{4,}"
+        required="required"
+        value="${sessionScope.account.login}"
+        disabled>
+    <label class="w3-label" for="login">Username</label>
+</div><div class="w3-panel">
+    <input class="w3-input w3-border w3-round-large"
+        type="password"
+        name="oldpassword"
+        size="40"
+        maxlength="30"
+        title="login password"
+        placeholder="<password>"
+        pattern=".{4,}"
+        required="required"
+        value=""
+        autofocus>
+    <label class="w3-label" for="oldpassword">Old Password</label>
+</div><div class="w3-panel">
+    <input class="w3-input w3-border w3-round-large"
+        type="password"
+        name="newpassword1"
+        size="40"
+        maxlength="30"
+        title="new password"
+        placeholder="<password>"
+        pattern=".{4,}"
+        required="required"
+        value="">
+    <label class="w3-label" for="newpassword1">New Password</label>
+</div><div class="w3-panel">
+    <input class="w3-input w3-border w3-round-large"
+        type="password"
+        name="newpassword2"
+        size="40"
+        maxlength="30"
+        title="repeat new password"
+        placeholder="<password>"
+        pattern=".{4,}"
+        required="required"
+        value="">
+    <label class="w3-label" for="newpassword2">Repeat New Password</label>
+</div><div class="w3-panel">
+    <div class="w3-row">
+        <input class="w3-btn w3-green w3-xlarge w3-round-xxlarge" type="submit" value="Update Account" onclick="return checkPasswords()">
+        <input class="w3-btn w3-red w3-tiny w3-round-xxlarge" type="reset" value="Reset">
+    </div>
+</div>
 </form>
 
 <script type="text/javascript">
