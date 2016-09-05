@@ -56,7 +56,7 @@ the License.
     </div>
     <div class="w3-row">
         <nav class="w3-col m3 w3-grey">
-            <ul class="w3-ul">
+            <c:if test="${not disabled}"><ul class="w3-ul">
                 <li class="${disabled ? '' : 'w3-hover-yellow'}">
                     <a ${disabled ? '' : 'href="addexpense"'} title="add expense">
                         <img class="w3-left w3-margin-right" src="img/sign-add_96.png" alt="add expense" title="add expense" style="width:40px">
@@ -78,6 +78,6 @@ the License.
                         <span class="w3-xlarge">Show Statistics</span>
                     </a>
                 </li>
-            </ul>
+            </ul></c:if>
         </nav>
         <section class="w3-col m9 w3-light-grey w3-container w3-card-4">
