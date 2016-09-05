@@ -28,7 +28,7 @@ the License.
 <table class="w3-table-all">
     <thead>
         <tr>
-            <c:if test="${requestScope.pageMax gt 1}"><th class="w3-light-grey">
+            <c:if test="${requestScope.pageMax gt 1}"><th class="w3-light-grey" colspan="5">
                 <c:choose>
                 <c:when test="${requestScope.page eq 1}">
                     <img src="img/sign-left_24_inactive.png" alt="inactive arrow left" title="no previous results" width="24" height="24"/>
