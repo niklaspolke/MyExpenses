@@ -30,7 +30,9 @@ the License.
 
 <body>
     <div class="w3-row w3-grey">
-        <span class="w3-col s3 w3-opennav w3-xlarge w3-hide-large w3-grey" onclick="w3_open()">&#9776; Menü</span>
+        <c:if test="${not disabled}"><span class="w3-col s3 w3-opennav w3-xlarge w3-hide-large w3-grey" onclick="w3_open()">
+            &#9776; Menü
+        </span></c:if>
         <header class="w3-col s9 l6">
             <h1 style="text-align:center">MyExpenses</h1>
         </header>
@@ -92,4 +94,4 @@ the License.
                 </li>
             </ul>
         </nav></c:if>
-    <section class="w3-main w3-rest w3-light-grey w3-container" onclick="w3_close()">
+    <section class="w3-main w3-rest w3-light-grey" style="overflow:auto" onclick="w3_close()">
