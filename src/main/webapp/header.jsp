@@ -30,10 +30,11 @@ the License.
 
 <body>
     <div class="w3-row w3-grey">
-        <header class="w3-col m6">
+        <span class="w3-col s3 w3-opennav w3-xlarge w3-hide-large w3-grey" onclick="w3_open()">&#9776; Menü</span>
+        <header class="w3-col s9 l6">
             <h1 style="text-align:center">MyExpenses</h1>
         </header>
-        <c:if test="${not disabled}"><nav class="w3-col m3">
+        <c:if test="${not disabled}"><nav class="w3-col l3 w3-hide-medium w3-hide-small">
             <ul class="w3-ul">
                 <li class="w3-hover-yellow">
                     <a href="editaccount" title="edit account">
@@ -43,7 +44,7 @@ the License.
                 </li>
             </ul>
         </nav>
-        <nav class="w3-col m3">
+        <nav class="w3-col l3 w3-hide-medium w3-hide-small">
             <ul class="w3-ul">
                 <li class="w3-hover-yellow">
                     <a href="logout" title="logout">
@@ -55,8 +56,9 @@ the License.
         </nav></c:if>
     </div>
     <div class="w3-row">
-        <nav class="w3-col m3 w3-grey">
-            <c:if test="${not disabled}"><ul class="w3-ul">
+        <c:if test="${not disabled}"><nav class="w3-sidenav w3-col s10 m6 l4 w3-collapse w3-animate-left w3-grey" style="position:relative !important" id="mySidenav">
+            <a href="javascript:void(0)" onclick="w3_close()" class="w3-closenav w3-xlarge w3-hide-large">Close X</a>
+            <ul class="w3-ul">
                 <li class="${disabled ? '' : 'w3-hover-yellow'}">
                     <a ${disabled ? '' : 'href="addexpense"'} title="add expense">
                         <img class="w3-left w3-margin-right" src="img/sign-add_96.png" alt="add expense" title="add expense" style="width:40px">
@@ -77,7 +79,17 @@ the License.
                         <img class="w3-left w3-margin-right" src="img/file-powerpoint_96.png" alt="show statistics" title="show statistics" style="width:40px">
                         <span class="w3-xlarge">Show Statistics</span>
                     </a>
+                </li><li class="w3-hover-yellow w3-hide-large">
+                    <a href="editaccount" title="edit account">
+                        <img class="w3-left w3-margin-right" src="img/user-id_96.png" alt="user profile" title="user profile" style="width:40px">
+                        <span class="w3-xlarge">TestAccount</span>
+                    </a>
+                </li><li class="w3-hover-yellow w3-hide-large">
+                    <a href="logout" title="logout">
+                        <img class="w3-left w3-margin-right" src="img/flag-alt_96.png" alt="logout" title="logout" style="width:40px">
+                        <span class="w3-xlarge">Logout</span>
+                    </a>
                 </li>
-            </ul></c:if>
-        </nav>
-        <section class="w3-col m9 w3-light-grey w3-container w3-card-4">
+            </ul>
+        </nav></c:if>
+    <section class="w3-main w3-rest w3-light-grey w3-container" onclick="w3_close()">

@@ -14,6 +14,16 @@ License for the specific language governing permissions and limitations under
 the License.
 --%>
 <%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
+<script type="text/javascript">
+function w3_open() {
+    document.getElementById("mySidenav").style.display = "inherit";
+    document.getElementById("mySidenav").style.top = "0px";
+}
+function w3_close() {
+    document.getElementById("mySidenav").style.display = "none";
+    document.getElementById("mySidenav").style.top = "";
+}
+</script>
             </section>
         </div>
     </body>
