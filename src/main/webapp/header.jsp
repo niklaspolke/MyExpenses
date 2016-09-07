@@ -40,7 +40,7 @@ the License.
             <ul class="w3-ul">
                 <li class="w3-hover-yellow">
                     <a href="editaccount" title="edit account">
-                        <img class="w3-left w3-margin-right" src="img/user-id_96.png" alt="user profile" title="user profile" style="width:40px">
+                        <img class="w3-left w3-margin-right" src="img/user-id_48.png" style="width:40px" alt="user profile" title="user profile">
                         <span class="w3-xlarge"><c:out value="${sessionScope.account.login}"/></span>
                     </a>
                 </li>
@@ -50,7 +50,7 @@ the License.
             <ul class="w3-ul">
                 <li class="w3-hover-yellow">
                     <a href="logout" title="logout">
-                        <img class="w3-left w3-margin-right" src="img/flag-alt_96.png" alt="logout" title="logout" style="width:40px">
+                        <img class="w3-left w3-margin-right" src="img/flag-alt_48.png" style="width:40px" alt="logout" title="logout">
                         <span class="w3-xlarge">Logout</span>
                     </a>
                 </li>
@@ -63,32 +63,32 @@ the License.
             <ul class="w3-ul">
                 <li class="${disabled ? '' : 'w3-hover-yellow'}">
                     <a ${disabled ? '' : 'href="addexpense"'} title="add expense">
-                        <img class="w3-left w3-margin-right" src="img/sign-add_96.png" alt="add expense" title="add expense" style="width:40px">
+                        <img class="w3-left w3-margin-right" src="img/sign-add_48.png" style="width:40px" alt="add expense" title="add expense">
                         <span class="w3-xlarge">Add Expense</span>
                     </a>
                 </li><li class="${disabled ? '' : 'w3-hover-yellow'}">
                     <a ${disabled ? '' : 'href="listexpenses"'} title="list expenses">
-                        <img class="w3-left w3-margin-right" src="img/folder_96.png" alt="list expenses" title="list expenses" style="width:40px">
+                        <img class="w3-left w3-margin-right" src="img/folder_48.png" style="width:40px" alt="list expenses" title="list expenses">
                         <span class="w3-xlarge">List Expenses</span>
                     </a>
                 </li><li class="${disabled ? '' : 'w3-hover-yellow'}">
                     <a ${disabled ? '' : 'href="listcategories"'} title="list categories">
-                        <img class="w3-left w3-margin-right" src="img/layers_96.png" alt="list categories" title="list categories" style="width:40px">
+                        <img class="w3-left w3-margin-right" src="img/layers_48.png" style="width:40px" alt="list categories" title="list categories">
                         <span class="w3-xlarge">List Categories</span>
                     </a>
                 </li><li class="${disabled ? '' : 'w3-hover-yellow'}">
                     <a ${disabled ? '' : 'href="showstatistics"'} title="show statistics">
-                        <img class="w3-left w3-margin-right" src="img/file-powerpoint_96.png" alt="show statistics" title="show statistics" style="width:40px">
+                        <img class="w3-left w3-margin-right" src="img/file-powerpoint_48.png" style="width:40px" alt="show statistics" title="show statistics">
                         <span class="w3-xlarge">Show Statistics</span>
                     </a>
                 </li><li class="w3-hover-yellow w3-hide-large">
                     <a href="editaccount" title="edit account">
-                        <img class="w3-left w3-margin-right" src="img/user-id_96.png" alt="user profile" title="user profile" style="width:40px">
+                        <img class="w3-left w3-margin-right" src="img/user-id_48.png" style="width:40px" alt="user profile" title="user profile">
                         <span class="w3-xlarge">TestAccount</span>
                     </a>
                 </li><li class="w3-hover-yellow w3-hide-large">
                     <a href="logout" title="logout">
-                        <img class="w3-left w3-margin-right" src="img/flag-alt_96.png" alt="logout" title="logout" style="width:40px">
+                        <img class="w3-left w3-margin-right" src="img/flag-alt_48.png" style="width:40px" alt="logout" title="logout">
                         <span class="w3-xlarge">Logout</span>
                     </a>
                 </li>
