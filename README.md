@@ -5,15 +5,13 @@ Web Application to track and analyse my expenses
 * Coverage: [![codecov.io](http://codecov.io/github/niklaspolke/MyExpenses/coverage.svg?branch=master)](http://codecov.io/github/niklaspolke/MyExpenses?branch=master)
 
 ### Planned features:
-* User registration / login
-* Expense handling (date, amount, description, category)
-* Category handling (name)
+* Quick cloning of frequently used expenses 
 * Multiple language support
-* Graphical statistics
 
 ### Architecture:
 * Java EE
 * JSP / EL / JSTL / Chartist.js
+* W3.CSS
 * JDBC / HSQLDB
 * Maven
 * Tomcat
