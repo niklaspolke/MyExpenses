@@ -84,7 +84,7 @@ the License.
                 </li><li class="w3-hover-yellow w3-hide-large">
                     <a href="editaccount" title="edit account">
                         <img class="w3-left w3-margin-right" src="img/user-id_48.png" style="width:40px" alt="user profile" title="user profile">
-                        <span class="w3-xlarge">TestAccount</span>
+                        <span class="w3-xlarge"><c:out value="${sessionScope.account.login}"/></span>
                     </a>
                 </li><li class="w3-hover-yellow w3-hide-large">
                     <a href="logout" title="logout">
