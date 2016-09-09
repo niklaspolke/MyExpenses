@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 
 /**
@@ -46,6 +47,11 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 			"WHERE c.account_id = ? " +
 			"GROUP BY c.name " +
 			"ORDER BY c.name ASC";
+
+	private static final String SQL_READ_TOPTEN_BY_ACCOUNT_ID = "SELECT * FROM ("
+			+ "SELECT COUNT(e.reason), e.reason, e.category_id, c.name " + "FROM Expense e " + "JOIN Category c "
+			+ "ON e.category_id = c.id " + "WHERE account_id = ? " + "GROUP BY e.category_id, c.name, e.reason "
+			+ "ORDER BY COUNT(e.reason) DESC " + ") WHERE rownum() <= 10";
 	//@formatter:on
 
 	public List<String> readDistinctMonthsByAccountId(final long accountId) {
@@ -88,5 +94,29 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 		}
 
 		return statisticsPairs;
+	}
+
+	public List<Expense> readTopTenByAccountId(final long accountId) {
+		List<Expense> expenses = new ArrayList<Expense>();
+
+		try (Connection connection = getConnection()) {
+			PreparedStatement readStatement;
+			readStatement = connection.prepareStatement(SQL_READ_TOPTEN_BY_ACCOUNT_ID);
+			readStatement.setLong(1, accountId);
+			ResultSet result = readStatement.executeQuery();
+			while (result.next()) {
+				Expense expense = new Expense();
+				expense.setReason(result.getString("reason"));
+				expense.setCategoryId(result.getLong("category_id"));
+				expense.setAccountId(accountId);
+				expense.setCategoryName(result.getString("name"));
+				expenses.add(expense);
+			}
+			connection.rollback();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return expenses;
 	}
 }

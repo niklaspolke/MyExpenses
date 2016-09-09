@@ -6,9 +6,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 
 /**
@@ -30,6 +32,9 @@ import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
  */
 public class StatisticsDAOTest extends AbstractDAOTest {
 
+	private static final String TESTDATA_INSERT_SCRIPT = "src/test/resources/insert_testdata_statistics.sql";
+	private static final long ACCOUNT_ID = 2;
+
 	private static StatisticsDAO statisticsDAO;
 
 	private static long testCounter = 0;
@@ -43,14 +48,20 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 		statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsPair.class);
 	}
 
+	@Before
+	public void setup() {
+		this.scriptExecutor.executeSqlScript(TESTDATA_INSERT_SCRIPT);
+	}
+
 	@Test
 	public void readDistinctMonthsByAccountId_ValidAccount() {
-		List<String> months = statisticsDAO.readDistinctMonthsByAccountId(1);
+		List<String> months = statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID);
 
 		assertNotNull(months);
-		assertEquals(2, months.size());
-		assertEquals("2015.06", months.get(0));
-		assertEquals("2015.05", months.get(1));
+		assertEquals(3, months.size());
+		assertEquals("2015.07", months.get(0));
+		assertEquals("2015.06", months.get(1));
+		assertEquals("2015.05", months.get(2));
 	}
 
 	@Test
@@ -63,35 +74,35 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void readStatisticsByMonthsAndAccountId_201506() {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthsAndAccountId("2015.06", 1);
+		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthsAndAccountId("2015.06", ACCOUNT_ID);
 
 		assertNotNull(statistics);
 		assertEquals(3, statistics.size());
 		assertEquals("food", statistics.get(0).getName());
-		assertEquals(0.0, statistics.get(0).getValue(), 0.01);
+		assertEquals(35, statistics.get(0).getValue(), 0.01);
 		assertEquals("luxury", statistics.get(1).getName());
-		assertEquals(80.0, statistics.get(1).getValue(), 0.01);
+		assertEquals(15, statistics.get(1).getValue(), 0.01);
 		assertEquals("sports", statistics.get(2).getName());
-		assertEquals(0.0, statistics.get(2).getValue(), 0.01);
+		assertEquals(35, statistics.get(2).getValue(), 0.01);
 	}
 
 	@Test
 	public void readStatisticsByMonthsAndAccountId_201505() {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthsAndAccountId("2015.05", 1);
+		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthsAndAccountId("2015.05", ACCOUNT_ID);
 
 		assertNotNull(statistics);
 		assertEquals(3, statistics.size());
 		assertEquals("food", statistics.get(0).getName());
-		assertEquals(9.05, statistics.get(0).getValue(), 0.01);
+		assertEquals(12, statistics.get(0).getValue(), 0.01);
 		assertEquals("luxury", statistics.get(1).getName());
-		assertEquals(700.0, statistics.get(1).getValue(), 0.01);
+		assertEquals(27, statistics.get(1).getValue(), 0.01);
 		assertEquals("sports", statistics.get(2).getName());
-		assertEquals(0.0, statistics.get(2).getValue(), 0.01);
+		assertEquals(11, statistics.get(2).getValue(), 0.01);
 	}
 
 	@Test
 	public void readStatisticsByMonthsAndAccountId_InvalidMonth() {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthsAndAccountId("2015.07", 1);
+		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthsAndAccountId("2002.01", ACCOUNT_ID);
 
 		assertNotNull(statistics);
 		assertEquals(3, statistics.size());
@@ -109,5 +120,25 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 
 		assertNotNull(statistics);
 		assertEquals(0, statistics.size());
+	}
+
+	@Test
+	public void readTopTenByAccountId() {
+		List<Expense> expenses = statisticsDAO.readTopTenByAccountId(ACCOUNT_ID);
+
+		assertNotNull(expenses);
+		assertEquals(4, expenses.size());
+		assertEquals("climbing", expenses.get(0).getReason());
+		assertEquals("sports", expenses.get(0).getCategoryName());
+		assertEquals(21, expenses.get(0).getCategoryId());
+		assertEquals("supermarket", expenses.get(1).getReason());
+		assertEquals("food", expenses.get(1).getCategoryName());
+		assertEquals(22, expenses.get(1).getCategoryId());
+		assertEquals("jewels", expenses.get(2).getReason());
+		assertEquals("luxury", expenses.get(2).getCategoryName());
+		assertEquals(23, expenses.get(2).getCategoryId());
+		assertEquals("climbing", expenses.get(3).getReason());
+		assertEquals("luxury", expenses.get(3).getCategoryName());
+		assertEquals(23, expenses.get(3).getCategoryId());
 	}
 }
