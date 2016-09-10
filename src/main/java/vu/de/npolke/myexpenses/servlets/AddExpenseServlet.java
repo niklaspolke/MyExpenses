@@ -65,6 +65,7 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 
 		boolean errorOccured = false;
 		ServletReaction reaction = new ServletReaction();
+		reaction.setSessionAttribute("categoryPreset", null);
 
 		try {
 			long id = Long.parseLong(expenseId);
@@ -75,6 +76,7 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 				expense.setId(0);
 				expense.setDay(now.getTime());
 				reaction.setSessionAttribute("expense", expense);
+				reaction.setSessionAttribute("categoryPreset", Boolean.TRUE);
 			}
 		} catch (NumberFormatException nfe) {
 			Expense defaultExpense = new Expense();
@@ -88,6 +90,7 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 				for (Category category : categories) {
 					if (category.getId() == categoryIdAsLong) {
 						defaultExpense.setCategoryId(category.getId());
+						reaction.setSessionAttribute("categoryPreset", Boolean.TRUE);
 						break;
 					}
 				}
