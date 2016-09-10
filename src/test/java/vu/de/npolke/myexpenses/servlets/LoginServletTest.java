@@ -7,11 +7,16 @@ import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import vu.de.npolke.myexpenses.model.Account;
+import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.AccountDAO;
+import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 
 public class LoginServletTest {
@@ -22,24 +27,32 @@ public class LoginServletTest {
 
 	private Account account;
 	private LoginServlet servlet;
+	private List<Expense> topten;
 
 	@Before
 	public void init() {
 		account = new Account();
 		account.setId(ACCOUNT_ID);
+		topten = new ArrayList<Expense>();
+		topten.add(new Expense());
+		topten.add(new Expense());
 		servlet = new LoginServlet();
 		servlet.accountDAO = mock(AccountDAO.class);
+		servlet.statisticsDAO = mock(StatisticsDAO.class);
 	}
 
 	@Test
 	public void login_success() {
 		when(servlet.accountDAO.readByLogin(LOGIN, PASSWORD)).thenReturn(account);
+		when(servlet.statisticsDAO.readTopTenByAccountId(ACCOUNT_ID)).thenReturn(topten);
 
 		final ServletReaction reaction = servlet.login(LOGIN, PASSWORD);
 
 		assertNotNull(reaction);
 		// correct account in session
 		assertSame(account, reaction.getSessionAttributes().get("account"));
+		// correct topten in session
+		assertSame(topten, reaction.getSessionAttributes().get("topten"));
 		// correct navigation
 		assertEquals("listexpenses", reaction.getRedirect());
 	}

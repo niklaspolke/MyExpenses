@@ -41,6 +41,8 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
+	protected static final int MAX_LENGTH_REASON = 40;
+
 	ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
 	CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
 
@@ -48,18 +50,22 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 	protected ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
 
-		String id = request.getParameter("id");
+		final String id = request.getParameter("id");
+		final String reason = request.getParameter("reason");
+		final String categoryId = request.getParameter("category");
 
-		return prepareAddExpense(account, id);
+		return prepareAddExpense(account, id, reason, categoryId);
 	}
 
-	public ServletReaction prepareAddExpense(final Account account, final String expenseId) {
+	public ServletReaction prepareAddExpense(final Account account, final String expenseId, final String reason,
+			final String categoryId) {
 		List<Category> categories = categoryDAO.readByAccountId(account.getId());
 		Calendar now = Calendar.getInstance(Locale.GERMANY);
 		now.setTimeInMillis(System.currentTimeMillis());
 
 		boolean errorOccured = false;
 		ServletReaction reaction = new ServletReaction();
+		reaction.setSessionAttribute("categoryPreset", null);
 
 		try {
 			long id = Long.parseLong(expenseId);
@@ -70,10 +76,26 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 				expense.setId(0);
 				expense.setDay(now.getTime());
 				reaction.setSessionAttribute("expense", expense);
+				reaction.setSessionAttribute("categoryPreset", Boolean.TRUE);
 			}
 		} catch (NumberFormatException nfe) {
 			Expense defaultExpense = new Expense();
 			defaultExpense.setDay(now.getTime());
+			if (reason != null) {
+				defaultExpense.setReason(
+						reason.length() > MAX_LENGTH_REASON ? reason.substring(0, MAX_LENGTH_REASON) : reason);
+			}
+			try {
+				final long categoryIdAsLong = Long.parseLong(categoryId);
+				for (Category category : categories) {
+					if (category.getId() == categoryIdAsLong) {
+						defaultExpense.setCategoryId(category.getId());
+						reaction.setSessionAttribute("categoryPreset", Boolean.TRUE);
+						break;
+					}
+				}
+			} catch (NumberFormatException nfe2) {
+			}
 			reaction.setSessionAttribute("expense", defaultExpense);
 		}
 

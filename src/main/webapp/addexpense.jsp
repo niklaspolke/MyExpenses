@@ -71,7 +71,7 @@ the License.
         name="category"
         title="category of expense"
         required="required"
-        autofocus>
+        ${sessionScope.categoryPreset ? '' : 'autofocus'}>
         <c:forEach items="${sessionScope.categories}" var="singlecategory">
             <option value="${singlecategory.id}" ${singlecategory.id eq sessionScope.expense.categoryId ? 'selected' : ''}>${singlecategory.name}</option>
         </c:forEach>
@@ -88,7 +88,8 @@ the License.
         pattern="[-+]?[0-9]*[,.]?[0-9]{0,2}"
         required="required"
         autocomplete="off"
-        value="${sessionScope.expense.amount != 0.0 ? sessionScope.expense.amount : ''}">
+        value="${sessionScope.expense.amount != 0.0 ? sessionScope.expense.amount : ''}"
+        ${sessionScope.categoryPreset ? 'autofocus' : ''}>
     <label class="w3-label" for="amount">Amount (€)</label>
 </div><div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"

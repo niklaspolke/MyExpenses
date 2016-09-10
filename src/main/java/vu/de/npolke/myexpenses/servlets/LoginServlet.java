@@ -1,6 +1,7 @@
 package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,9 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import vu.de.npolke.myexpenses.model.Account;
+import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.AccountDAO;
 import vu.de.npolke.myexpenses.services.DAOFactory;
+import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
+import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -36,6 +40,7 @@ public class LoginServlet extends AbstractBasicServlet {
 	private static final long serialVersionUID = 1L;
 
 	AccountDAO accountDAO = (AccountDAO) DAOFactory.getDAO(Account.class);
+	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsPair.class);
 
 	@Override
 	public ServletReaction doPost(final HttpServletRequest request, final HttpServletResponse response,
@@ -53,7 +58,9 @@ public class LoginServlet extends AbstractBasicServlet {
 		Account account = accountDAO.readByLogin(login, password);
 
 		if (account != null) {
+			List<Expense> topten = statisticsDAO.readTopTenByAccountId(account.getId());
 			reaction.setSessionAttribute("account", account);
+			reaction.setSessionAttribute("topten", topten);
 			reaction.setRedirect("listexpenses");
 		} else {
 			reaction.setRequestAttribute("errorMessage", "unknown login or wrong password");
