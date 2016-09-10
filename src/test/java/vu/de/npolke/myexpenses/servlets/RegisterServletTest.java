@@ -58,7 +58,22 @@ public class RegisterServletTest {
 	}
 
 	@Test
-	public void register_equalPasswordsButNoAccount() {
+	public void register_differentPasswordsAndLoginAlreadyExists() {
+		when(servlet.accountDAO.create(LOGIN, PASSWORD)).thenReturn(null);
+
+		final ServletReaction reaction = servlet.registerUser(LOGIN, PASSWORD, OTHER_PASSWORD);
+
+		assertNotNull(reaction);
+		// correct account in session
+		assertNull(reaction.getSessionAttributes().get("account"));
+		// correct error message
+		assertEquals("password1 wasn't equal to password2", reaction.getRequestAttributes().get("errorMessage"));
+		// correct navigation
+		assertEquals("register.jsp", reaction.getForward());
+	}
+
+	@Test
+	public void register_equalPasswordsButLoginAlreadyExists() {
 		when(servlet.accountDAO.create(LOGIN, PASSWORD)).thenReturn(null);
 
 		final ServletReaction reaction = servlet.registerUser(LOGIN, PASSWORD, PASSWORD);
@@ -67,7 +82,7 @@ public class RegisterServletTest {
 		// correct account in session
 		assertNull(reaction.getSessionAttributes().get("account"));
 		// correct error message
-		assertEquals("password1 wasn't equal to password2", reaction.getRequestAttributes().get("errorMessage"));
+		assertEquals("user \"" + LOGIN + "\" already exists", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
 		assertEquals("register.jsp", reaction.getForward());
 	}
