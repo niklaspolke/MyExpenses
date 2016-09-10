@@ -38,6 +38,12 @@ import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
  */
 public class AddExpenseServletTest {
 
+	private static final long ACCOUNT_ID = 123;
+	private static final String REASON = "correctReason";
+	private static final String REASON_2_IGNORE = "wrongReason";
+	private static final long CATEGORY_ID = 14;
+	private static final long NON_EXISTING_CATEGORY_ID = 15;
+
 	private AddExpenseServlet servlet;
 
 	@Before
@@ -49,14 +55,13 @@ public class AddExpenseServletTest {
 
 	@Test
 	public void prepareAddExpense() {
-		long accountId = 123;
 		Account account = new Account();
-		account.setId(accountId);
+		account.setId(ACCOUNT_ID);
 		String expenseId = null;
 		List<Category> categories = new ArrayList<Category>();
-		when(servlet.categoryDAO.readByAccountId(accountId)).thenReturn(categories);
+		when(servlet.categoryDAO.readByAccountId(ACCOUNT_ID)).thenReturn(categories);
 
-		ServletReaction reaction = servlet.prepareAddExpense(account, expenseId);
+		ServletReaction reaction = servlet.prepareAddExpense(account, expenseId, null, null);
 
 		assertNotNull(reaction);
 		assertEquals(2, reaction.getSessionAttributes().size());
@@ -72,19 +77,123 @@ public class AddExpenseServletTest {
 	}
 
 	@Test
-	public void prepareCopyExpense() {
-		long accountId = 123;
+	public void prepareAddExpense_WithReason() {
 		Account account = new Account();
-		account.setId(accountId);
+		account.setId(ACCOUNT_ID);
+		String expenseId = null;
+		List<Category> categories = new ArrayList<Category>();
+		when(servlet.categoryDAO.readByAccountId(ACCOUNT_ID)).thenReturn(categories);
+
+		ServletReaction reaction = servlet.prepareAddExpense(account, expenseId, REASON, null);
+
+		assertNotNull(reaction);
+		assertEquals(2, reaction.getSessionAttributes().size());
+		// correct session attribute: prepared expense
+		Object expenseObject = reaction.getSessionAttributes().get("expense");
+		assertTrue(expenseObject instanceof Expense);
+		Expense expense = (Expense) expenseObject;
+		assertTrue(System.currentTimeMillis() - expense.getDay().getTimeInMillis() < 10000);
+		assertEquals(REASON, expense.getReason());
+		// correct session attribute: categories
+		assertSame(categories, reaction.getSessionAttributes().get("categories"));
+		// correct navigation
+		assertEquals("addexpense.jsp", reaction.getRedirect());
+	}
+
+	@Test
+	public void prepareAddExpense_WithCategoryId() {
+		Account account = new Account();
+		account.setId(ACCOUNT_ID);
+		String expenseId = null;
+		List<Category> categories = new ArrayList<Category>();
+		Category category = new Category();
+		category.setAccountId(ACCOUNT_ID);
+		category.setId(CATEGORY_ID);
+		categories.add(category);
+		when(servlet.categoryDAO.readByAccountId(ACCOUNT_ID)).thenReturn(categories);
+
+		ServletReaction reaction = servlet.prepareAddExpense(account, expenseId, null, "" + CATEGORY_ID);
+
+		assertNotNull(reaction);
+		assertEquals(2, reaction.getSessionAttributes().size());
+		// correct session attribute: prepared expense
+		Object expenseObject = reaction.getSessionAttributes().get("expense");
+		assertTrue(expenseObject instanceof Expense);
+		Expense expense = (Expense) expenseObject;
+		assertTrue(System.currentTimeMillis() - expense.getDay().getTimeInMillis() < 10000);
+		assertEquals(CATEGORY_ID, expense.getCategoryId());
+		// correct session attribute: categories
+		assertSame(categories, reaction.getSessionAttributes().get("categories"));
+		// correct navigation
+		assertEquals("addexpense.jsp", reaction.getRedirect());
+	}
+
+	@Test
+	public void prepareAddExpense_WithWrongCategoryId() {
+		Account account = new Account();
+		account.setId(ACCOUNT_ID);
+		String expenseId = null;
+		List<Category> categories = new ArrayList<Category>();
+		when(servlet.categoryDAO.readByAccountId(ACCOUNT_ID)).thenReturn(categories);
+
+		ServletReaction reaction = servlet.prepareAddExpense(account, expenseId, null, "" + NON_EXISTING_CATEGORY_ID);
+
+		assertNotNull(reaction);
+		assertEquals(2, reaction.getSessionAttributes().size());
+		// correct session attribute: prepared expense
+		Object expenseObject = reaction.getSessionAttributes().get("expense");
+		assertTrue(expenseObject instanceof Expense);
+		Expense expense = (Expense) expenseObject;
+		assertTrue(System.currentTimeMillis() - expense.getDay().getTimeInMillis() < 10000);
+		assertEquals(0, expense.getCategoryId());
+		// correct session attribute: categories
+		assertSame(categories, reaction.getSessionAttributes().get("categories"));
+		// correct navigation
+		assertEquals("addexpense.jsp", reaction.getRedirect());
+	}
+
+	@Test
+	public void prepareAddExpense_WithReasonAndCategoryId() {
+		Account account = new Account();
+		account.setId(ACCOUNT_ID);
+		String expenseId = null;
+		List<Category> categories = new ArrayList<Category>();
+		Category category = new Category();
+		category.setAccountId(ACCOUNT_ID);
+		category.setId(CATEGORY_ID);
+		categories.add(category);
+		when(servlet.categoryDAO.readByAccountId(ACCOUNT_ID)).thenReturn(categories);
+
+		ServletReaction reaction = servlet.prepareAddExpense(account, expenseId, REASON, "" + CATEGORY_ID);
+
+		assertNotNull(reaction);
+		assertEquals(2, reaction.getSessionAttributes().size());
+		// correct session attribute: prepared expense
+		Object expenseObject = reaction.getSessionAttributes().get("expense");
+		assertTrue(expenseObject instanceof Expense);
+		Expense expense = (Expense) expenseObject;
+		assertTrue(System.currentTimeMillis() - expense.getDay().getTimeInMillis() < 10000);
+		assertEquals(REASON, expense.getReason());
+		assertEquals(CATEGORY_ID, expense.getCategoryId());
+		// correct session attribute: categories
+		assertSame(categories, reaction.getSessionAttributes().get("categories"));
+		// correct navigation
+		assertEquals("addexpense.jsp", reaction.getRedirect());
+	}
+
+	@Test
+	public void prepareCopyExpense() {
+		Account account = new Account();
+		account.setId(ACCOUNT_ID);
 		long expenseId = 444;
 		Expense expense = new Expense();
-		expense.setAccountId(accountId);
+		expense.setAccountId(ACCOUNT_ID);
 		expense.setId(expenseId);
 		List<Category> categories = new ArrayList<Category>();
 		when(servlet.expenseDAO.read(expenseId)).thenReturn(expense);
-		when(servlet.categoryDAO.readByAccountId(accountId)).thenReturn(categories);
+		when(servlet.categoryDAO.readByAccountId(ACCOUNT_ID)).thenReturn(categories);
 
-		ServletReaction reaction = servlet.prepareAddExpense(account, Long.toString(expenseId));
+		ServletReaction reaction = servlet.prepareAddExpense(account, Long.toString(expenseId), null, null);
 
 		assertNotNull(reaction);
 		assertEquals(2, reaction.getSessionAttributes().size());
@@ -97,16 +206,46 @@ public class AddExpenseServletTest {
 	}
 
 	@Test
-	public void prepareCopyNonExistingExpense() {
-		long accountId = 123;
+	public void prepareCopyExpense_WithReasonAndCategory() {
 		Account account = new Account();
-		account.setId(accountId);
+		account.setId(ACCOUNT_ID);
+		long expenseId = 444;
+		Expense expense = new Expense();
+		expense.setAccountId(ACCOUNT_ID);
+		expense.setId(expenseId);
+		expense.setReason(REASON);
+		expense.setCategoryId(CATEGORY_ID);
+		List<Category> categories = new ArrayList<Category>();
+		when(servlet.expenseDAO.read(expenseId)).thenReturn(expense);
+		when(servlet.categoryDAO.readByAccountId(ACCOUNT_ID)).thenReturn(categories);
+
+		ServletReaction reaction = servlet.prepareAddExpense(account, Long.toString(expenseId), REASON_2_IGNORE,
+				"" + NON_EXISTING_CATEGORY_ID);
+
+		assertNotNull(reaction);
+		assertEquals(2, reaction.getSessionAttributes().size());
+		// correct session attribute: prepared expense
+		assertEquals(expense, reaction.getSessionAttributes().get("expense"));
+		final Expense sessionExpense = (Expense) reaction.getSessionAttributes().get("expense");
+		// ignore other parameters
+		assertEquals(CATEGORY_ID, sessionExpense.getCategoryId());
+		assertEquals(REASON, sessionExpense.getReason());
+		// correct session attribute: categories
+		assertSame(categories, reaction.getSessionAttributes().get("categories"));
+		// correct navigation
+		assertEquals("addexpense.jsp", reaction.getRedirect());
+	}
+
+	@Test
+	public void prepareCopyNonExistingExpense() {
+		Account account = new Account();
+		account.setId(ACCOUNT_ID);
 		long nonExistingExpenseId = 123;
 		List<Category> categories = new ArrayList<Category>();
 		when(servlet.expenseDAO.read(nonExistingExpenseId)).thenReturn(null);
-		when(servlet.categoryDAO.readByAccountId(accountId)).thenReturn(categories);
+		when(servlet.categoryDAO.readByAccountId(ACCOUNT_ID)).thenReturn(categories);
 
-		ServletReaction reaction = servlet.prepareAddExpense(account, Long.toString(nonExistingExpenseId));
+		ServletReaction reaction = servlet.prepareAddExpense(account, Long.toString(nonExistingExpenseId), null, null);
 
 		assertNotNull(reaction);
 		assertEquals(1, reaction.getRequestAttributes().size());
@@ -119,19 +258,18 @@ public class AddExpenseServletTest {
 
 	@Test
 	public void prepareCopyForeignExpense() {
-		long accountId = 123;
 		long foreignAccountId = 666;
 		Account account = new Account();
-		account.setId(accountId);
+		account.setId(ACCOUNT_ID);
 		long expenseId = 444;
 		Expense expense = new Expense();
 		expense.setAccountId(foreignAccountId);
 		expense.setId(expenseId);
 		List<Category> categories = new ArrayList<Category>();
 		when(servlet.expenseDAO.read(expenseId)).thenReturn(expense);
-		when(servlet.categoryDAO.readByAccountId(accountId)).thenReturn(categories);
+		when(servlet.categoryDAO.readByAccountId(ACCOUNT_ID)).thenReturn(categories);
 
-		ServletReaction reaction = servlet.prepareAddExpense(account, Long.toString(expenseId));
+		ServletReaction reaction = servlet.prepareAddExpense(account, Long.toString(expenseId), null, null);
 
 		assertNotNull(reaction);
 		assertEquals(1, reaction.getRequestAttributes().size());
@@ -145,7 +283,7 @@ public class AddExpenseServletTest {
 	@Test
 	public void addExpense() {
 		Account account = new Account();
-		account.setId(123);
+		account.setId(ACCOUNT_ID);
 		double amount = 123.1;
 		String reason = "reason";
 		long categoryId = 12;
@@ -160,6 +298,6 @@ public class AddExpenseServletTest {
 		// correct navigation
 		assertEquals("listexpenses", reaction.getRedirect());
 		// correct creation of Expense
-		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, categoryId, account.getId());
+		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, categoryId, ACCOUNT_ID);
 	}
 }
