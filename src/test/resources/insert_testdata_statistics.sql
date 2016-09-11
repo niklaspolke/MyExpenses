@@ -15,4 +15,25 @@ INSERT INTO expense(id, day, amount, reason, category_id, account_id) VALUES (20
 INSERT INTO expense(id, day, amount, reason, category_id, account_id) VALUES (209, '2015-06-04', 19, 'supermarket', 22, 2);
 INSERT INTO expense(id, day, amount, reason, category_id, account_id) VALUES (210, '2015-07-04', 20, 'climbing', 21, 2);
 
+INSERT INTO account(id, login, password) VALUES (3, 'statistics2', '5f4dcc3b5aa765d61d8327deb882cf99');
+
+INSERT INTO category(id, name, account_id) VALUES (31, 'sports', 3);
+INSERT INTO category(id, name, account_id) VALUES (32, 'food', 3);
+INSERT INTO category(id, name, account_id) VALUES (33, 'luxury', 3);
+
+INSERT INTO expense(id, day, amount, reason, category_id, account_id) VALUES (320, '2016-01-31', 45, 'aaaa', 31, 3);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id) VALUES (321, '2016-01-30', 22, 'bbbb', 31, 3);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id) VALUES (322, '2016-01-29', 33, 'cccc', 31, 3);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id) VALUES (323, '2016-01-28', 44, 'dddd', 31, 3);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id) VALUES (324, '2016-01-27', 11, 'eeee', 31, 3);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id) VALUES (325, '2016-01-26', 1, 'ffff', 31, 3);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id) VALUES (326, '2016-01-25', 2, 'gggg', 31, 3);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id) VALUES (327, '2016-01-24', 3, 'hhhh', 31, 3);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id) VALUES (328, '2016-01-23', 4, 'iiii', 31, 3);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id) VALUES (329, '2016-01-22', 5, 'jjjj', 31, 3);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id) VALUES (330, '2016-01-21', 6, 'kkkk', 31, 3);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id) VALUES (331, '2016-01-20', 7, 'jjjj', 32, 3);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id) VALUES (332, '2016-01-19', 8, 'kkkk', 33, 3);
+
+
 commit;

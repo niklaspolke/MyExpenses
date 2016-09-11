@@ -34,6 +34,7 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 
 	private static final String TESTDATA_INSERT_SCRIPT = "src/test/resources/insert_testdata_statistics.sql";
 	private static final long ACCOUNT_ID = 2;
+	private static final double DELTA = 0.001;
 
 	private static StatisticsDAO statisticsDAO;
 
@@ -140,5 +141,23 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 		assertEquals("climbing", expenses.get(3).getReason());
 		assertEquals("luxury", expenses.get(3).getCategoryName());
 		assertEquals(23, expenses.get(3).getCategoryId());
+	}
+
+	@Test
+	public void readTopTenByMonthAndCategory() {
+		List<Expense> expenses = statisticsDAO.readTopTenByMonthAndCategory(3, "2016.01", 31);
+
+		assertNotNull(expenses);
+		assertEquals(10, expenses.size());
+		assertEquals("aaaa", expenses.get(0).getReason());
+		assertEquals(323, expenses.get(1).getId());
+		assertEquals(33.0, expenses.get(2).getAmount(), DELTA);
+		assertEquals("bbbb", expenses.get(3).getReason());
+		assertEquals(324, expenses.get(4).getId());
+		assertEquals(6.0, expenses.get(5).getAmount(), DELTA);
+		assertEquals("jjjj", expenses.get(6).getReason());
+		assertEquals(328, expenses.get(7).getId());
+		assertEquals(3.0, expenses.get(8).getAmount(), DELTA);
+		assertEquals("gggg", expenses.get(9).getReason());
 	}
 }
