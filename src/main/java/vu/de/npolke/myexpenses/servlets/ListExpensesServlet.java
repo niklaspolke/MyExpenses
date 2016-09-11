@@ -13,7 +13,9 @@ import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.ExpenseDAO;
+import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
+import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -40,33 +42,57 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 	private static final int AMOUNT_OF_ENTRIES_PER_PAGE = 10;
 
 	ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
+	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsPair.class);
 
 	@Override
 	public ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
 
 		final String requestedPage = request.getParameter("page");
+		final String requestedMonth = request.getParameter("month");
+		final String requestCategoryId = request.getParameter("category");
 
-		return prepareListExpenses(account, requestedPage);
+		return prepareListExpenses(account, requestedPage, requestedMonth, requestCategoryId);
 	}
 
-	public ServletReaction prepareListExpenses(final Account account, final String requestedPage) {
+	public ServletReaction prepareListExpenses(final Account account, final String requestedPage,
+			final String monthForTopTen, final String categoryIdForTopTen) {
 		ServletReaction reaction = new ServletReaction();
+		List<Expense> expenses = null;
 
-		final long amountOfExpenses = expenseDAO.readAmountOfExpenses(account.getId());
+		if (monthForTopTen != null || categoryIdForTopTen != null) {
+			final long parsedCategoryIdForTopTen = parseLongDefault0(categoryIdForTopTen);
+			expenses = statisticsDAO.readTopTenByMonthAndCategory(account.getId(), monthForTopTen,
+					parsedCategoryIdForTopTen);
 
-		final int pageMax = calcAmountOfPages(amountOfExpenses, AMOUNT_OF_ENTRIES_PER_PAGE);
-		final int page = parseRequestedPage(requestedPage, pageMax);
+			reaction.setRequestAttribute("month", monthForTopTen);
+			reaction.setRequestAttribute("category", parsedCategoryIdForTopTen);
+		} else {
+			final long amountOfExpenses = expenseDAO.readAmountOfExpenses(account.getId());
 
-		final List<Expense> expenses = expenseDAO.readByAccountId(account.getId(),
-				(page - 1) * AMOUNT_OF_ENTRIES_PER_PAGE + 1, page * AMOUNT_OF_ENTRIES_PER_PAGE);
+			final int pageMax = calcAmountOfPages(amountOfExpenses, AMOUNT_OF_ENTRIES_PER_PAGE);
+			final int page = parseRequestedPage(requestedPage, pageMax);
 
-		reaction.setRequestAttribute("page", page);
-		reaction.setRequestAttribute("pageMax", pageMax);
+			expenses = expenseDAO.readByAccountId(account.getId(), (page - 1) * AMOUNT_OF_ENTRIES_PER_PAGE + 1,
+					page * AMOUNT_OF_ENTRIES_PER_PAGE);
+
+			reaction.setRequestAttribute("page", page);
+			reaction.setRequestAttribute("pageMax", pageMax);
+		}
+
 		reaction.setSessionAttribute("expenses", expenses);
 		reaction.setForward("listexpenses.jsp");
 
 		return reaction;
+	}
+
+	private static long parseLongDefault0(final String longAsString) {
+		long parsedLong = 0;
+		try {
+			parsedLong = Long.parseLong(longAsString);
+		} catch (NumberFormatException nfe) {
+		}
+		return parsedLong;
 	}
 
 	public int parseRequestedPage(final String requestedPage, final int pageMax) {
