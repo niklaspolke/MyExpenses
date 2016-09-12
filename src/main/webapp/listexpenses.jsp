@@ -60,7 +60,7 @@ the License.
             <tr>
                 <td><c:out value="${expense.getReadableDayAsString()}"/></td>
                 <c:if test="${empty requestScope.month}"><td><c:out value="${expense.categoryName}"/></td></c:if>
-                <td class="number"><fmt:formatNumber value="${expense.amount}" type="currency"/></td>
+                <td class="number" style="text-align:right"><fmt:formatNumber value="${expense.amount}" type="currency"/></td>
                 <td><c:out value="${expense.reason}"/></td>
                 <td style="border:none">
                     <a href="editexpense?id=${expense.id}"><img src="img/pencil_24.png" alt="edit expense" title="edit expense" width="24" height="24"/></a>

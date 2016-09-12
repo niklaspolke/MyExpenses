@@ -56,7 +56,7 @@ the License.
                         <c:when test="${category.name ne 'Summe' and category.value gt 0}"><a href="listexpenses?month=${sessionScope.month}&category=${category.id}">${category.name}</a></c:when>
                         <c:otherwise>${category.name}</c:otherwise>
                         </c:choose>
-                    </td><td class="number">
+                    </td><td class="number" style="text-align:right">
                         <fmt:formatNumber value="${category.value}" type="currency"/>
                     </td>
                 </tr>
