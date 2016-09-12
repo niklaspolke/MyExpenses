@@ -25,6 +25,7 @@ public class ListExpensesServletTest {
 	private static final long ACCOUNT_ID = 123;
 	private static final String MONTH = "2016.01";
 	private static final long CATEGORY_ID = 13;
+	private static final String CATEGORY = "Food";
 
 	private Account account;
 	private ListExpensesServlet servlet;
@@ -124,6 +125,10 @@ public class ListExpensesServletTest {
 	@Test
 	public void prepareListExpenses_MonthAndCategory() {
 		final ArrayList<Expense> expenses = new ArrayList<Expense>();
+		Expense expense = new Expense();
+		expense.setCategoryId(CATEGORY_ID);
+		expense.setCategoryName(CATEGORY);
+		expenses.add(expense);
 		when(servlet.statisticsDAO.readTopTenByMonthAndCategory(ACCOUNT_ID, MONTH, CATEGORY_ID)).thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, null, MONTH, "" + CATEGORY_ID);
@@ -132,7 +137,7 @@ public class ListExpensesServletTest {
 		// correct month in request
 		assertEquals(MONTH, reaction.getRequestAttributes().get("month"));
 		// correct categoryId in request
-		assertEquals(CATEGORY_ID, reaction.getRequestAttributes().get("category"));
+		assertEquals(CATEGORY, reaction.getRequestAttributes().get("category"));
 		// correct expenses in session
 		assertSame(expenses, reaction.getSessionAttributes().get("expenses"));
 		// correct navigation
@@ -150,7 +155,7 @@ public class ListExpensesServletTest {
 		// correct month in request
 		assertEquals(MONTH, reaction.getRequestAttributes().get("month"));
 		// correct categoryId in request
-		assertEquals(0l, reaction.getRequestAttributes().get("category"));
+		assertEquals("error" + CATEGORY_ID, reaction.getRequestAttributes().get("category"));
 		// correct expenses in session
 		assertSame(expenses, reaction.getSessionAttributes().get("expenses"));
 		// correct navigation
@@ -160,6 +165,10 @@ public class ListExpensesServletTest {
 	@Test
 	public void prepareListExpenses_MonthAndCategory_NoMonth() {
 		final ArrayList<Expense> expenses = new ArrayList<Expense>();
+		Expense expense = new Expense();
+		expense.setCategoryId(CATEGORY_ID);
+		expense.setCategoryName(CATEGORY);
+		expenses.add(expense);
 		when(servlet.statisticsDAO.readTopTenByMonthAndCategory(ACCOUNT_ID, null, CATEGORY_ID)).thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, "" + CATEGORY_ID);
@@ -168,7 +177,7 @@ public class ListExpensesServletTest {
 		// correct month in request
 		assertEquals(null, reaction.getRequestAttributes().get("month"));
 		// correct categoryId in request
-		assertEquals(CATEGORY_ID, reaction.getRequestAttributes().get("category"));
+		assertEquals(CATEGORY, reaction.getRequestAttributes().get("category"));
 		// correct expenses in session
 		assertSame(expenses, reaction.getSessionAttributes().get("expenses"));
 		// correct navigation

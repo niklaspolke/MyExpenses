@@ -75,49 +75,58 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void readStatisticsByMonthsAndAccountId_201506() {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthsAndAccountId("2015.06", ACCOUNT_ID);
+		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId("2015.06", ACCOUNT_ID);
 
 		assertNotNull(statistics);
 		assertEquals(3, statistics.size());
+		assertEquals(22, statistics.get(0).getId());
 		assertEquals("food", statistics.get(0).getName());
 		assertEquals(35, statistics.get(0).getValue(), 0.01);
+		assertEquals(23, statistics.get(1).getId());
 		assertEquals("luxury", statistics.get(1).getName());
 		assertEquals(15, statistics.get(1).getValue(), 0.01);
+		assertEquals(21, statistics.get(2).getId());
 		assertEquals("sports", statistics.get(2).getName());
 		assertEquals(35, statistics.get(2).getValue(), 0.01);
 	}
 
 	@Test
 	public void readStatisticsByMonthsAndAccountId_201505() {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthsAndAccountId("2015.05", ACCOUNT_ID);
+		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId("2015.05", ACCOUNT_ID);
 
 		assertNotNull(statistics);
 		assertEquals(3, statistics.size());
+		assertEquals(22, statistics.get(0).getId());
 		assertEquals("food", statistics.get(0).getName());
 		assertEquals(12, statistics.get(0).getValue(), 0.01);
+		assertEquals(23, statistics.get(1).getId());
 		assertEquals("luxury", statistics.get(1).getName());
 		assertEquals(27, statistics.get(1).getValue(), 0.01);
+		assertEquals(21, statistics.get(2).getId());
 		assertEquals("sports", statistics.get(2).getName());
 		assertEquals(11, statistics.get(2).getValue(), 0.01);
 	}
 
 	@Test
 	public void readStatisticsByMonthsAndAccountId_InvalidMonth() {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthsAndAccountId("2002.01", ACCOUNT_ID);
+		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId("2002.01", ACCOUNT_ID);
 
 		assertNotNull(statistics);
 		assertEquals(3, statistics.size());
+		assertEquals(22, statistics.get(0).getId());
 		assertEquals("food", statistics.get(0).getName());
 		assertEquals(0.0, statistics.get(0).getValue(), 0.01);
+		assertEquals(23, statistics.get(1).getId());
 		assertEquals("luxury", statistics.get(1).getName());
 		assertEquals(0.0, statistics.get(1).getValue(), 0.01);
+		assertEquals(21, statistics.get(2).getId());
 		assertEquals("sports", statistics.get(2).getName());
 		assertEquals(0.0, statistics.get(2).getValue(), 0.01);
 	}
 
 	@Test
 	public void readStatisticsByMonthsAndAccountId_InvalidAccount() {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthsAndAccountId("2015.06", 9);
+		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId("2015.06", 9);
 
 		assertNotNull(statistics);
 		assertEquals(0, statistics.size());

@@ -42,7 +42,7 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsPair.class);
 
 	private void readStatisticsForMonth(final ServletReaction reaction, final String month, final Account account) {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthsAndAccountId(month, account.getId());
+		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId());
 
 		List<String> labels = new ArrayList<String>();
 		List<Double> values = new ArrayList<Double>();
@@ -52,7 +52,7 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 			values.add(pair.getValue());
 			sum += pair.getValue();
 		}
-		statistics.add(new StatisticsPair("Summe", sum));
+		statistics.add(new StatisticsPair(0l, "Summe", sum));
 
 		JsonObject json = new JsonObject();
 		json.addParameter("labels", labels);

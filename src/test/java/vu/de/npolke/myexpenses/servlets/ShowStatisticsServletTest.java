@@ -42,10 +42,10 @@ public class ShowStatisticsServletTest {
 		months.add(MONTH);
 		months.add("2015.05");
 		final List<StatisticsPair> statistic = new ArrayList<StatisticsPair>();
-		statistic.add(new StatisticsPair("category1", 1.1));
-		statistic.add(new StatisticsPair("category2", 22.22));
+		statistic.add(new StatisticsPair(4l, "category1", 1.1));
+		statistic.add(new StatisticsPair(5l, "category2", 22.22));
 		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
-		when(servlet.statisticsDAO.readStatisticsByMonthsAndAccountId(MONTH, ACCOUNT_ID)).thenReturn(statistic);
+		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(MONTH, ACCOUNT_ID)).thenReturn(statistic);
 
 		final ServletReaction reaction = servlet.prepareStatistics(account);
 
@@ -54,6 +54,8 @@ public class ShowStatisticsServletTest {
 		assertEquals(months, reaction.getSessionAttributes().get("months"));
 		assertEquals(MONTH, reaction.getSessionAttributes().get("month"));
 		assertEquals(statistic, reaction.getSessionAttributes().get("statistics"));
+		assertEquals(4l, statistic.get(0).getId());
+		assertEquals(5l, statistic.get(1).getId());
 		assertEquals("{\"labels\":[\"category1\",\"category2\"],\"series\":[1.1,22.22]}",
 				reaction.getSessionAttributes().get("chart"));
 		// correct navigation
@@ -64,7 +66,7 @@ public class ShowStatisticsServletTest {
 	public void prepareStatistics_noMonths() {
 		final List<StatisticsPair> statistic = new ArrayList<StatisticsPair>();
 		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
-		when(servlet.statisticsDAO.readStatisticsByMonthsAndAccountId(null, ACCOUNT_ID)).thenReturn(statistic);
+		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(null, ACCOUNT_ID)).thenReturn(statistic);
 
 		final ServletReaction reaction = servlet.prepareStatistics(account);
 
@@ -82,9 +84,9 @@ public class ShowStatisticsServletTest {
 	public void showStatistics() {
 		final String MONTH = "2015.06";
 		final List<StatisticsPair> statistic = new ArrayList<StatisticsPair>();
-		statistic.add(new StatisticsPair("category1", 1.1));
-		statistic.add(new StatisticsPair("category2", 22.22));
-		when(servlet.statisticsDAO.readStatisticsByMonthsAndAccountId(MONTH, ACCOUNT_ID)).thenReturn(statistic);
+		statistic.add(new StatisticsPair(4l, "category1", 1.1));
+		statistic.add(new StatisticsPair(5l, "category2", 22.22));
+		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(MONTH, ACCOUNT_ID)).thenReturn(statistic);
 
 		final ServletReaction reaction = servlet.showStatistics(account, MONTH);
 
@@ -92,6 +94,8 @@ public class ShowStatisticsServletTest {
 		// correct values in session
 		assertEquals(MONTH, reaction.getSessionAttributes().get("month"));
 		assertEquals(statistic, reaction.getSessionAttributes().get("statistics"));
+		assertEquals(4l, statistic.get(0).getId());
+		assertEquals(5l, statistic.get(1).getId());
 		assertEquals("{\"labels\":[\"category1\",\"category2\"],\"series\":[1.1,22.22]}",
 				reaction.getSessionAttributes().get("chart"));
 		// correct navigation

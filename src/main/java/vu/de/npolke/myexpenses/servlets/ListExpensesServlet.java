@@ -66,7 +66,8 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 					parsedCategoryIdForTopTen);
 
 			reaction.setRequestAttribute("month", monthForTopTen);
-			reaction.setRequestAttribute("category", parsedCategoryIdForTopTen);
+			reaction.setRequestAttribute("category",
+					expenses.size() > 0 ? expenses.get(0).getCategoryName() : categoryIdForTopTen);
 		} else {
 			final long amountOfExpenses = expenseDAO.readAmountOfExpenses(account.getId());
 

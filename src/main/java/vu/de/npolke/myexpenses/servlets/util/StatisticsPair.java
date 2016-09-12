@@ -19,12 +19,18 @@ package vu.de.npolke.myexpenses.servlets.util;
  */
 public class StatisticsPair {
 
+	private Long id;
 	private String name;
 	private Double value;
 
-	public StatisticsPair(final String name, final Double value) {
+	public StatisticsPair(final Long id, final String name, final Double value) {
+		this.id = id;
 		this.name = name;
 		this.value = value;
+	}
+
+	public long getId() {
+		return id;
 	}
 
 	public String getName() {

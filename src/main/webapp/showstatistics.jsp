@@ -52,7 +52,10 @@ the License.
             <c:forEach var="category" items="${sessionScope.statistics}">
                 <tr>
                     <td>
-                        ${category.name}
+                        <c:choose>
+                        <c:when test="${category.name ne 'Summe' and category.value gt 0}"><a href="listexpenses?month=${sessionScope.month}&category=${category.id}">${category.name}</a></c:when>
+                        <c:otherwise>${category.name}</c:otherwise>
+                        </c:choose>
                     </td><td class="number">
                         <fmt:formatNumber value="${category.value}" type="currency"/>
                     </td>

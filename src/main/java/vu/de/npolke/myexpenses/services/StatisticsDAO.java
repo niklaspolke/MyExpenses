@@ -37,7 +37,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 					"ORDER BY month DESC";
 
 	private static final String SQL_SELECT_STATISTICS_FOR_MONTH =
-			"SELECT c.name as category, sum(e.amount) as sumofamount " +
+			"SELECT c.id as id, c.name as category, sum(e.amount) as sumofamount " +
 			"FROM category c " +
 			"LEFT OUTER JOIN ( " +
 					"SELECT category_id, amount " +
@@ -45,7 +45,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 					"WHERE year(day)+'.'+lpad(month(day),2,'0') = ? AND account_id = ? ) e " +
 			"ON e.category_id = c.id " +
 			"WHERE c.account_id = ? " +
-			"GROUP BY c.name " +
+			"GROUP BY c.id, c.name " +
 			"ORDER BY c.name ASC";
 
 	private static final String SQL_READ_TOPTEN_BY_ACCOUNT_ID =
@@ -89,7 +89,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 		return months;
 	}
 
-	public List<StatisticsPair> readStatisticsByMonthsAndAccountId(final String month, final long accountId) {
+	public List<StatisticsPair> readStatisticsByMonthAndAccountId(final String month, final long accountId) {
 		List<StatisticsPair> statisticsPairs = new ArrayList<StatisticsPair>();
 
 		try (Connection connection = getConnection()) {
@@ -100,9 +100,10 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 			readStatement.setLong(3, accountId);
 			ResultSet result = readStatement.executeQuery();
 			while (result.next()) {
+				Long id = result.getLong("id");
 				String category = result.getString("category");
 				Double value = result.getDouble("sumofamount");
-				statisticsPairs.add(new StatisticsPair(category, value));
+				statisticsPairs.add(new StatisticsPair(id, category, value));
 			}
 			connection.rollback();
 		} catch (SQLException e) {

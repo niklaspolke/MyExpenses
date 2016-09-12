@@ -24,15 +24,22 @@ import org.junit.Test;
 public class StatisticsPairTest {
 
 	@Test
+	public void constructorToGetterId() {
+		StatisticsPair pair = new StatisticsPair(4l, "category", 3.3);
+
+		assertEquals(4, pair.getId());
+	}
+
+	@Test
 	public void constructorToGetterName() {
-		StatisticsPair pair = new StatisticsPair("category", 3.3);
+		StatisticsPair pair = new StatisticsPair(4l, "category", 3.3);
 
 		assertEquals("category", pair.getName());
 	}
 
 	@Test
 	public void constructorToGetterValue() {
-		StatisticsPair pair = new StatisticsPair("category", 3.3);
+		StatisticsPair pair = new StatisticsPair(4l, "category", 3.3);
 
 		assertEquals(3.3, pair.getValue(), 0.01);
 	}
