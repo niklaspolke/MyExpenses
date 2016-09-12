@@ -25,7 +25,7 @@ the License.
 
 <div class="w3-panel">
     <a href="addcategory.jsp" title="add category">
-        Add Category<img src="img/sign-add_96.png" alt="add category" title="add category" width="24" height="24"/>
+        Add Category<img src="img/sign-add_24.png" alt="add category" title="add category" width="24" height="24"/>
     </a>
 </div>
 
