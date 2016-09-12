@@ -21,7 +21,7 @@ the License.
 <jsp:include page="header.jsp"/>
 
 
-<h3>List Expenses</h3>
+<h3>List Expenses<c:if test="${not empty requestScope.month}"> - Top10 <b><c:out value="${requestScope.category}"/></b> within <b><c:out value="${requestScope.month}"/></b></c:if></h3>
 
 <div class="w3-panel w3-padding-8">
 <fmt:setLocale value="de_DE"/>
@@ -49,7 +49,7 @@ the License.
         </tr>
         <tr>
             <th>Date</th>
-            <th>Category</th>
+            <c:if test="${empty requestScope.month}"><th>Category</th></c:if>
             <th>Amount</th>
             <th>Reason</th>
             <th>Modify</th>
@@ -59,7 +59,7 @@ the License.
         <c:forEach var="expense" items="${sessionScope.expenses}">
             <tr>
                 <td><c:out value="${expense.getReadableDayAsString()}"/></td>
-                <td><c:out value="${expense.categoryName}"/></td>
+                <c:if test="${empty requestScope.month}"><td><c:out value="${expense.categoryName}"/></td></c:if>
                 <td class="number"><fmt:formatNumber value="${expense.amount}" type="currency"/></td>
                 <td><c:out value="${expense.reason}"/></td>
                 <td style="border:none">

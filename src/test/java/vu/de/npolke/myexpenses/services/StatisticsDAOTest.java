@@ -34,6 +34,7 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 
 	private static final String TESTDATA_INSERT_SCRIPT = "src/test/resources/insert_testdata_statistics.sql";
 	private static final long ACCOUNT_ID = 2;
+	private static final double DELTA = 0.001;
 
 	private static StatisticsDAO statisticsDAO;
 
@@ -74,49 +75,58 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void readStatisticsByMonthsAndAccountId_201506() {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthsAndAccountId("2015.06", ACCOUNT_ID);
+		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId("2015.06", ACCOUNT_ID);
 
 		assertNotNull(statistics);
 		assertEquals(3, statistics.size());
+		assertEquals(22, statistics.get(0).getId());
 		assertEquals("food", statistics.get(0).getName());
 		assertEquals(35, statistics.get(0).getValue(), 0.01);
+		assertEquals(23, statistics.get(1).getId());
 		assertEquals("luxury", statistics.get(1).getName());
 		assertEquals(15, statistics.get(1).getValue(), 0.01);
+		assertEquals(21, statistics.get(2).getId());
 		assertEquals("sports", statistics.get(2).getName());
 		assertEquals(35, statistics.get(2).getValue(), 0.01);
 	}
 
 	@Test
 	public void readStatisticsByMonthsAndAccountId_201505() {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthsAndAccountId("2015.05", ACCOUNT_ID);
+		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId("2015.05", ACCOUNT_ID);
 
 		assertNotNull(statistics);
 		assertEquals(3, statistics.size());
+		assertEquals(22, statistics.get(0).getId());
 		assertEquals("food", statistics.get(0).getName());
 		assertEquals(12, statistics.get(0).getValue(), 0.01);
+		assertEquals(23, statistics.get(1).getId());
 		assertEquals("luxury", statistics.get(1).getName());
 		assertEquals(27, statistics.get(1).getValue(), 0.01);
+		assertEquals(21, statistics.get(2).getId());
 		assertEquals("sports", statistics.get(2).getName());
 		assertEquals(11, statistics.get(2).getValue(), 0.01);
 	}
 
 	@Test
 	public void readStatisticsByMonthsAndAccountId_InvalidMonth() {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthsAndAccountId("2002.01", ACCOUNT_ID);
+		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId("2002.01", ACCOUNT_ID);
 
 		assertNotNull(statistics);
 		assertEquals(3, statistics.size());
+		assertEquals(22, statistics.get(0).getId());
 		assertEquals("food", statistics.get(0).getName());
 		assertEquals(0.0, statistics.get(0).getValue(), 0.01);
+		assertEquals(23, statistics.get(1).getId());
 		assertEquals("luxury", statistics.get(1).getName());
 		assertEquals(0.0, statistics.get(1).getValue(), 0.01);
+		assertEquals(21, statistics.get(2).getId());
 		assertEquals("sports", statistics.get(2).getName());
 		assertEquals(0.0, statistics.get(2).getValue(), 0.01);
 	}
 
 	@Test
 	public void readStatisticsByMonthsAndAccountId_InvalidAccount() {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthsAndAccountId("2015.06", 9);
+		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId("2015.06", 9);
 
 		assertNotNull(statistics);
 		assertEquals(0, statistics.size());
@@ -140,5 +150,23 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 		assertEquals("climbing", expenses.get(3).getReason());
 		assertEquals("luxury", expenses.get(3).getCategoryName());
 		assertEquals(23, expenses.get(3).getCategoryId());
+	}
+
+	@Test
+	public void readTopTenByMonthAndCategory() {
+		List<Expense> expenses = statisticsDAO.readTopTenByMonthAndCategory(3, "2016.01", 31);
+
+		assertNotNull(expenses);
+		assertEquals(10, expenses.size());
+		assertEquals("aaaa", expenses.get(0).getReason());
+		assertEquals(323, expenses.get(1).getId());
+		assertEquals(33.0, expenses.get(2).getAmount(), DELTA);
+		assertEquals("bbbb", expenses.get(3).getReason());
+		assertEquals(324, expenses.get(4).getId());
+		assertEquals(6.0, expenses.get(5).getAmount(), DELTA);
+		assertEquals("jjjj", expenses.get(6).getReason());
+		assertEquals(328, expenses.get(7).getId());
+		assertEquals(3.0, expenses.get(8).getAmount(), DELTA);
+		assertEquals("gggg", expenses.get(9).getReason());
 	}
 }

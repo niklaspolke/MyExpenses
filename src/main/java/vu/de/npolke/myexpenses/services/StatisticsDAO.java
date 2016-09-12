@@ -37,7 +37,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 					"ORDER BY month DESC";
 
 	private static final String SQL_SELECT_STATISTICS_FOR_MONTH =
-			"SELECT c.name as category, sum(e.amount) as sumofamount " +
+			"SELECT c.id as id, c.name as category, sum(e.amount) as sumofamount " +
 			"FROM category c " +
 			"LEFT OUTER JOIN ( " +
 					"SELECT category_id, amount " +
@@ -45,13 +45,29 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 					"WHERE year(day)+'.'+lpad(month(day),2,'0') = ? AND account_id = ? ) e " +
 			"ON e.category_id = c.id " +
 			"WHERE c.account_id = ? " +
-			"GROUP BY c.name " +
+			"GROUP BY c.id, c.name " +
 			"ORDER BY c.name ASC";
 
-	private static final String SQL_READ_TOPTEN_BY_ACCOUNT_ID = "SELECT * FROM ("
-			+ "SELECT COUNT(e.reason), e.reason, e.category_id, c.name " + "FROM Expense e " + "JOIN Category c "
-			+ "ON e.category_id = c.id " + "WHERE account_id = ? " + "GROUP BY e.category_id, c.name, e.reason "
-			+ "ORDER BY COUNT(e.reason) DESC " + ") WHERE rownum() <= 10";
+	private static final String SQL_READ_TOPTEN_BY_ACCOUNT_ID =
+			"SELECT * FROM ( " +
+				"SELECT COUNT(e.reason), e.reason, e.category_id, c.name " +
+				"FROM Expense e " +
+				"JOIN Category c " +
+				"ON e.category_id = c.id " +
+				"WHERE account_id = ? " +
+				"GROUP BY e.category_id, c.name, e.reason " +
+				"ORDER BY COUNT(e.reason) DESC " +
+			") WHERE rownum() <= 10";
+
+	private static final String SQL_READ_TOPTEN_BY_MONTH_AND_CATEGORY =
+			"SELECT * FROM ( " +
+				"SELECT e.*, c.name " +
+				"FROM Expense e " +
+				"JOIN Category c " +
+				"ON e.category_id = c.id " +
+				"WHERE e.account_id = ? AND c.id = ? AND year(e.day)+'.'+lpad(month(e.day),2,'0') = ? " +
+				"ORDER BY e.amount DESC " +
+			") WHERE rownum() <= 10";
 	//@formatter:on
 
 	public List<String> readDistinctMonthsByAccountId(final long accountId) {
@@ -73,7 +89,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 		return months;
 	}
 
-	public List<StatisticsPair> readStatisticsByMonthsAndAccountId(final String month, final long accountId) {
+	public List<StatisticsPair> readStatisticsByMonthAndAccountId(final String month, final long accountId) {
 		List<StatisticsPair> statisticsPairs = new ArrayList<StatisticsPair>();
 
 		try (Connection connection = getConnection()) {
@@ -84,9 +100,10 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 			readStatement.setLong(3, accountId);
 			ResultSet result = readStatement.executeQuery();
 			while (result.next()) {
+				Long id = result.getLong("id");
 				String category = result.getString("category");
 				Double value = result.getDouble("sumofamount");
-				statisticsPairs.add(new StatisticsPair(category, value));
+				statisticsPairs.add(new StatisticsPair(id, category, value));
 			}
 			connection.rollback();
 		} catch (SQLException e) {
@@ -109,6 +126,35 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 				expense.setReason(result.getString("reason"));
 				expense.setCategoryId(result.getLong("category_id"));
 				expense.setAccountId(accountId);
+				expense.setCategoryName(result.getString("name"));
+				expenses.add(expense);
+			}
+			connection.rollback();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return expenses;
+	}
+
+	public List<Expense> readTopTenByMonthAndCategory(final long accountId, final String month, final long categoryId) {
+		List<Expense> expenses = new ArrayList<Expense>();
+
+		try (Connection connection = getConnection()) {
+			PreparedStatement readStatement;
+			readStatement = connection.prepareStatement(SQL_READ_TOPTEN_BY_MONTH_AND_CATEGORY);
+			readStatement.setLong(1, accountId);
+			readStatement.setLong(2, categoryId);
+			readStatement.setString(3, month);
+			ResultSet result = readStatement.executeQuery();
+			while (result.next()) {
+				Expense expense = new Expense();
+				expense.setId(result.getLong("id"));
+				expense.setDay(result.getDate("day"));
+				expense.setAmount(result.getDouble("amount"));
+				expense.setReason(result.getString("reason"));
+				expense.setAccountId(accountId);
+				expense.setCategoryId(categoryId);
 				expense.setCategoryName(result.getString("name"));
 				expenses.add(expense);
 			}
