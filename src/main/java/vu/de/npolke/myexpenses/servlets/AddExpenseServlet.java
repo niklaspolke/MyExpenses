@@ -117,21 +117,24 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 
 		String amount = request.getParameter("amount").replaceAll(",", ".");
 		String reason = request.getParameter("reason");
+		String monthly = request.getParameter("monthly");
 		String day = request.getParameter("day");
 		String month = request.getParameter("month");
 		String year = request.getParameter("year");
 		String categoryId = request.getParameter("category");
 
-		return addExpense(account, amount, reason, day, month, year, categoryId);
+		return addExpense(account, amount, reason, monthly, day, month, year, categoryId);
 	}
 
 	public ServletReaction addExpense(final Account account, final String amountAsString, final String reason,
-			final String day, final String month, final String year, final String categoryIdAsString) {
+			final String monthly, final String day, final String month, final String year,
+			final String categoryIdAsString) {
 		double amount = Double.parseDouble(amountAsString);
+		boolean isMonthly = Boolean.parseBoolean(monthly);
 		long categoryId = Long.valueOf(categoryIdAsString);
 		String readableDate = day + "." + month + "." + year;
 
-		expenseDAO.create(readableDate, amount, reason, categoryId, account.getId());
+		expenseDAO.create(readableDate, amount, reason, isMonthly, categoryId, account.getId());
 
 		ServletReaction reaction = new ServletReaction();
 		reaction.setRedirect("listexpenses");

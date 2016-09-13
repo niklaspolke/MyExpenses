@@ -54,6 +54,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 		assertEquals("01.05.15", expense.getReadableDayAsString());
 		assertEquals(5.5, expense.getAmount(), 0.01);
 		assertEquals("burger", expense.getReason());
+		assertEquals(false, expense.isMonthly());
 		assertEquals(11, expense.getCategoryId());
 		assertEquals("food", expense.getCategoryName());
 		assertEquals(1, expense.getAccountId());
@@ -68,13 +69,14 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void create() {
-		Expense expense = expenseDAO.create("25.05.15", 13.3, "junk food", 11, 1);
+		Expense expense = expenseDAO.create("25.05.15", 13.3, "junk food", true, 11, 1);
 
 		assertNotNull(expense);
 		assertTrue(expense.getId() > 0);
 		assertEquals("25.05.15", expense.getReadableDayAsString());
 		assertEquals(13.3, expense.getAmount(), 0.01);
 		assertEquals("junk food", expense.getReason());
+		assertEquals(true, expense.isMonthly());
 		assertEquals(11, expense.getCategoryId());
 		assertEquals("food", expense.getCategoryName());
 		assertEquals(1, expense.getAccountId());
@@ -87,6 +89,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 		expense.setCategoryId(13);
 		expense.setReadableDayAsString("01.01.15");
 		expense.setReason("gone swimming");
+		expense.setMonthly(true);
 
 		boolean success = expenseDAO.update(expense);
 
@@ -98,6 +101,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 		assertEquals("01.01.15", expense.getReadableDayAsString());
 		assertEquals(12.2, expense.getAmount(), 0.01);
 		assertEquals("gone swimming", expense.getReason());
+		assertEquals(true, expense.isMonthly());
 		assertEquals(13, expense.getCategoryId());
 		assertEquals("sports", expense.getCategoryName());
 		assertEquals(1, expense.getAccountId());
@@ -111,6 +115,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 		expense.setCategoryId(13);
 		expense.setReadableDayAsString("01.01.15");
 		expense.setReason("gone swimming");
+		expense.setMonthly(true);
 
 		boolean success = expenseDAO.update(expense);
 		expense = expenseDAO.read(999);
@@ -130,6 +135,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 			assertTrue(expense.getReadableDayAsString().length() == 8);
 			assertTrue(expense.getAmount() > 0);
 			assertTrue(expense.getReason().trim().length() > 0);
+			assertFalse(expense.isMonthly());
 			assertTrue(expense.getCategoryId() == 11 || expense.getCategoryId() == 12);
 			assertTrue("food".equals(expense.getCategoryName()) || "luxury".equals(expense.getCategoryName()));
 			assertEquals(1, expense.getAccountId());
@@ -147,6 +153,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 			assertTrue(expense.getReadableDayAsString().length() == 8);
 			assertTrue(expense.getAmount() > 0);
 			assertTrue(expense.getReason().equals("jewels") || expense.getReason().equals("french fries"));
+			assertFalse(expense.isMonthly());
 			assertTrue(expense.getCategoryId() == 11 || expense.getCategoryId() == 12);
 			assertTrue("food".equals(expense.getCategoryName()) || "luxury".equals(expense.getCategoryName()));
 			assertEquals(1, expense.getAccountId());
@@ -157,9 +164,9 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 	public void readAmountOfExpenses() {
 		assertEquals(4, expenseDAO.readAmountOfExpenses(1));
 
-		expenseDAO.create("25.05.15", 13.3, "junk food", 11, 1);
-		expenseDAO.create("25.05.15", 13.3, "junk food", 11, 1);
-		Expense expense = expenseDAO.create("25.05.15", 13.3, "junk food", 11, 1);
+		expenseDAO.create("25.05.15", 13.3, "junk food", false, 11, 1);
+		expenseDAO.create("25.05.15", 13.3, "junk food", false, 11, 1);
+		Expense expense = expenseDAO.create("25.05.15", 13.3, "junk food", false, 11, 1);
 
 		assertEquals(7, expenseDAO.readAmountOfExpenses(1));
 
@@ -179,6 +186,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 			assertTrue(expense.getReadableDayAsString().length() == 8);
 			assertTrue(expense.getAmount() > 0);
 			assertTrue(expense.getReason().trim().length() > 0);
+			assertFalse(expense.isMonthly());
 			assertEquals(12, expense.getCategoryId());
 			assertEquals("luxury", expense.getCategoryName());
 			assertEquals(1, expense.getAccountId());

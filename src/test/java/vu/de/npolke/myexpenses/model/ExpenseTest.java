@@ -24,13 +24,13 @@ import org.junit.Test;
  */
 public class ExpenseTest {
 
-	private static final int	ID				= 4;
-	private static final Double	AMOUNT			= 18.35;
-	private static final String	REASON			= "chicken";
-	private static final String	DATABASE_DATE	= "15.09.15";
-	private static final long	ACCOUNTID		= 1;
-	private static final long	CATEGORYID		= 2;
-	private static final String	CATEGORYNAME	= "food";
+	private static final int ID = 4;
+	private static final Double AMOUNT = 18.35;
+	private static final String REASON = "chicken";
+	private static final String DATABASE_DATE = "15.09.15";
+	private static final long ACCOUNTID = 1;
+	private static final long CATEGORYID = 2;
+	private static final String CATEGORYNAME = "food";
 
 	private Expense expense;
 
@@ -67,5 +67,13 @@ public class ExpenseTest {
 		expense.setReadableDayAsString(DATABASE_DATE);
 
 		assertEquals("Expense: (15.09.15) - 18,00 € - null for ", expense.toString());
+	}
+
+	@Test
+	public void toString_MonthlyFixed() {
+		expense.setMonthly(true);
+		expense.setReadableDayAsString(DATABASE_DATE);
+
+		assertEquals("Expense: (15.09.15) - 0,00 € - null for  - monthly fixed", expense.toString());
 	}
 }

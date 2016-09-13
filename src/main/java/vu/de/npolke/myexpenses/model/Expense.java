@@ -29,8 +29,8 @@ public class Expense implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private final NumberFormat	NUMBER_FORMATTER	= NumberFormat.getCurrencyInstance(Locale.GERMANY);
-	private final DateFormat	DATA_FORMATTER		= DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMANY);
+	private final NumberFormat NUMBER_FORMATTER = NumberFormat.getCurrencyInstance(Locale.GERMANY);
+	private final DateFormat DATA_FORMATTER = DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMANY);
 
 	private long id;
 
@@ -40,10 +40,12 @@ public class Expense implements Serializable {
 
 	private String reason;
 
-	private long	categoryId;
-	private String	categoryName;
+	private long categoryId;
+	private String categoryName;
 
 	private long accountId;
+
+	private boolean monthly = false;
 
 	public long getId() {
 		return id;
@@ -125,6 +127,14 @@ public class Expense implements Serializable {
 		this.accountId = accountId;
 	}
 
+	public boolean isMonthly() {
+		return monthly;
+	}
+
+	public void setMonthly(final boolean monthly) {
+		this.monthly = monthly;
+	}
+
 	@Override
 	public String toString() {
 		//@formatter:off
@@ -132,7 +142,8 @@ public class Expense implements Serializable {
 				.append("(").append(getReadableDayAsString()).append(") - ")
 				.append(NUMBER_FORMATTER.format(getAmount())).append(" - ")
 				.append(getCategoryName()).append(" for ")
-				.append(getReason() != null ? getReason() : "");
+				.append(getReason() != null ? getReason() : "")
+				.append(isMonthly() ? " - monthly fixed" : "");
 		return text.toString();
 		//@formatter:on
 	}

@@ -78,19 +78,26 @@ the License.
     </select>
     <label class="w3-label" for="category">Category</label>
 </div><div class="w3-panel">
-    <input class="w3-input w3-border w3-round-large"
-        type="text"
-        name="amount"
-        size="40"
-        maxlength="40"
-        title="amount of expense - #0.00"
-        placeholder="0.00"
-        pattern="[-+]?[0-9]*[,.]?[0-9]{0,2}"
-        required="required"
-        autocomplete="off"
-        value="${sessionScope.expense.amount != 0.0 ? sessionScope.expense.amount : ''}"
-        ${sessionScope.categoryPreset ? 'autofocus' : ''}>
-    <label class="w3-label" for="amount">Amount (€)</label>
+    <div class="w3-row-padding">
+        <div class="w3-half">
+            <input class="w3-input w3-border w3-round-large"
+                type="text"
+                name="amount"
+                size="40"
+                maxlength="40"
+                title="amount of expense - #0.00"
+                placeholder="0.00"
+                pattern="[-+]?[0-9]*[,.]?[0-9]{0,2}"
+                required="required"
+                autocomplete="off"
+                value="${sessionScope.expense.amount != 0.0 ? sessionScope.expense.amount : ''}"
+                ${sessionScope.categoryPreset ? 'autofocus' : ''}>
+            <label class="w3-label" for="amount">Amount (€)</label>
+        </div><div class="w3-half">
+            <input class="w3-check" type="checkbox" name="monthly" value="true">
+            <label class="w3-label" for="fixedcost">Monthly</label>
+        </div>
+    </div>
 </div><div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
         type="text"
