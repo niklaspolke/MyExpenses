@@ -30,7 +30,7 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 
 	private static final String SQL_INSERT = "INSERT INTO Expense (id, day, amount, reason, monthly, category_id, account_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-	private static final String SQL_READ_BY_ID = "SELECT e.day, e.amount, e.reason, monthly, e.category_id, e.account_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE e.id = ?";
+	private static final String SQL_READ_BY_ID = "SELECT e.day, e.amount, e.reason, e.monthly, e.category_id, e.account_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE e.id = ?";
 
 	private static final String SQL_READ_BY_ACCOUNT_ID = "SELECT * FROM (SELECT e.id, e.day, e.amount, e.reason, e.monthly, e.category_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE account_id = ? ORDER BY day DESC, id DESC) WHERE rownum() <= ?";
 

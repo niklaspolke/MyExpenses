@@ -91,12 +91,12 @@ the License.
                 required="required"
                 autocomplete="off"
                 value="${sessionScope.expense.amount}">
+            <label class="w3-label" for="amount">Amount (€)</label>
         </div><div class="w3-half">
             <input class="w3-check" type="checkbox" name="monthly" value="true" ${sessionScope.expense.monthly ? 'checked' : ''}>
             <label class="w3-label" for="fixedcost">Monthly</label>
         </div>
     </div>
-    <label class="w3-label" for="amount">Amount (€)</label>
 </div><div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
         type="text"
