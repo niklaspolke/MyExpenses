@@ -97,7 +97,7 @@ the License.
                 ${sessionScope.categoryPreset ? 'autofocus' : ''}>
             <label class="w3-label" for="amount">Amount (€)</label>
         </div><div class="w3-half">
-            <input class="w3-check" type="checkbox" name="monthly" value="true">
+            <input class="w3-check" type="checkbox" name="monthly" value="true" ${sessionScope.expense.monthly ? 'checked' : ''}>
             <label class="w3-label" for="fixedcost">Monthly</label>
         </div>
     </div>
