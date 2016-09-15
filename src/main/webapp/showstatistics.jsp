@@ -22,7 +22,9 @@ the License.
 <link rel="stylesheet" href="css/chartist.min.css">
 <script type="text/javascript" src="js/chartist.min.js"></script>
 
+<div class="w3-container">
 <h3>Statistics</h3>
+</div>
 
 <div class="w3-panel">
     <form action="showstatistics" method="post">

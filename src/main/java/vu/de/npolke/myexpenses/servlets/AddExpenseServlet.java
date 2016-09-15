@@ -137,7 +137,11 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 		expenseDAO.create(readableDate, amount, reason, isMonthly, categoryId, account.getId());
 
 		ServletReaction reaction = new ServletReaction();
-		reaction.setRedirect("listexpenses");
+		if (isMonthly) {
+			reaction.setRedirect("listexpenses?monthly=true");
+		} else {
+			reaction.setRedirect("listexpenses");
+		}
 
 		return reaction;
 	}

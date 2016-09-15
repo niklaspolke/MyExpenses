@@ -19,8 +19,9 @@ the License.
 
 <jsp:include page="header.jsp"/>
 
-
+<div class="w3-container">
 <h3>Edit Category</h3>
+</div>
 
 <form action="editcategory" method="post">
 <div class="w3-panel">

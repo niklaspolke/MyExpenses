@@ -39,6 +39,10 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
+	protected static final String MODE_EXPENSES = "expenses";
+	protected static final String MODE_TOP_10 = "topten";
+	protected static final String MODE_MONTHLY = "monthly";
+
 	private static final int AMOUNT_OF_ENTRIES_PER_PAGE = 10;
 
 	ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
@@ -50,21 +54,26 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 
 		final String requestedPage = request.getParameter("page");
 		final String requestedMonth = request.getParameter("month");
-		final String requestCategoryId = request.getParameter("category");
+		final String requestedCategoryId = request.getParameter("category");
+		final String requestedMonthly = request.getParameter("monthly");
 
-		return prepareListExpenses(account, requestedPage, requestedMonth, requestCategoryId);
+		return prepareListExpenses(account, requestedPage, requestedMonth, requestedCategoryId, requestedMonthly);
 	}
 
 	public ServletReaction prepareListExpenses(final Account account, final String requestedPage,
-			final String monthForTopTen, final String categoryIdForTopTen) {
+			final String monthForTopTen, final String categoryIdForTopTen, final String monthly) {
 		ServletReaction reaction = new ServletReaction();
 		List<Expense> expenses = null;
+		boolean getMonthly = Boolean.parseBoolean(monthly);
 
-		if (monthForTopTen != null || categoryIdForTopTen != null) {
+		if (getMonthly) {
+			expenses = expenseDAO.readMonthlyByAccountId(account.getId());
+			reaction.setRequestAttribute("mode", MODE_MONTHLY);
+		} else if (monthForTopTen != null || categoryIdForTopTen != null) {
 			final long parsedCategoryIdForTopTen = parseLongDefault0(categoryIdForTopTen);
 			expenses = statisticsDAO.readTopTenByMonthAndCategory(account.getId(), monthForTopTen,
 					parsedCategoryIdForTopTen);
-
+			reaction.setRequestAttribute("mode", MODE_TOP_10);
 			reaction.setRequestAttribute("month", monthForTopTen);
 			reaction.setRequestAttribute("category",
 					expenses.size() > 0 ? expenses.get(0).getCategoryName() : categoryIdForTopTen);
@@ -76,7 +85,7 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 
 			expenses = expenseDAO.readByAccountId(account.getId(), (page - 1) * AMOUNT_OF_ENTRIES_PER_PAGE + 1,
 					page * AMOUNT_OF_ENTRIES_PER_PAGE);
-
+			reaction.setRequestAttribute("mode", MODE_EXPENSES);
 			reaction.setRequestAttribute("page", page);
 			reaction.setRequestAttribute("pageMax", pageMax);
 		}

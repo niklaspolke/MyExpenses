@@ -305,12 +305,34 @@ public class AddExpenseServletTest {
 		int month = 6;
 		int year = 2000;
 
-		ServletReaction reaction = servlet.addExpense(account, Double.toString(amount), reason, "true",
+		ServletReaction reaction = servlet.addExpense(account, Double.toString(amount), reason, null,
 				Integer.toString(day), Integer.toString(month), Integer.toString(year), Long.toString(categoryId));
 
 		assertNotNull(reaction);
 		// correct navigation
 		assertEquals("listexpenses", reaction.getRedirect());
+		// correct creation of Expense
+		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, false, categoryId,
+				ACCOUNT_ID);
+	}
+
+	@Test
+	public void addExpense_Monthly() {
+		Account account = new Account();
+		account.setId(ACCOUNT_ID);
+		double amount = 123.1;
+		String reason = "reason";
+		long categoryId = 12;
+		int day = 15;
+		int month = 6;
+		int year = 2000;
+
+		ServletReaction reaction = servlet.addExpense(account, Double.toString(amount), reason, "true",
+				Integer.toString(day), Integer.toString(month), Integer.toString(year), Long.toString(categoryId));
+
+		assertNotNull(reaction);
+		// correct navigation
+		assertEquals("listexpenses?monthly=true", reaction.getRedirect());
 		// correct creation of Expense
 		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, true, categoryId, ACCOUNT_ID);
 	}

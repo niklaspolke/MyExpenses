@@ -143,6 +143,24 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 	}
 
 	@Test
+	public void readMonthlyByAccountId() {
+		List<Expense> expenses = expenseDAO.readMonthlyByAccountId(1);
+
+		assertNotNull(expenses);
+		assertEquals(1, expenses.size());
+		for (Expense expense : expenses) {
+			assertTrue(expense.getId() > 0);
+			assertTrue(expense.getReadableDayAsString().length() == 8);
+			assertTrue(expense.getAmount() > 0);
+			assertEquals("flat", expense.getReason());
+			assertTrue(expense.isMonthly());
+			assertEquals(12, expense.getCategoryId());
+			assertEquals("luxury", expense.getCategoryName());
+			assertEquals(1, expense.getAccountId());
+		}
+	}
+
+	@Test
 	public void readByAccountId_NotAllEntries() {
 		List<Expense> expenses = expenseDAO.readByAccountId(1, 2, 3);
 
@@ -177,7 +195,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void readByCategoryId() {
-		List<Expense> expenses = expenseDAO.readByCategoryId(12);
+		List<Expense> expenses = expenseDAO.readByCategoryId(11);
 
 		assertNotNull(expenses);
 		assertEquals(2, expenses.size());
@@ -187,8 +205,8 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 			assertTrue(expense.getAmount() > 0);
 			assertTrue(expense.getReason().trim().length() > 0);
 			assertFalse(expense.isMonthly());
-			assertEquals(12, expense.getCategoryId());
-			assertEquals("luxury", expense.getCategoryName());
+			assertEquals(11, expense.getCategoryId());
+			assertEquals("food", expense.getCategoryName());
 			assertEquals(1, expense.getAccountId());
 		}
 	}

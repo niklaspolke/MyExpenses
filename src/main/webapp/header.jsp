@@ -79,6 +79,11 @@ the License.
                         <span class="w3-xlarge">List Expenses</span>
                     </a>
                 </li><li class="${disabled ? '' : 'w3-hover-yellow'}">
+                    <a ${disabled ? '' : 'href="listexpenses?monthly=true"'} title="list monthly expenses">
+                        <img class="w3-left w3-margin-right" src="img/calendar_48.png" style="width:40px" alt="list monthly expenses" title="list monthly expenses">
+                        <span class="w3-xlarge">List Monthly Expenses</span>
+                    </a>
+                </li><li class="${disabled ? '' : 'w3-hover-yellow'}">
                     <a ${disabled ? '' : 'href="listcategories"'} title="list categories">
                         <img class="w3-left w3-margin-right" src="img/layers_48.png" style="width:40px" alt="list categories" title="list categories">
                         <span class="w3-xlarge">List Categories</span>

@@ -19,8 +19,9 @@ the License.
 
 <jsp:include page="header.jsp"/>
 
-
+<div class="w3-container">
 <h3>Edit Expense</h3>
+</div>
 
 <form action="editexpense" method="post">
 <div class="w3-panel">
@@ -67,6 +68,7 @@ the License.
         </div>
     </div>
 </div><div class="w3-panel">
+    <div class="w3-row-padding"><div class="w3-col s12">
     <select class="w3-input w3-border w3-round-large"
         name="category"
         title="category of expense"
@@ -77,6 +79,7 @@ the License.
         </c:forEach>
     </select>
     <label class="w3-label" for="category">Category</label>
+    </div></div>
 </div><div class="w3-panel">
     <div class="w3-row-padding">
         <div class="w3-half">
@@ -98,6 +101,7 @@ the License.
         </div>
     </div>
 </div><div class="w3-panel">
+    <div class="w3-row-padding"><div class="w3-col s12">
     <input class="w3-input w3-border w3-round-large"
         type="text"
         name="reason"
@@ -109,8 +113,9 @@ the License.
         required="required"
         value="${sessionScope.expense.reason}">
     <label class="w3-label" for="reason">Reason</label>
+    </div></div>
 </div><div class="w3-panel">
-    <div class="w3-row">
+    <div class="w3-row-padding">
         <input class="w3-btn w3-green w3-xlarge w3-round-xxlarge" type="submit" value="Save Expense">
         <input class="w3-btn w3-red w3-tiny w3-round-xxlarge" type="reset" value="Reset">
     </div>

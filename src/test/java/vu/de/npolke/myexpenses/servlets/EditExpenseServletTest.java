@@ -130,6 +130,26 @@ public class EditExpenseServletTest {
 		final int DAY_NEW = 15;
 		final int MONTH_NEW = 12;
 		final int YEAR_NEW = 2000;
+		ServletReaction reaction = servlet.editExpense(expense, AMOUNT_NEW, REASON_NEW, null, String.valueOf(DAY_NEW),
+				String.valueOf(MONTH_NEW), String.valueOf(YEAR_NEW), String.valueOf(CATEGORY_ID_NEW));
+
+		assertNotNull(reaction);
+		// correct update
+		assertEquals(Double.valueOf(AMOUNT_NEW), expense.getAmount(), 0.01);
+		assertEquals(CATEGORY_ID_NEW, expense.getCategoryId());
+		assertEquals(REASON_NEW, expense.getReason());
+		assertEquals(false, expense.isMonthly());
+		assertEquals(DAY_NEW + "." + MONTH_NEW + "." + "00", expense.getReadableDayAsString());
+		verify(servlet.expenseDAO).update(expense);
+		// correct navigation
+		assertEquals("listexpenses", reaction.getRedirect());
+	}
+
+	@Test
+	public void editExpense_Monthly() {
+		final int DAY_NEW = 15;
+		final int MONTH_NEW = 12;
+		final int YEAR_NEW = 2000;
 		ServletReaction reaction = servlet.editExpense(expense, AMOUNT_NEW, REASON_NEW, "true", String.valueOf(DAY_NEW),
 				String.valueOf(MONTH_NEW), String.valueOf(YEAR_NEW), String.valueOf(CATEGORY_ID_NEW));
 
@@ -142,6 +162,6 @@ public class EditExpenseServletTest {
 		assertEquals(DAY_NEW + "." + MONTH_NEW + "." + "00", expense.getReadableDayAsString());
 		verify(servlet.expenseDAO).update(expense);
 		// correct navigation
-		assertEquals("listexpenses", reaction.getRedirect());
+		assertEquals("listexpenses?monthly=true", reaction.getRedirect());
 	}
 }

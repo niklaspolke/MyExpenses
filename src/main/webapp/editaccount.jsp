@@ -19,8 +19,9 @@ the License.
 
 <jsp:include page="header.jsp"/>
 
-
+<div class="w3-container">
 <h3>Edit Account</h3>
+</div>
 
 <form action="editaccount" method="post">
 <c:if test="${not empty requestScope.errorMessage}"><div class="w3-panel w3-leftbar w3-pale-red w3-border-red">

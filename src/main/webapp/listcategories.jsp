@@ -20,8 +20,9 @@ the License.
 
 <jsp:include page="header.jsp"/>
 
-
+<div class="w3-container">
 <h3>List Categories</h3>
+</div>
 
 <div class="w3-panel">
     <a href="addcategory.jsp" title="add category">

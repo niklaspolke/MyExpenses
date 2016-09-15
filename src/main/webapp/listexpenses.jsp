@@ -20,8 +20,19 @@ the License.
 
 <jsp:include page="header.jsp"/>
 
-
-<h3>List Expenses<c:if test="${not empty requestScope.month}"> - Top10 <b><c:out value="${requestScope.category}"/></b> within <b><c:out value="${requestScope.month}"/></b></c:if></h3>
+<div class="w3-container">
+<h3><c:choose>
+    <c:when test="${requestScope.mode eq 'topten'}">
+        List Expenses - Top10 <b><c:out value="${requestScope.category}"/></b> within <b><c:out value="${requestScope.month}"/></b>
+    </c:when>
+    <c:when test="${requestScope.mode eq 'monthly'}">
+        List Monthly Expenses
+    </c:when>
+    <c:otherwise>
+        List Expenses
+    </c:otherwise>
+</c:choose></h3>
+</div>
 
 <div class="w3-panel w3-padding-8">
 <fmt:setLocale value="de_DE"/>
@@ -48,8 +59,8 @@ the License.
             </th></c:if>
         </tr>
         <tr>
-            <th>Date</th>
-            <c:if test="${empty requestScope.month}"><th>Category</th></c:if>
+            <c:if test="${requestScope.mode ne 'monthly'}"><th>Date</th></c:if>
+            <c:if test="${requestScope.mode ne 'topten'}"><th>Category</th></c:if>
             <th>Amount</th>
             <th>Reason</th>
             <th>Modify</th>
@@ -58,8 +69,8 @@ the License.
     <tbody>
         <c:forEach var="expense" items="${sessionScope.expenses}">
             <tr>
-                <td><c:out value="${expense.getReadableDayAsString()}"/></td>
-                <c:if test="${empty requestScope.month}"><td><c:out value="${expense.categoryName}"/></td></c:if>
+                <c:if test="${requestScope.mode ne 'monthly'}"><td><c:out value="${expense.getReadableDayAsString()}"/></td></c:if>
+                <c:if test="${requestScope.mode ne 'topten'}"><td><c:out value="${expense.categoryName}"/></td></c:if>
                 <td class="number" style="text-align:right"><fmt:formatNumber value="${expense.amount}" type="currency"/></td>
                 <td><c:out value="${expense.reason}"/></td>
                 <td style="border:none">

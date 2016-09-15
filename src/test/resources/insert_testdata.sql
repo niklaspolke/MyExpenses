@@ -8,5 +8,6 @@ INSERT INTO expense(id, day, amount, reason, monthly, category_id, account_id) V
 INSERT INTO expense(id, day, amount, reason, monthly, category_id, account_id) VALUES (102, '2015-05-10', 700, 'jewels', false, 12, 1);
 INSERT INTO expense(id, day, amount, reason, monthly, category_id, account_id) VALUES (103, '2015-05-21', 3.55, 'french fries', false, 11, 1);
 INSERT INTO expense(id, day, amount, reason, monthly, category_id, account_id) VALUES (104, '2015-06-03', 80, 'watch', false, 12, 1);
+INSERT INTO expense(id, day, amount, reason, monthly, category_id, account_id) VALUES (105, '2015-06-04', 800, 'flat', true, 12, 1);
 
 commit;
