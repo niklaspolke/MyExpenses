@@ -23,6 +23,7 @@ CREATE TABLE expense (
     amount      DOUBLE NOT NULL,
     reason      VARCHAR(40),
     monthly     BOOLEAN NOT NULL,
+    income      BOOLEAN NOT NULL,
     category_id INTEGER NOT NULL,
     account_id  INTEGER NOT NULL,
     CONSTRAINT fk_expense_category FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE,

@@ -55,6 +55,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 		assertEquals(5.5, expense.getAmount(), 0.01);
 		assertEquals("burger", expense.getReason());
 		assertEquals(false, expense.isMonthly());
+		assertEquals(false, expense.isIncome());
 		assertEquals(11, expense.getCategoryId());
 		assertEquals("food", expense.getCategoryName());
 		assertEquals(1, expense.getAccountId());
@@ -69,7 +70,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void create() {
-		Expense expense = expenseDAO.create("25.05.15", 13.3, "junk food", true, 11, 1);
+		Expense expense = expenseDAO.create("25.05.15", 13.3, "junk food", true, true, 11, 1);
 
 		assertNotNull(expense);
 		assertTrue(expense.getId() > 0);
@@ -77,6 +78,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 		assertEquals(13.3, expense.getAmount(), 0.01);
 		assertEquals("junk food", expense.getReason());
 		assertEquals(true, expense.isMonthly());
+		assertEquals(true, expense.isIncome());
 		assertEquals(11, expense.getCategoryId());
 		assertEquals("food", expense.getCategoryName());
 		assertEquals(1, expense.getAccountId());
@@ -90,6 +92,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 		expense.setReadableDayAsString("01.01.15");
 		expense.setReason("gone swimming");
 		expense.setMonthly(true);
+		expense.setIncome(true);
 
 		boolean success = expenseDAO.update(expense);
 
@@ -102,6 +105,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 		assertEquals(12.2, expense.getAmount(), 0.01);
 		assertEquals("gone swimming", expense.getReason());
 		assertEquals(true, expense.isMonthly());
+		assertEquals(true, expense.isIncome());
 		assertEquals(13, expense.getCategoryId());
 		assertEquals("sports", expense.getCategoryName());
 		assertEquals(1, expense.getAccountId());
@@ -116,6 +120,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 		expense.setReadableDayAsString("01.01.15");
 		expense.setReason("gone swimming");
 		expense.setMonthly(true);
+		expense.setIncome(true);
 
 		boolean success = expenseDAO.update(expense);
 		expense = expenseDAO.read(999);
@@ -136,6 +141,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 			assertTrue(expense.getAmount() > 0);
 			assertTrue(expense.getReason().trim().length() > 0);
 			assertFalse(expense.isMonthly());
+			assertFalse(expense.isIncome());
 			assertTrue(expense.getCategoryId() == 11 || expense.getCategoryId() == 12);
 			assertTrue("food".equals(expense.getCategoryName()) || "luxury".equals(expense.getCategoryName()));
 			assertEquals(1, expense.getAccountId());
@@ -147,15 +153,16 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 		List<Expense> expenses = expenseDAO.readMonthlyByAccountId(1);
 
 		assertNotNull(expenses);
-		assertEquals(1, expenses.size());
+		assertEquals(2, expenses.size());
 		for (Expense expense : expenses) {
 			assertTrue(expense.getId() > 0);
 			assertTrue(expense.getReadableDayAsString().length() == 8);
 			assertTrue(expense.getAmount() > 0);
-			assertEquals("flat", expense.getReason());
+			assertTrue("flat".equals(expense.getReason()) || "work".equals(expense.getReason()));
 			assertTrue(expense.isMonthly());
-			assertEquals(12, expense.getCategoryId());
-			assertEquals("luxury", expense.getCategoryName());
+			assertTrue(expense.isIncome() || expense.getId() == 105);
+			assertTrue(expense.getCategoryId() == 12 || expense.getCategoryId() == 14);
+			assertTrue("luxury".equals(expense.getCategoryName()) || "income".equals(expense.getCategoryName()));
 			assertEquals(1, expense.getAccountId());
 		}
 	}
@@ -182,9 +189,9 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 	public void readAmountOfExpenses() {
 		assertEquals(4, expenseDAO.readAmountOfExpenses(1));
 
-		expenseDAO.create("25.05.15", 13.3, "junk food", false, 11, 1);
-		expenseDAO.create("25.05.15", 13.3, "junk food", false, 11, 1);
-		Expense expense = expenseDAO.create("25.05.15", 13.3, "junk food", false, 11, 1);
+		expenseDAO.create("25.05.15", 13.3, "junk food", false, false, 11, 1);
+		expenseDAO.create("25.05.15", 13.3, "junk food", false, false, 11, 1);
+		Expense expense = expenseDAO.create("25.05.15", 13.3, "junk food", false, false, 11, 1);
 
 		assertEquals(7, expenseDAO.readAmountOfExpenses(1));
 

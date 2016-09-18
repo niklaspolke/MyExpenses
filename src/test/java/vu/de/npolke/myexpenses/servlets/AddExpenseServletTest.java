@@ -305,14 +305,14 @@ public class AddExpenseServletTest {
 		int month = 6;
 		int year = 2000;
 
-		ServletReaction reaction = servlet.addExpense(account, Double.toString(amount), reason, null,
+		ServletReaction reaction = servlet.addExpense(account, Double.toString(amount), reason, null, null,
 				Integer.toString(day), Integer.toString(month), Integer.toString(year), Long.toString(categoryId));
 
 		assertNotNull(reaction);
 		// correct navigation
 		assertEquals("listexpenses", reaction.getRedirect());
 		// correct creation of Expense
-		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, false, categoryId,
+		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, false, false, categoryId,
 				ACCOUNT_ID);
 	}
 
@@ -327,13 +327,14 @@ public class AddExpenseServletTest {
 		int month = 6;
 		int year = 2000;
 
-		ServletReaction reaction = servlet.addExpense(account, Double.toString(amount), reason, "true",
+		ServletReaction reaction = servlet.addExpense(account, Double.toString(amount), reason, "true", "true",
 				Integer.toString(day), Integer.toString(month), Integer.toString(year), Long.toString(categoryId));
 
 		assertNotNull(reaction);
 		// correct navigation
 		assertEquals("listexpenses?monthly=true", reaction.getRedirect());
 		// correct creation of Expense
-		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, true, categoryId, ACCOUNT_ID);
+		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, true, true, categoryId,
+				ACCOUNT_ID);
 	}
 }

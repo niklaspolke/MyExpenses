@@ -42,7 +42,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 			"LEFT OUTER JOIN ( " +
 					"SELECT category_id, amount " +
 					"FROM expense " +
-					"WHERE year(day)+'.'+lpad(month(day),2,'0') = ? AND account_id = ? ) e " +
+					"WHERE year(day)+'.'+lpad(month(day),2,'0') = ? AND account_id = ? AND income = false ) e " +
 			"ON e.category_id = c.id " +
 			"WHERE c.account_id = ? " +
 			"GROUP BY c.id, c.name " +
@@ -54,7 +54,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 				"FROM Expense e " +
 				"JOIN Category c " +
 				"ON e.category_id = c.id " +
-				"WHERE account_id = ? " +
+				"WHERE account_id = ? AND income = false AND monthly = false " +
 				"GROUP BY e.category_id, c.name, e.reason " +
 				"ORDER BY COUNT(e.reason) DESC " +
 			") WHERE rownum() <= 10";
