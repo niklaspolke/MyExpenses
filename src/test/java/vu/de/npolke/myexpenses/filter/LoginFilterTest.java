@@ -1,6 +1,12 @@
 package vu.de.npolke.myexpenses.filter;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -65,5 +71,25 @@ public class LoginFilterTest {
 	@Test
 	public void noRedirectWhen_RegisterRequest() {
 		assertFalse(filter.redirectToLoginPage("/myexpenses/register", "/myexpenses", "POST", null));
+	}
+
+	@Test
+	public void originalUri_standard() {
+		assertEquals("listexpenses", filter.extractOrignalRequest("/myexpenses/listexpenses"));
+	}
+
+	@Test
+	public void redirectURL_noParam() {
+		Map<String, String[]> params = new HashMap<String, String[]>();
+		assertEquals("index.jsp?origurl=addExpense", filter.getRedirectURL("/myexpenses/addExpense", params));
+	}
+
+	@Test
+	public void redirectURL_twoParams() {
+		Map<String, String[]> params = new LinkedHashMap<String, String[]>();
+		params.put("id", new String[] { "445" });
+		params.put("test", new String[] { "true" });
+		assertEquals("index.jsp?origurl=addExpense%3Fid%3D445%26test%3Dtrue",
+				filter.getRedirectURL("/myexpenses/addExpense", params));
 	}
 }

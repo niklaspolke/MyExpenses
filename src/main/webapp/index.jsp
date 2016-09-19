@@ -23,6 +23,7 @@ the License.
 <h3>Login</h3>
 
 <form action="login" method="post">
+<input name="origurl" value="${param.origurl}" type="hidden">
 <c:if test="${not empty requestScope.errorMessage}"><div class="w3-panel w3-leftbar w3-pale-red w3-border-red">
     ${requestScope.errorMessage}
 </div></c:if>

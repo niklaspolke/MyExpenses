@@ -1,6 +1,8 @@
 package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -48,11 +50,12 @@ public class LoginServlet extends AbstractBasicServlet {
 
 		final String login = request.getParameter("login");
 		final String password = request.getParameter("password");
+		final String origurl = request.getParameter("origurl");
 
-		return login(login, password);
+		return login(login, password, origurl);
 	}
 
-	public ServletReaction login(final String login, final String password) {
+	public ServletReaction login(final String login, final String password, final String origurl) {
 		ServletReaction reaction = new ServletReaction();
 
 		Account account = accountDAO.readByLogin(login, password);
@@ -61,7 +64,15 @@ public class LoginServlet extends AbstractBasicServlet {
 			List<Expense> topten = statisticsDAO.readTopTenByAccountId(account.getId());
 			reaction.setSessionAttribute("account", account);
 			reaction.setSessionAttribute("topten", topten);
-			reaction.setRedirect("listexpenses");
+			if (origurl != null && origurl.length() > 0) {
+				try {
+					reaction.setRedirect(URLDecoder.decode(origurl, "UTF-8"));
+				} catch (UnsupportedEncodingException e) {
+					reaction.setRedirect("listexpenses");
+				}
+			} else {
+				reaction.setRedirect("listexpenses");
+			}
 		} else {
 			reaction.setRequestAttribute("errorMessage", "unknown login or wrong password");
 			reaction.setForward("index.jsp");

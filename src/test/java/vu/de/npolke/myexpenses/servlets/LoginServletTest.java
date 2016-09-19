@@ -46,7 +46,7 @@ public class LoginServletTest {
 		when(servlet.accountDAO.readByLogin(LOGIN, PASSWORD)).thenReturn(account);
 		when(servlet.statisticsDAO.readTopTenByAccountId(ACCOUNT_ID)).thenReturn(topten);
 
-		final ServletReaction reaction = servlet.login(LOGIN, PASSWORD);
+		final ServletReaction reaction = servlet.login(LOGIN, PASSWORD, null);
 
 		assertNotNull(reaction);
 		// correct account in session
@@ -58,10 +58,34 @@ public class LoginServletTest {
 	}
 
 	@Test
+	public void login_success_withSimpleRedirect() {
+		when(servlet.accountDAO.readByLogin(LOGIN, PASSWORD)).thenReturn(account);
+		when(servlet.statisticsDAO.readTopTenByAccountId(ACCOUNT_ID)).thenReturn(topten);
+
+		final ServletReaction reaction = servlet.login(LOGIN, PASSWORD, "addExpense");
+
+		assertNotNull(reaction);
+		// correct navigation
+		assertEquals("addExpense", reaction.getRedirect());
+	}
+
+	@Test
+	public void login_success_withComplexRedirect() {
+		when(servlet.accountDAO.readByLogin(LOGIN, PASSWORD)).thenReturn(account);
+		when(servlet.statisticsDAO.readTopTenByAccountId(ACCOUNT_ID)).thenReturn(topten);
+
+		final ServletReaction reaction = servlet.login(LOGIN, PASSWORD, "addExpense%3Fid%3D445%26test%3Dtrue");
+
+		assertNotNull(reaction);
+		// correct navigation
+		assertEquals("addExpense?id=445&test=true", reaction.getRedirect());
+	}
+
+	@Test
 	public void login_failure() {
 		when(servlet.accountDAO.readByLogin(LOGIN, PASSWORD)).thenReturn(account);
 
-		final ServletReaction reaction = servlet.login("nologin", "wrongpassword");
+		final ServletReaction reaction = servlet.login("nologin", "wrongpassword", null);
 
 		assertNotNull(reaction);
 		// no account in session
