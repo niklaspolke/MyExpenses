@@ -40,8 +40,10 @@ public class LoginFilterTest {
 	}
 
 	@Test
-	public void noRedirectWhen_LoggedIn() {
+	public void noRedirectWhen_LogIn() {
 		assertFalse(filter.redirectToLoginPage("/myexpenses/index.jsp", "/myexpenses", "GET", null));
+		assertFalse(filter.redirectToLoginPage("/myexpenses/", "/myexpenses", "GET", null));
+		assertFalse(filter.redirectToLoginPage("/myexpenses", "/myexpenses", "GET", null));
 	}
 
 	@Test
@@ -76,6 +78,12 @@ public class LoginFilterTest {
 	@Test
 	public void originalUri_standard() {
 		assertEquals("listexpenses", filter.extractOrignalRequest("/myexpenses/listexpenses"));
+	}
+
+	@Test
+	public void redirectURL_endsWithSlash() {
+		Map<String, String[]> params = new HashMap<String, String[]>();
+		assertEquals("index.jsp?origurl=/myexpenses/", filter.getRedirectURL("/myexpenses/", params));
 	}
 
 	@Test

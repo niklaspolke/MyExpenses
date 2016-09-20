@@ -78,6 +78,7 @@ public class LoginFilter implements Filter {
 	public boolean redirectToLoginPage(final String requestURI, final String contextPath, final String method,
 			final Account account) {
 		boolean isLoggedIn = account != null;
+		boolean indirectLoginPage = requestURI.equals(contextPath + URI_DELIMITER) || requestURI.equals(contextPath);
 		boolean loginPage = requestURI.startsWith(contextPath + URI_DELIMITER + LOGIN_PAGE);
 		boolean loginRequest = requestURI.startsWith(contextPath + URI_DELIMITER + LOGIN_URL)
 				&& LOGIN_METHOD.equalsIgnoreCase(method);
@@ -94,16 +95,19 @@ public class LoginFilter implements Filter {
 		boolean registerRequest = requestURI.startsWith(contextPath + URI_DELIMITER + REGISTER_URL)
 				&& REGISTER_METHOD.equalsIgnoreCase(method);
 
-		return !(isLoggedIn || loginPage || loginRequest || resourceRequest || registerPage || registerRequest);
+		return !(isLoggedIn || indirectLoginPage || loginPage || loginRequest || resourceRequest || registerPage
+				|| registerRequest);
 	}
 
 	protected String extractOrignalRequest(final String requestURI) {
 		String originalRequest = requestURI;
 		int index;
 
-		while ((index = originalRequest.indexOf(URI_DELIMITER)) != -1) {
-			if (index < originalRequest.length() - 1) {
-				originalRequest = originalRequest.substring(index + 1);
+		if (!originalRequest.endsWith(URI_DELIMITER)) {
+			while ((index = originalRequest.indexOf(URI_DELIMITER)) != -1) {
+				if (index < originalRequest.length() - 1) {
+					originalRequest = originalRequest.substring(index + 1);
+				}
 			}
 		}
 
