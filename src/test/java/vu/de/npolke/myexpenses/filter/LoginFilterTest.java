@@ -83,13 +83,13 @@ public class LoginFilterTest {
 	@Test
 	public void redirectURL_endsWithSlash() {
 		Map<String, String[]> params = new HashMap<String, String[]>();
-		assertEquals("index.jsp?origurl=/myexpenses/", filter.getRedirectURL("/myexpenses/", params));
+		assertEquals("/myexpenses/", filter.getRedirectURL("/myexpenses/", params));
 	}
 
 	@Test
 	public void redirectURL_noParam() {
 		Map<String, String[]> params = new HashMap<String, String[]>();
-		assertEquals("index.jsp?origurl=addExpense", filter.getRedirectURL("/myexpenses/addExpense", params));
+		assertEquals("addExpense", filter.getRedirectURL("/myexpenses/addExpense", params));
 	}
 
 	@Test
@@ -97,7 +97,7 @@ public class LoginFilterTest {
 		Map<String, String[]> params = new LinkedHashMap<String, String[]>();
 		params.put("id", new String[] { "445" });
 		params.put("test", new String[] { "true" });
-		assertEquals("index.jsp?origurl=addExpense%3Fid%3D445%26test%3Dtrue",
+		assertEquals("addExpense?id=445&test=true",
 				filter.getRedirectURL("/myexpenses/addExpense", params));
 	}
 }

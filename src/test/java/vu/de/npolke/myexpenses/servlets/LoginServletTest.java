@@ -74,7 +74,7 @@ public class LoginServletTest {
 		when(servlet.accountDAO.readByLogin(LOGIN, PASSWORD)).thenReturn(account);
 		when(servlet.statisticsDAO.readTopTenByAccountId(ACCOUNT_ID)).thenReturn(topten);
 
-		final ServletReaction reaction = servlet.login(LOGIN, PASSWORD, "addExpense%3Fid%3D445%26test%3Dtrue");
+		final ServletReaction reaction = servlet.login(LOGIN, PASSWORD, "addExpense?id=445&test=true");
 
 		assertNotNull(reaction);
 		// correct navigation

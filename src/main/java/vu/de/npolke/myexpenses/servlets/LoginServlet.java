@@ -1,8 +1,6 @@
 package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -50,12 +48,12 @@ public class LoginServlet extends AbstractBasicServlet {
 
 		final String login = request.getParameter("login");
 		final String password = request.getParameter("password");
-		final String origurl = request.getParameter("origurl");
+		final String redirectURL = (String) session.getAttribute("redirectAfterLogin");
 
-		return login(login, password, origurl);
+		return login(login, password, redirectURL);
 	}
 
-	public ServletReaction login(final String login, final String password, final String origurl) {
+	public ServletReaction login(final String login, final String password, final String redirectURL) {
 		ServletReaction reaction = new ServletReaction();
 
 		Account account = accountDAO.readByLogin(login, password);
@@ -64,12 +62,9 @@ public class LoginServlet extends AbstractBasicServlet {
 			List<Expense> topten = statisticsDAO.readTopTenByAccountId(account.getId());
 			reaction.setSessionAttribute("account", account);
 			reaction.setSessionAttribute("topten", topten);
-			if (origurl != null && origurl.length() > 0) {
-				try {
-					reaction.setRedirect(URLDecoder.decode(origurl, "UTF-8"));
-				} catch (UnsupportedEncodingException e) {
-					reaction.setRedirect("listexpenses");
-				}
+			if (redirectURL != null && redirectURL.length() > 0) {
+				reaction.setRedirect(redirectURL);
+				reaction.setSessionAttribute("redirectURL", null);
 			} else {
 				reaction.setRedirect("listexpenses");
 			}

@@ -1,8 +1,6 @@
 package vu.de.npolke.myexpenses.filter;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -56,6 +54,14 @@ public class LoginFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
 			throws IOException, ServletException {
+		/*
+		 * IMPORTANT!!! If characterEncoding isn't set to UTF-8 and it is
+		 * operated on the request parameter, any other setting of the encoding
+		 * (AbstractBasicServlet) is for nothing / without any effect and
+		 * special characters arent't parsed correctly from forms!
+		 */
+		request.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html;charset=UTF-8");
 		//@formatter:off
 		final HttpServletRequest httpRequest   = (HttpServletRequest) request;
 		final String requestURI                = httpRequest.getRequestURI();
@@ -69,7 +75,8 @@ public class LoginFilter implements Filter {
 		if (redirectToLoginPage(requestURI, contextPath, method, account)) {
 			logger.info("redirect to login page (original target: " + requestURI + ")");
 			HttpServletResponse httpResponse = (HttpServletResponse) response;
-			httpResponse.sendRedirect(getRedirectURL(requestURI, parameter));
+			session.setAttribute("redirectAfterLogin", getRedirectURL(requestURI, parameter));
+			httpResponse.sendRedirect(LOGIN_PAGE);
 		} else {
 			filterChain.doFilter(request, response);
 		}
@@ -115,20 +122,14 @@ public class LoginFilter implements Filter {
 	}
 
 	protected String getRedirectURL(final String requestURI, final Map<String, String[]> parameter) {
-		String redirectURL = LOGIN_PAGE + "?" + URI_ORIGINAL_URL + "=" + extractOrignalRequest(requestURI);
-		String param = "";
+		String redirectURL = extractOrignalRequest(requestURI);
+		String param = null;
 		if (parameter.size() > 0) {
-			param += "?";
 			for (String paramKey : parameter.keySet()) {
-				param = param.endsWith("?") ? param : param + "&";
+				param = param == null ? "?" : param + "&";
 				param += paramKey + "=" + parameter.get(paramKey)[0];
 			}
-			try {
-				param = URLEncoder.encode(param, "UTF-8");
-				redirectURL += param;
-			} catch (UnsupportedEncodingException e) {
-				redirectURL = LOGIN_PAGE;
-			}
+			redirectURL += param;
 		}
 		return redirectURL;
 	}
