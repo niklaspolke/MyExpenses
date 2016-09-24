@@ -22,11 +22,16 @@ public class StatisticsPair {
 	private Long id;
 	private String name;
 	private Double value;
+	private Boolean monthly;
+	private Boolean income;
 
-	public StatisticsPair(final Long id, final String name, final Double value) {
+	public StatisticsPair(final Long id, final String name, final Double value, final Boolean monthly,
+			final Boolean income) {
 		this.id = id;
 		this.name = name;
 		this.value = value;
+		this.monthly = monthly;
+		this.income = income;
 	}
 
 	public long getId() {
@@ -39,5 +44,13 @@ public class StatisticsPair {
 
 	public Double getValue() {
 		return value;
+	}
+
+	public Boolean isMonthly() {
+		return monthly;
+	}
+
+	public Boolean isIncome() {
+		return income;
 	}
 }

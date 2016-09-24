@@ -82,15 +82,23 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 		assertEquals(22, statistics.get(0).getId());
 		assertEquals("food", statistics.get(0).getName());
 		assertEquals(35, statistics.get(0).getValue(), 0.01);
+		assertEquals(false, statistics.get(0).isMonthly());
+		assertEquals(false, statistics.get(0).isIncome());
 		assertEquals(24, statistics.get(1).getId());
 		assertEquals("income", statistics.get(1).getName());
 		assertEquals(0, statistics.get(1).getValue(), 0.01);
+		assertEquals(false, statistics.get(1).isMonthly());
+		assertEquals(false, statistics.get(2).isIncome());
 		assertEquals(23, statistics.get(2).getId());
 		assertEquals("luxury", statistics.get(2).getName());
 		assertEquals(15, statistics.get(2).getValue(), 0.01);
+		assertEquals(false, statistics.get(2).isMonthly());
+		assertEquals(false, statistics.get(2).isIncome());
 		assertEquals(21, statistics.get(3).getId());
 		assertEquals("sports", statistics.get(3).getName());
 		assertEquals(35, statistics.get(3).getValue(), 0.01);
+		assertEquals(false, statistics.get(3).isMonthly());
+		assertEquals(false, statistics.get(3).isIncome());
 	}
 
 	@Test
@@ -98,19 +106,32 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId("2015.05", ACCOUNT_ID);
 
 		assertNotNull(statistics);
-		assertEquals(4, statistics.size());
+		assertEquals(5, statistics.size());
 		assertEquals(22, statistics.get(0).getId());
 		assertEquals("food", statistics.get(0).getName());
 		assertEquals(12, statistics.get(0).getValue(), 0.01);
+		assertEquals(false, statistics.get(0).isMonthly());
+		assertEquals(false, statistics.get(0).isIncome());
 		assertEquals(24, statistics.get(1).getId());
 		assertEquals("income", statistics.get(1).getName());
-		assertEquals(0, statistics.get(1).getValue(), 0.01);
+		assertEquals(2000, statistics.get(1).getValue(), 0.01);
+		assertEquals(true, statistics.get(1).isMonthly());
+		assertEquals(true, statistics.get(1).isIncome());
 		assertEquals(23, statistics.get(2).getId());
 		assertEquals("luxury", statistics.get(2).getName());
 		assertEquals(27, statistics.get(2).getValue(), 0.01);
+		assertEquals(false, statistics.get(2).isMonthly());
+		assertEquals(false, statistics.get(2).isIncome());
 		assertEquals(21, statistics.get(3).getId());
 		assertEquals("sports", statistics.get(3).getName());
 		assertEquals(11, statistics.get(3).getValue(), 0.01);
+		assertEquals(false, statistics.get(3).isMonthly());
+		assertEquals(false, statistics.get(3).isIncome());
+		assertEquals(21, statistics.get(4).getId());
+		assertEquals("sports", statistics.get(4).getName());
+		assertEquals(21, statistics.get(4).getValue(), 0.01);
+		assertEquals(true, statistics.get(4).isMonthly());
+		assertEquals(false, statistics.get(4).isIncome());
 	}
 
 	@Test

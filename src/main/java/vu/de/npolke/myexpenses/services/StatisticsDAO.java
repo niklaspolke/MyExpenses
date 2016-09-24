@@ -37,16 +37,16 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 					"ORDER BY month DESC";
 
 	private static final String SQL_SELECT_STATISTICS_FOR_MONTH =
-			"SELECT c.id as id, c.name as category, sum(e.amount) as sumofamount " +
+			"SELECT c.id as id, c.name as category, sum(e.amount) as sumofamount, monthly, income " +
 			"FROM category c " +
 			"LEFT OUTER JOIN ( " +
-					"SELECT category_id, amount " +
+					"SELECT category_id, amount, monthly, income " +
 					"FROM expense " +
-					"WHERE year(day)+'.'+lpad(month(day),2,'0') = ? AND account_id = ? AND income = false ) e " +
+					"WHERE year(day)+'.'+lpad(month(day),2,'0') = ? AND account_id = ? ) e " +
 			"ON e.category_id = c.id " +
 			"WHERE c.account_id = ? " +
-			"GROUP BY c.id, c.name " +
-			"ORDER BY c.name ASC";
+			"GROUP BY c.id, c.name, e.monthly, e.income " +
+			"ORDER BY c.name ASC, e.monthly ASC, e.income ASC";
 
 	private static final String SQL_READ_TOPTEN_BY_ACCOUNT_ID =
 			"SELECT * FROM ( " +
@@ -103,7 +103,9 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 				Long id = result.getLong("id");
 				String category = result.getString("category");
 				Double value = result.getDouble("sumofamount");
-				statisticsPairs.add(new StatisticsPair(id, category, value));
+				Boolean monthly = result.getBoolean("monthly");
+				Boolean income = result.getBoolean("income");
+				statisticsPairs.add(new StatisticsPair(id, category, value, monthly, income));
 			}
 			connection.rollback();
 		} catch (SQLException e) {

@@ -15,7 +15,8 @@ INSERT INTO expense(id, day, amount, reason, category_id, account_id, monthly, i
 INSERT INTO expense(id, day, amount, reason, category_id, account_id, monthly, income) VALUES (208, '2015-06-04', 18, 'climbing', 21, 2, false, false);
 INSERT INTO expense(id, day, amount, reason, category_id, account_id, monthly, income) VALUES (209, '2015-06-04', 19, 'supermarket', 22, 2, false, false);
 INSERT INTO expense(id, day, amount, reason, category_id, account_id, monthly, income) VALUES (210, '2015-07-04', 20, 'climbing', 21, 2, false, false);
-INSERT INTO expense(id, day, amount, reason, category_id, account_id, monthly, income) VALUES (211, '2015-07-01', 2000, 'work', 24, 2, true, true);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id, monthly, income) VALUES (211, '2015-05-01', 2000, 'work', 24, 2, true, true);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id, monthly, income) VALUES (212, '2015-05-01', 21, 'sports club membership', 21, 2, true, false);
 
 INSERT INTO account(id, login, password) VALUES (3, 'statistics2', '5f4dcc3b5aa765d61d8327deb882cf99');
 

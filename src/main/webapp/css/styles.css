@@ -16,3 +16,15 @@ the License.
 ul.w3-ul li { border-bottom: 0 }
 .w3-sidenav a:hover { background-color: #ffeb3b }
 .w3-sidenav .w3-dropdown-hover:first-child { background-color: #9e9e9e }
+.ct-series-c .ct-bar {
+  /* Colour of your bars */
+  stroke: green;
+}
+.ct-series-b .ct-bar {
+  /* Colour of your bars */
+  stroke: red;
+}
+.ct-series-a .ct-bar {
+  /* Colour of your bars */
+  stroke: orange;
+}

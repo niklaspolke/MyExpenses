@@ -2,7 +2,9 @@ package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -41,25 +43,65 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 
 	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsPair.class);
 
-	private void readStatisticsForMonth(final ServletReaction reaction, final String month, final Account account) {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId());
+	private void setBarChartOptions(final ServletReaction reaction) {
+		JsonObject barchartOptions = new JsonObject();
+		barchartOptions.addParameter("horizontalBars", Boolean.TRUE);
+		barchartOptions.addParameter("reverseData", Boolean.TRUE);
+		barchartOptions.addParameter("distributeSeries", Boolean.TRUE);
+		Map<String, Integer> chartPadding = new HashMap<String, Integer>();
+		chartPadding.put("top", 5);
+		chartPadding.put("right", 5);
+		chartPadding.put("buttom", 5);
+		chartPadding.put("left", 25);
+		barchartOptions.addParameter("chartPadding", chartPadding);
+
+		reaction.setSessionAttribute("barchartoptions", barchartOptions.toString());
+	}
+
+	protected void readStatisticsForMonth(final ServletReaction reaction, final String month, final Account account) {
+		List<StatisticsPair> statisticsAll = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId());
+		List<StatisticsPair> statistics = new ArrayList<StatisticsPair>();
+		List<StatisticsPair> statisticsMonthlyCosts = new ArrayList<StatisticsPair>();
+		List<StatisticsPair> statisticsIncome = new ArrayList<StatisticsPair>();
 
 		List<String> labels = new ArrayList<String>();
 		List<Double> values = new ArrayList<Double>();
 		Double sum = new Double(0);
-		for (StatisticsPair pair : statistics) {
-			labels.add(pair.getName());
-			values.add(pair.getValue());
-			sum += pair.getValue();
+		Double sumMonthlyCosts = new Double(0);
+		Double sumIncome = new Double(0);
+		for (StatisticsPair pair : statisticsAll) {
+			if (pair.isIncome()) {
+				statisticsIncome.add(pair);
+				sumIncome += pair.getValue();
+			} else if (pair.isMonthly() && !pair.isIncome()) {
+				statisticsMonthlyCosts.add(pair);
+				sumMonthlyCosts += pair.getValue();
+			} else {
+				statistics.add(pair);
+				labels.add(pair.getName());
+				values.add(pair.getValue());
+				sum += pair.getValue();
+			}
 		}
-		statistics.add(new StatisticsPair(0l, "Summe", sum));
+		statistics.add(new StatisticsPair(0l, "Summe", sum, false, false));
+		statisticsMonthlyCosts.add(new StatisticsPair(0l, "Summe", sumMonthlyCosts, true, false));
+		statisticsIncome.add(new StatisticsPair(0l, "Summe", sumIncome, true, true));
 
 		JsonObject json = new JsonObject();
 		json.addParameter("labels", labels);
 		json.addParameter("series", values);
 
+		JsonObject barchart = new JsonObject();
+		barchart.addParameter("labels", new String[] { "Income", "Fixed Costs", "Expenses" });
+		barchart.addParameter("series", new Double[] { sumIncome, sumMonthlyCosts, sum });
+
 		reaction.setSessionAttribute("chart", json.toString());
+		reaction.setSessionAttribute("barchart", barchart.toString());
+		setBarChartOptions(reaction);
 		reaction.setSessionAttribute("statistics", statistics);
+		reaction.setSessionAttribute("statisticsMonthlyCosts", statisticsMonthlyCosts);
+		reaction.setSessionAttribute("statisticsIncome", statisticsIncome);
+		reaction.setSessionAttribute("sum", sumIncome - sumMonthlyCosts - sum);
 		reaction.setSessionAttribute("month", month);
 	}
 
