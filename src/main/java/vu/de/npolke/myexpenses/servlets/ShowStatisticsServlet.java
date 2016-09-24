@@ -39,6 +39,8 @@ import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 @WebServlet("/showstatistics")
 public class ShowStatisticsServlet extends AbstractBasicServlet {
 
+	public static final String TEXT_TOTAL = "Total";
+
 	private static final long serialVersionUID = 1L;
 
 	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsPair.class);
@@ -83,9 +85,9 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 				sum += pair.getValue();
 			}
 		}
-		statistics.add(new StatisticsPair(0l, "Summe", sum, false, false));
-		statisticsMonthlyCosts.add(new StatisticsPair(0l, "Summe", sumMonthlyCosts, true, false));
-		statisticsIncome.add(new StatisticsPair(0l, "Summe", sumIncome, true, true));
+		statistics.add(new StatisticsPair(0l, TEXT_TOTAL, sum, false, false));
+		statisticsMonthlyCosts.add(new StatisticsPair(0l, TEXT_TOTAL, sumMonthlyCosts, true, false));
+		statisticsIncome.add(new StatisticsPair(0l, TEXT_TOTAL, sumIncome, true, true));
 
 		JsonObject json = new JsonObject();
 		json.addParameter("labels", labels);

@@ -54,10 +54,10 @@ the License.
                 <th style="width:100px">Value</th>
             </tr>
             <c:forEach var="category" items="${sessionScope.statistics}">
-                <tr>
+                <tr ${category.name eq 'Total' ? 'class="total-cost"' : ''}>
                     <td>
                         <c:choose>
-                        <c:when test="${category.name ne 'Summe' and category.value gt 0}"><a href="listexpenses?month=${sessionScope.month}&category=${category.id}">${category.name}</a></c:when>
+                        <c:when test="${category.name ne 'Total' and category.value gt 0}"><a href="listexpenses?month=${sessionScope.month}&category=${category.id}">${category.name}</a></c:when>
                         <c:otherwise>${category.name}</c:otherwise>
                         </c:choose>
                     </td><td class="number" style="text-align:right">
@@ -80,10 +80,10 @@ the License.
                 <th style="width:100px">Value</th>
             </tr>
             <c:forEach var="category" items="${sessionScope.statisticsIncome}">
-                <tr>
+                <tr ${category.name eq 'Total' ? 'class="total-income"' : ''}>
                     <td>
                         <c:choose>
-                        <c:when test="${category.name ne 'Summe' and category.value gt 0}"><a href="listexpenses?month=${sessionScope.month}&category=${category.id}">${category.name}</a></c:when>
+                        <c:when test="${category.name ne 'Total' and category.value gt 0}"><a href="listexpenses?month=${sessionScope.month}&category=${category.id}">${category.name}</a></c:when>
                         <c:otherwise>${category.name}</c:otherwise>
                         </c:choose>
                     </td><td class="number" style="text-align:right">
@@ -104,10 +104,10 @@ the License.
                 <th style="width:100px">Value</th>
             </tr>
             <c:forEach var="category" items="${sessionScope.statisticsMonthlyCosts}">
-                <tr>
+                <tr ${category.name eq 'Total' ? 'class="total-cost"' : ''}>
                     <td>
                         <c:choose>
-                        <c:when test="${category.name ne 'Summe' and category.value gt 0}"><a href="listexpenses?month=${sessionScope.month}&category=${category.id}">${category.name}</a></c:when>
+                        <c:when test="${category.name ne 'Total' and category.value gt 0}"><a href="listexpenses?month=${sessionScope.month}&category=${category.id}">${category.name}</a></c:when>
                         <c:otherwise>${category.name}</c:otherwise>
                         </c:choose>
                     </td><td class="number" style="text-align:right">
@@ -124,7 +124,7 @@ the License.
     <div class="w3-col m6">
         <h4>Result</h4>
         <div id="myBarChart" style="height: 100px"></div>
-        <div style="color:${sessionScope.sum > 0 ? 'green' : 'red'}">Sum: <fmt:formatNumber value="${sessionScope.sum}" type="currency"/></div>
+        <div class="${sessionScope.sum > 0 ? 'total-income' : 'total-cost'}">Total: <fmt:formatNumber value="${sessionScope.sum}" type="currency"/></div>
     </div>
 </div>
 

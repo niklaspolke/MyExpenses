@@ -28,3 +28,12 @@ ul.w3-ul li { border-bottom: 0 }
   /* Colour of your bars */
   stroke: orange;
 }
+.total-income, .total-cost {
+	font-weight: bold;
+}
+.total-income {
+	color: green;
+}
+.total-cost {
+	color: red;
+}
