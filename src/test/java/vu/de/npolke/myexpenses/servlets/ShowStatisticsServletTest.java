@@ -26,7 +26,7 @@ public class ShowStatisticsServletTest {
 	private static final long ACCOUNT_ID = 123;
 	private static final double DELTA = 0.001;
 
-	public static final String JSON_BARCHART_OPTIONS = "{\"chartPadding\":{\"buttom\":5,\"top\":5,\"left\":25,\"right\":5},\"distributeSeries\":true,\"horizontalBars\":true,\"reverseData\":true}";
+	public static final String JSON_BARCHART_OPTIONS = "{\"chartPadding\":{\"top\":5,\"right\":5,\"buttom\":5,\"left\":25},\"distributeSeries\":true,\"horizontalBars\":true,\"reverseData\":true}";
 	public static final String JSON_CHART_TEMPLATE = "{\"labels\":[{1}],\"series\":[{2}]}";
 	public static final String JSON_BARCHART_TEMPLATE = "{\"labels\":[\"Income\",\"Fixed Costs\",\"Expenses\"],\"series\":[{1}]}";
 

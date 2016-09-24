@@ -2,7 +2,7 @@ package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +50,7 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 		barchartOptions.addParameter("horizontalBars", Boolean.TRUE);
 		barchartOptions.addParameter("reverseData", Boolean.TRUE);
 		barchartOptions.addParameter("distributeSeries", Boolean.TRUE);
-		Map<String, Integer> chartPadding = new HashMap<String, Integer>();
+		Map<String, Integer> chartPadding = new LinkedHashMap<String, Integer>();
 		chartPadding.put("top", 5);
 		chartPadding.put("right", 5);
 		chartPadding.put("buttom", 5);
