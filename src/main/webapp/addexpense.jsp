@@ -82,7 +82,7 @@ the License.
     </div></div>
 </div><div class="w3-panel">
     <div class="w3-row-padding">
-        <div class="w3-half">
+        <div class="w3-third">
             <input class="w3-input w3-border w3-round-large"
                 type="text"
                 name="amount"
@@ -96,9 +96,12 @@ the License.
                 value="${sessionScope.expense.amount != 0.0 ? sessionScope.expense.amount : ''}"
                 ${sessionScope.categoryPreset ? 'autofocus' : ''}>
             <label class="w3-label" for="amount">Amount (€)</label>
-        </div><div class="w3-half">
+        </div><div class="w3-third">
             <input class="w3-check" type="checkbox" name="monthly" value="true" ${sessionScope.expense.monthly ? 'checked' : ''}>
             <label class="w3-label" for="fixedcost">Monthly</label>
+        </div><div class="w3-third">
+            <input class="w3-check" type="checkbox" name="income" value="true" ${sessionScope.expense.income ? 'checked' : ''}>
+            <label class="w3-label" for="income">Income</label>
         </div>
     </div>
 </div><div class="w3-panel">

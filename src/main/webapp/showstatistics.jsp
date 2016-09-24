@@ -20,6 +20,7 @@ the License.
 
 <jsp:include page="header.jsp"/>
 <link rel="stylesheet" href="css/chartist.min.css">
+<link rel="stylesheet" href="css/styles.css">
 <script type="text/javascript" src="js/chartist.min.js"></script>
 
 <div class="w3-container">
@@ -45,6 +46,7 @@ the License.
     <div class="w3-col m6" id="myChart" style="height: 300px"></div>
 
     <div class="w3-col m6">
+        <h4>Expenses</h4>
         <fmt:setLocale value="de_DE"/>
         <table class="w3-table-all">
             <tr>
@@ -68,11 +70,72 @@ the License.
         </table>
     </div>
 </div>
+<div class="w3-row-padding">
+    <div class="w3-col m6">
+        <h4>Income</h4>
+        <fmt:setLocale value="de_DE"/>
+        <table class="w3-table-all">
+            <tr>
+                <th>Category</th>
+                <th style="width:100px">Value</th>
+            </tr>
+            <c:forEach var="category" items="${sessionScope.statisticsIncome}">
+                <tr>
+                    <td>
+                        <c:choose>
+                        <c:when test="${category.name ne 'Summe' and category.value gt 0}"><a href="listexpenses?month=${sessionScope.month}&category=${category.id}">${category.name}</a></c:when>
+                        <c:otherwise>${category.name}</c:otherwise>
+                        </c:choose>
+                    </td><td class="number" style="text-align:right">
+                        <fmt:formatNumber value="${category.value}" type="currency"/>
+                    </td>
+                </tr>
+            </c:forEach>
+            <tr>
+            </tr>
+        </table>
+    </div>
+    <div class="w3-col m6">
+    <h4>Monthly Costs</h4>
+        <fmt:setLocale value="de_DE"/>
+        <table class="w3-table-all">
+            <tr>
+                <th>Category</th>
+                <th style="width:100px">Value</th>
+            </tr>
+            <c:forEach var="category" items="${sessionScope.statisticsMonthlyCosts}">
+                <tr>
+                    <td>
+                        <c:choose>
+                        <c:when test="${category.name ne 'Summe' and category.value gt 0}"><a href="listexpenses?month=${sessionScope.month}&category=${category.id}">${category.name}</a></c:when>
+                        <c:otherwise>${category.name}</c:otherwise>
+                        </c:choose>
+                    </td><td class="number" style="text-align:right">
+                        <fmt:formatNumber value="${category.value}" type="currency"/>
+                    </td>
+                </tr>
+            </c:forEach>
+            <tr>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="w3-row-padding">
+    <div class="w3-col m6">
+        <h4>Result</h4>
+        <div id="myBarChart" style="height: 100px"></div>
+        <div style="color:${sessionScope.sum > 0 ? 'green' : 'red'}">Sum: <fmt:formatNumber value="${sessionScope.sum}" type="currency"/></div>
+    </div>
+</div>
 
 <script type="text/javascript">
 document.body.onload = function() {
     var chart = JSON.parse('${sessionScope.chart}');
     new Chartist.Pie('#myChart', chart);
+
+    var barchart = JSON.parse('${sessionScope.barchart}');
+    var barchartoptions = JSON.parse('${sessionScope.barchartoptions}');
+    new Chartist.Bar('#myBarChart', barchart, barchartoptions);
 }
 </script>
 

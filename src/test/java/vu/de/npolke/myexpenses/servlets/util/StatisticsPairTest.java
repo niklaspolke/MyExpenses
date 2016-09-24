@@ -25,22 +25,36 @@ public class StatisticsPairTest {
 
 	@Test
 	public void constructorToGetterId() {
-		StatisticsPair pair = new StatisticsPair(4l, "category", 3.3);
+		StatisticsPair pair = new StatisticsPair(4l, "category", 3.3, true, false);
 
 		assertEquals(4, pair.getId());
 	}
 
 	@Test
 	public void constructorToGetterName() {
-		StatisticsPair pair = new StatisticsPair(4l, "category", 3.3);
+		StatisticsPair pair = new StatisticsPair(4l, "category", 3.3, true, false);
 
 		assertEquals("category", pair.getName());
 	}
 
 	@Test
 	public void constructorToGetterValue() {
-		StatisticsPair pair = new StatisticsPair(4l, "category", 3.3);
+		StatisticsPair pair = new StatisticsPair(4l, "category", 3.3, true, false);
 
 		assertEquals(3.3, pair.getValue(), 0.01);
+	}
+
+	@Test
+	public void constructorToGetterMonthly() {
+		StatisticsPair pair = new StatisticsPair(4l, "category", 3.3, true, false);
+
+		assertEquals(true, pair.isMonthly());
+	}
+
+	@Test
+	public void constructorToGetterIncome() {
+		StatisticsPair pair = new StatisticsPair(4l, "category", 3.3, true, false);
+
+		assertEquals(false, pair.isIncome());
 	}
 }

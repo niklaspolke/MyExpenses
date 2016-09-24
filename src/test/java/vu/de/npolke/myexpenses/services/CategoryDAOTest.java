@@ -103,10 +103,11 @@ public class CategoryDAOTest extends AbstractDAOTest {
 		List<Category> categories = categoryDAO.readByAccountId(1);
 
 		assertNotNull(categories);
-		assertEquals(3, categories.size());
+		assertEquals(4, categories.size());
 		assertEquals("food", categories.get(0).getName());
-		assertEquals("luxury", categories.get(1).getName());
-		assertEquals("sports", categories.get(2).getName());
+		assertEquals("income", categories.get(1).getName());
+		assertEquals("luxury", categories.get(2).getName());
+		assertEquals("sports", categories.get(3).getName());
 	}
 
 	@Test

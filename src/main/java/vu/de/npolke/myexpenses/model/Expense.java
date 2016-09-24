@@ -47,6 +47,8 @@ public class Expense implements Serializable {
 
 	private boolean monthly = false;
 
+	private boolean income = false;
+
 	public long getId() {
 		return id;
 	}
@@ -135,6 +137,14 @@ public class Expense implements Serializable {
 		this.monthly = monthly;
 	}
 
+	public boolean isIncome() {
+		return income;
+	}
+
+	public void setIncome(final boolean income) {
+		this.income = income;
+	}
+
 	@Override
 	public String toString() {
 		//@formatter:off
@@ -143,7 +153,8 @@ public class Expense implements Serializable {
 				.append(NUMBER_FORMATTER.format(getAmount())).append(" - ")
 				.append(getCategoryName()).append(" for ")
 				.append(getReason() != null ? getReason() : "")
-				.append(isMonthly() ? " - monthly fixed" : "");
+				.append(isMonthly() ? " - monthly fixed" : "")
+				.append(isIncome() ? " - income" : "");
 		return text.toString();
 		//@formatter:on
 	}
