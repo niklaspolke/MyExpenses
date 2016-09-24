@@ -36,9 +36,7 @@ the License.
         title="username - at least 4 characters"
         placeholder="<username>"
         pattern=".{4,}"
-        required="required"
-        value="${sessionScope.account.login}"
-        disabled>
+        value="${sessionScope.account.login}">
     <label class="w3-label" for="login">Username</label>
 </div><div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
@@ -62,7 +60,6 @@ the License.
         title="new password"
         placeholder="<password>"
         pattern=".{4,}"
-        required="required"
         value="">
     <label class="w3-label" for="newpassword1">New Password</label>
 </div><div class="w3-panel">
@@ -74,7 +71,6 @@ the License.
         title="repeat new password"
         placeholder="<password>"
         pattern=".{4,}"
-        required="required"
         value="">
     <label class="w3-label" for="newpassword2">Repeat New Password</label>
 </div><div class="w3-panel">

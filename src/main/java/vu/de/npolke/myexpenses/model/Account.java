@@ -19,7 +19,7 @@ import java.io.Serializable;
  *
  * @author Niklas Polke
  */
-public class Account implements Serializable {
+public class Account implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -53,6 +53,36 @@ public class Account implements Serializable {
 	public void setPassword(final String password) {
 		this.password = password;
 	}
+
+	@Override
+	public Account clone() {
+		final Account clone = new Account();
+		clone.setId(getId());
+		clone.setLogin(getLogin());
+		clone.setPassword(getPassword());
+		return clone;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Account) {
+			Account other = (Account) obj;
+			boolean equal = getId() == other.getId();
+			if (getLogin() == null) {
+				equal &= other.getLogin() == null;
+			} else {
+				equal &= getLogin().equals(other.getLogin());
+			}
+			if (getPassword() == null) {
+				equal &= other.getPassword() == null;
+			} else {
+				equal &= getPassword().equals(other.getPassword());
+			}
+			return equal;
+		} else {
+			return false;
+		}
+	};
 
 	@Override
 	public String toString() {

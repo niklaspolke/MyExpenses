@@ -3,9 +3,12 @@ package vu.de.npolke.myexpenses.servlets;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +37,8 @@ import vu.de.npolke.myexpenses.util.HashUtil;
  */
 public class EditAccountServletTest {
 
+	private static final String LOGIN_OLD = "user";
+	private static final String LOGIN_NEW = "new user";
 	private static final String PASSWORD_OLD = "password";
 	private static final String PASSWORD_NEW = "new password";
 
@@ -45,6 +50,7 @@ public class EditAccountServletTest {
 		servlet = new EditAccountServlet();
 		servlet.accountDAO = mock(AccountDAO.class);
 		account = new Account();
+		account.setLogin(LOGIN_OLD);
 		account.setPassword(HashUtil.toMD5(PASSWORD_OLD));
 	}
 
@@ -63,25 +69,67 @@ public class EditAccountServletTest {
 	}
 
 	@Test
-	public void editAccount() {
-		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, PASSWORD_NEW, PASSWORD_NEW);
+	public void editAccount_Password() {
+		Account accountToUpdate = account.clone();
+		accountToUpdate.setPassword(HashUtil.toMD5(PASSWORD_NEW));
+		when(servlet.accountDAO.update(eq(accountToUpdate))).thenReturn(true);
+
+		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, PASSWORD_NEW, PASSWORD_NEW, LOGIN_OLD);
 
 		assertNotNull(reaction);
-		// correct new account password
+		assertEquals(LOGIN_OLD, account.getLogin());
 		assertEquals(HashUtil.toMD5(PASSWORD_NEW), account.getPassword());
 		// correct persisting
-		verify(servlet.accountDAO).update(account);
+		verify(servlet.accountDAO).update(eq(accountToUpdate));
+		// correct navigation
+		assertEquals("listexpenses", reaction.getRedirect());
+	}
+
+	@Test
+	public void editAccount_Login() {
+		Account accountToUpdate = account.clone();
+		accountToUpdate.setLogin(LOGIN_NEW);
+		when(servlet.accountDAO.update(eq(accountToUpdate))).thenReturn(true);
+
+		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, "", "", LOGIN_NEW);
+
+		assertNotNull(reaction);
+		assertEquals(LOGIN_NEW, account.getLogin());
+		assertEquals(HashUtil.toMD5(PASSWORD_OLD), account.getPassword());
+		// correct persisting
+		verify(servlet.accountDAO).update(eq(accountToUpdate));
+		// correct navigation
+		assertEquals("listexpenses", reaction.getRedirect());
+	}
+
+	@Test
+	public void editAccount_LoginAndPassword() {
+		Account accountToUpdate = account.clone();
+		accountToUpdate.setLogin(LOGIN_NEW);
+		accountToUpdate.setPassword(HashUtil.toMD5(PASSWORD_NEW));
+		when(servlet.accountDAO.update(eq(accountToUpdate))).thenReturn(true);
+
+		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, PASSWORD_NEW, PASSWORD_NEW, LOGIN_NEW);
+
+		assertNotNull(reaction);
+		assertEquals(LOGIN_NEW, account.getLogin());
+		assertEquals(HashUtil.toMD5(PASSWORD_NEW), account.getPassword());
+		// correct persisting
+		verify(servlet.accountDAO).update(eq(accountToUpdate));
 		// correct navigation
 		assertEquals("listexpenses", reaction.getRedirect());
 	}
 
 	@Test
 	public void editAccount_wrongPassword() {
-		ServletReaction reaction = servlet.editAccount(account, "notOldPassword", PASSWORD_NEW, PASSWORD_NEW);
+		ServletReaction reaction = servlet.editAccount(account, "notOldPassword", PASSWORD_NEW, PASSWORD_NEW,
+				LOGIN_OLD);
 
 		assertNotNull(reaction);
+		assertEquals(LOGIN_OLD, account.getLogin());
+		assertEquals(HashUtil.toMD5(PASSWORD_OLD), account.getPassword());
 		// correct persisting
-		verify(servlet.accountDAO, never()).update(account);
+		verify(servlet.accountDAO, never()).update(any(Account.class));
 		// correct error message
 		assertEquals("old password wasn't correct", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
@@ -90,13 +138,52 @@ public class EditAccountServletTest {
 
 	@Test
 	public void editAccount_newPasswordsNotEqual() {
-		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, PASSWORD_NEW, "notNewPassword");
+		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, PASSWORD_NEW, "notNewPassword",
+				LOGIN_NEW);
 
 		assertNotNull(reaction);
+		assertEquals(LOGIN_OLD, account.getLogin());
+		assertEquals(HashUtil.toMD5(PASSWORD_OLD), account.getPassword());
 		// correct persisting
-		verify(servlet.accountDAO, never()).update(account);
+		verify(servlet.accountDAO, never()).update(any(Account.class));
 		// correct error message
-		assertEquals("new password 1 wasn't equal to new password 2", reaction.getRequestAttributes().get("errorMessage"));
+		assertEquals("new password 1 wasn't equal to new password 2",
+				reaction.getRequestAttributes().get("errorMessage"));
+		// correct navigation
+		assertEquals("editaccount.jsp", reaction.getForward());
+	}
+
+	@Test
+	public void editAccount_newPasswordsNotEqualAndEmptyLogin() {
+		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, PASSWORD_NEW, "notNewPassword", "");
+
+		assertNotNull(reaction);
+		assertEquals(LOGIN_OLD, account.getLogin());
+		assertEquals(HashUtil.toMD5(PASSWORD_OLD), account.getPassword());
+		// correct persisting
+		verify(servlet.accountDAO, never()).update(any(Account.class));
+		// correct error message
+		assertEquals("login has to be at least 4 characters long<br/>new password 1 wasn't equal to new password 2",
+				reaction.getRequestAttributes().get("errorMessage"));
+		// correct navigation
+		assertEquals("editaccount.jsp", reaction.getForward());
+	}
+
+	@Test
+	public void editAccount_LoginAlreadyInUse() {
+		Account accountToUpdate = account.clone();
+		accountToUpdate.setLogin(LOGIN_NEW);
+		when(servlet.accountDAO.update(eq(accountToUpdate))).thenReturn(false);
+
+		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, "", "", LOGIN_NEW);
+
+		assertNotNull(reaction);
+		assertEquals(LOGIN_OLD, account.getLogin());
+		assertEquals(HashUtil.toMD5(PASSWORD_OLD), account.getPassword());
+		// correct persisting
+		verify(servlet.accountDAO).update(eq(accountToUpdate));
+		// correct error message
+		assertEquals("login \"" + LOGIN_NEW + "\" already in use", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
 		assertEquals("editaccount.jsp", reaction.getForward());
 	}

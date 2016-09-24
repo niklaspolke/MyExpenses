@@ -59,28 +59,59 @@ public class EditAccountServlet extends AbstractBasicServlet {
 		final String oldpassword = request.getParameter("oldpassword");
 		final String newpassword1 = request.getParameter("newpassword1");
 		final String newpassword2 = request.getParameter("newpassword2");
+		final String login = request.getParameter("login");
 
-		return editAccount(account, oldpassword, newpassword1, newpassword2);
+		return editAccount(account, oldpassword, newpassword1, newpassword2, login);
 	}
 
 	public ServletReaction editAccount(final Account account, final String oldPassword, final String newPassword1,
-			final String newPassword2) {
+			final String newPassword2, final String login) {
 		ServletReaction reaction = new ServletReaction();
+		boolean validationErrors = false;
 		if (!account.getPassword().equals(HashUtil.toMD5(oldPassword))) {
 			handleIncorrectInput(reaction, "old password wasn't correct");
-		} else if (newPassword1 != null && newPassword1.trim().length() > 3 && newPassword1.equals(newPassword2)) {
-			account.setPassword(HashUtil.toMD5(newPassword1));
-			accountDAO.update(account);
-			reaction.setRedirect("listexpenses");
+			validationErrors = true;
 		} else {
-			handleIncorrectInput(reaction, "new password 1 wasn't equal to new password 2");
+			Account accountUpdate = account.clone();
+			if (!account.getLogin().equals(login)) {
+				if (login != null && login.trim().length() >= 4) {
+					accountUpdate.setLogin(login.trim());
+				} else {
+					handleIncorrectInput(reaction, "login has to be at least 4 characters long");
+					validationErrors = true;
+				}
+			}
+			if ((newPassword1 != null && newPassword1.length() > 0) || (newPassword2 != null && newPassword2.length() > 0)) {
+				if (newPassword1 != null && newPassword1.trim().length() > 3 && newPassword1.equals(newPassword2)) {
+					accountUpdate.setPassword(HashUtil.toMD5(newPassword1));
+				} else {
+					handleIncorrectInput(reaction, "new password 1 wasn't equal to new password 2");
+					validationErrors = true;
+				}
+			}
+
+			if (!validationErrors) {
+				boolean success = accountDAO.update(accountUpdate);
+				if (success) {
+					account.setLogin(accountUpdate.getLogin());
+					account.setPassword(accountUpdate.getPassword());
+					reaction.setRedirect("listexpenses");
+				} else {
+					handleIncorrectInput(reaction, "login \"" + accountUpdate.getLogin() + "\" already in use");
+				}
+			}
 		}
 
 		return reaction;
 	}
 
 	private void handleIncorrectInput(final ServletReaction reaction, final String errorMessage) {
-		reaction.setRequestAttribute("errorMessage", errorMessage);
+		if (reaction.getRequestAttributes().get("errorMessage") == null) {
+			reaction.setRequestAttribute("errorMessage", errorMessage);
+		} else {
+			String formerErrorMessage = (String) reaction.getRequestAttributes().get("errorMessage");
+			reaction.setRequestAttribute("errorMessage", formerErrorMessage + "<br/>" + errorMessage);
+		}
 		reaction.setForward("editaccount.jsp");
 	}
 }
