@@ -80,7 +80,7 @@ public class EditExpenseServletTest {
 	@Test
 	public void prepareEditExpense() {
 		when(servlet.categoryDAO.readByAccountId(ACCOUNT_ID)).thenReturn(categories);
-		when(servlet.expenseDAO.read(EXPENSE_ID)).thenReturn(expense);
+		when(servlet.expenseDAO.read(ACCOUNT_ID, EXPENSE_ID)).thenReturn(expense);
 
 		ServletReaction reaction = servlet.prepareEditExpense(account, String.valueOf(EXPENSE_ID));
 
@@ -96,7 +96,7 @@ public class EditExpenseServletTest {
 	@Test
 	public void prepareEditExpense_nonExistingExpense() {
 		when(servlet.categoryDAO.readByAccountId(ACCOUNT_ID)).thenReturn(categories);
-		when(servlet.expenseDAO.read(EXPENSE_ID)).thenReturn(expense);
+		when(servlet.expenseDAO.read(ACCOUNT_ID, EXPENSE_ID)).thenReturn(expense);
 
 		ServletReaction reaction = servlet.prepareEditExpense(account, String.valueOf(EXPENSE_ID_NONEXISTING));
 
@@ -113,7 +113,7 @@ public class EditExpenseServletTest {
 		Expense foreignExpense = new Expense();
 		foreignExpense.setId(EXPENSE_ID_FOREIGN);
 		foreignExpense.setAccountId(ACCOUNT_ID_FOREIGN);
-		when(servlet.expenseDAO.read(EXPENSE_ID_FOREIGN)).thenReturn(foreignExpense);
+		when(servlet.expenseDAO.read(ACCOUNT_ID_FOREIGN, EXPENSE_ID_FOREIGN)).thenReturn(foreignExpense);
 
 		ServletReaction reaction = servlet.prepareEditExpense(account, String.valueOf(EXPENSE_ID_FOREIGN));
 

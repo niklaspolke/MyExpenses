@@ -69,7 +69,7 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 
 		try {
 			long id = Long.parseLong(expenseId);
-			Expense expense = expenseDAO.read(id);
+			Expense expense = expenseDAO.read(account.getId(), id);
 			if (expense == null || expense.getAccountId() != account.getId()) {
 				errorOccured = true;
 			} else {

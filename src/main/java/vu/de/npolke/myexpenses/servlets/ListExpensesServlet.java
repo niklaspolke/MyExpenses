@@ -1,7 +1,10 @@
 package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -44,6 +47,9 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 	protected static final String MODE_MONTHLY = "monthly";
 
 	private static final int AMOUNT_OF_ENTRIES_PER_PAGE = 10;
+	
+	private final DecimalFormat FORMAT_YEAR = new DecimalFormat("0000");
+	private final DecimalFormat FORMAT_MONTH = new DecimalFormat("00");
 
 	ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
 	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsPair.class);
@@ -59,6 +65,14 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 
 		return prepareListExpenses(account, requestedPage, requestedMonth, requestedCategoryId, requestedMonthly);
 	}
+	
+	protected String getYearMonthString(final long timeInMillis) {
+		final Calendar now = Calendar.getInstance(Locale.GERMANY);
+		now.setTimeInMillis(timeInMillis);
+		final int year = now.get(Calendar.YEAR);
+		final int month = now.get(Calendar.MONTH) + 1;
+		return FORMAT_YEAR.format(year) + "." + FORMAT_MONTH.format(month);
+	}
 
 	public ServletReaction prepareListExpenses(final Account account, final String requestedPage,
 			final String monthForTopTen, final String categoryIdForTopTen, final String monthly) {
@@ -67,7 +81,7 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 		boolean getMonthly = Boolean.parseBoolean(monthly);
 
 		if (getMonthly) {
-			expenses = expenseDAO.readMonthlyByAccountId(account.getId());
+			expenses = expenseDAO.readMonthlyByAccountAndMonth(account.getId(), getYearMonthString(System.currentTimeMillis()));
 			reaction.setRequestAttribute("mode", MODE_MONTHLY);
 		} else if (monthForTopTen != null || categoryIdForTopTen != null) {
 			final long parsedCategoryIdForTopTen = parseLongDefault0(categoryIdForTopTen);

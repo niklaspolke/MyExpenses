@@ -28,13 +28,17 @@ import vu.de.npolke.myexpenses.model.Expense;
  */
 public class ExpenseDAO extends AbstractConnectionDAO {
 
+	private static final String SQL_READ_TEMPLATE = "SELECT e.id, e.day, e.amount, e.reason, e.monthly, e.income, e.category_id, e.account_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE e.account_id = ?";
+
 	private static final String SQL_INSERT = "INSERT INTO Expense (id, day, amount, reason, monthly, income, category_id, account_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-	private static final String SQL_READ_BY_ID = "SELECT e.id, e.day, e.amount, e.reason, e.monthly, e.income, e.category_id, e.account_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE e.id = ?";
+	private static final String SQL_READ_BY_ID = SQL_READ_TEMPLATE + "AND e.id = ?";
 
-	private static final String SQL_READ_BY_ACCOUNT_ID = "SELECT * FROM (SELECT e.id, e.day, e.amount, e.reason, e.monthly, e.income, e.category_id, c.name, e.account_id FROM Expense e JOIN Category c ON e.category_id = c.id WHERE account_id = ? AND monthly = false ORDER BY day DESC, id DESC) WHERE rownum() <= ?";
+	private static final String SQL_READ_BY_ACCOUNT_ID = "SELECT * FROM (" + SQL_READ_TEMPLATE
+			+ "AND monthly = false ORDER BY day DESC, id DESC) WHERE rownum() <= ?";
 
-	private static final String SQL_READ_MONTHLY_BY_ACCOUNT_ID = "SELECT e.id, e.day, e.amount, e.reason, e.monthly, e.income, e.category_id, c.name, e.account_id FROM Expense e JOIN Category c ON e.category_id = c.id WHERE account_id = ? AND monthly = true ORDER BY amount DESC, id DESC";
+	private static final String SQL_READ_MONTHLY_BY_ACCOUNT_AND_MONTH = SQL_READ_TEMPLATE
+			+ "AND year(e.day)+'.'+lpad(month(e.day),2,'0') = ? AND monthly = true ORDER BY amount DESC, id DESC";
 
 	private static final String SQL_READ_AMOUNT_BY_ACCOUNT_ID = "SELECT COUNT(id) as amountofexpenses FROM Expense WHERE account_id = ? AND monthly = false";
 
@@ -93,13 +97,14 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 		return expense;
 	}
 
-	public Expense read(final long id) {
+	public Expense read(final long accountId, final long id) {
 		Expense expense = null;
 
 		try (Connection connection = getConnection()) {
 			PreparedStatement readStatement;
 			readStatement = connection.prepareStatement(SQL_READ_BY_ID);
-			readStatement.setLong(1, id);
+			readStatement.setLong(1, accountId);
+			readStatement.setLong(2, id);
 			ResultSet result = readStatement.executeQuery();
 			if (result.next()) {
 				expense = mapResultRow(result);
@@ -173,13 +178,14 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 		return expenses;
 	}
 
-	public List<Expense> readMonthlyByAccountId(final long accountId) {
+	public List<Expense> readMonthlyByAccountAndMonth(final long accountId, final String month) {
 		List<Expense> monthlyCosts = new ArrayList<Expense>();
 
 		try (Connection connection = getConnection()) {
 			PreparedStatement readStatement;
-			readStatement = connection.prepareStatement(SQL_READ_MONTHLY_BY_ACCOUNT_ID);
+			readStatement = connection.prepareStatement(SQL_READ_MONTHLY_BY_ACCOUNT_AND_MONTH);
 			readStatement.setLong(1, accountId);
+			readStatement.setString(2, month);
 			ResultSet result = readStatement.executeQuery();
 			while (result.next()) {
 				Expense expense = mapResultRow(result);

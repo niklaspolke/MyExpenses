@@ -56,7 +56,7 @@ public class EditExpenseServlet extends AbstractBasicServlet {
 		long id = Long.parseLong(expenseId);
 
 		List<Category> categories = categoryDAO.readByAccountId(account.getId());
-		Expense expense = expenseDAO.read(id);
+		Expense expense = expenseDAO.read(account.getId(), id);
 
 		if (expense == null || expense.getAccountId() != account.getId()) {
 			reaction.setRequestAttribute("errorMessage",

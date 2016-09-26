@@ -55,7 +55,7 @@ public class DeleteExpenseServlet extends AbstractBasicServlet {
 		reaction.setForward("listexpenses");
 
 		if ("yes".equalsIgnoreCase(confirmed)) {
-			Expense expense = expenseDAO.read(expenseId);
+			Expense expense = expenseDAO.read(account.getId(), expenseId);
 			if (expense != null && expense.getAccountId() == account.getId()) {
 				expenseDAO.deleteById(expenseId);
 			} else {

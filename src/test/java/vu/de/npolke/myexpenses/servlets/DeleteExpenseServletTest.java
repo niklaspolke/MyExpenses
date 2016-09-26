@@ -55,7 +55,7 @@ public class DeleteExpenseServletTest {
 		Expense expense = new Expense();
 		expense.setId(expenseId);
 		expense.setAccountId(ACCOUNT_ID);
-		when(servlet.expenseDAO.read(expenseId)).thenReturn(expense);
+		when(servlet.expenseDAO.read(ACCOUNT_ID, expenseId)).thenReturn(expense);
 
 		ServletReaction reaction = servlet.deleteExpense(account, Long.toString(expenseId), "yes");
 
@@ -72,7 +72,7 @@ public class DeleteExpenseServletTest {
 		Expense expense = new Expense();
 		expense.setId(expenseId);
 		expense.setAccountId(ACCOUNT_ID);
-		when(servlet.expenseDAO.read(expenseId)).thenReturn(expense);
+		when(servlet.expenseDAO.read(ACCOUNT_ID, expenseId)).thenReturn(expense);
 
 		ServletReaction reaction = servlet.deleteExpense(account, Long.toString(expenseId), null);
 
@@ -89,7 +89,7 @@ public class DeleteExpenseServletTest {
 		Expense expense = new Expense();
 		expense.setId(expenseId);
 		expense.setAccountId(ACCOUNT_ID);
-		when(servlet.expenseDAO.read(expenseId)).thenReturn(expense);
+		when(servlet.expenseDAO.read(ACCOUNT_ID, expenseId)).thenReturn(expense);
 
 		ServletReaction reaction = servlet.deleteExpense(account, "44", "yes");
 
@@ -109,7 +109,7 @@ public class DeleteExpenseServletTest {
 		Expense expense = new Expense();
 		expense.setId(expenseId);
 		expense.setAccountId(666);
-		when(servlet.expenseDAO.read(expenseId)).thenReturn(expense);
+		when(servlet.expenseDAO.read(666, expenseId)).thenReturn(expense);
 
 		ServletReaction reaction = servlet.deleteExpense(account, Long.toString(expenseId), "yes");
 

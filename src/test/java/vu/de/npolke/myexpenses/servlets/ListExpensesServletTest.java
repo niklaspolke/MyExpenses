@@ -3,9 +3,11 @@ package vu.de.npolke.myexpenses.servlets;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -37,6 +39,15 @@ public class ListExpensesServletTest {
 		servlet = new ListExpensesServlet();
 		servlet.expenseDAO = mock(ExpenseDAO.class);
 		servlet.statisticsDAO = mock(StatisticsDAO.class);
+	}
+
+	@Test
+	public void getYearMonthString() {
+		final long TIME_IN_MILLIS = 1474841394643l;
+
+		final String RESULT = servlet.getYearMonthString(TIME_IN_MILLIS);
+
+		assertEquals("2016.09", RESULT);
 	}
 
 	@Test
@@ -200,12 +211,14 @@ public class ListExpensesServletTest {
 
 	@Test
 	public void prepareListExpenses_Monthly() {
+		servlet = spy(servlet);
 		final ArrayList<Expense> expenses = new ArrayList<Expense>();
 		Expense expense = new Expense();
 		expense.setCategoryId(CATEGORY_ID);
 		expense.setCategoryName(CATEGORY);
 		expenses.add(expense);
-		when(servlet.expenseDAO.readMonthlyByAccountId(ACCOUNT_ID)).thenReturn(expenses);
+		when(servlet.getYearMonthString(any(Long.class))).thenReturn("2016.09");
+		when(servlet.expenseDAO.readMonthlyByAccountAndMonth(ACCOUNT_ID, "2016.09")).thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, null, "true");
 

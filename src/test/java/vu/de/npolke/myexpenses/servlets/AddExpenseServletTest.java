@@ -200,7 +200,7 @@ public class AddExpenseServletTest {
 		expense.setAccountId(ACCOUNT_ID);
 		expense.setId(expenseId);
 		List<Category> categories = new ArrayList<Category>();
-		when(servlet.expenseDAO.read(expenseId)).thenReturn(expense);
+		when(servlet.expenseDAO.read(ACCOUNT_ID, expenseId)).thenReturn(expense);
 		when(servlet.categoryDAO.readByAccountId(ACCOUNT_ID)).thenReturn(categories);
 
 		ServletReaction reaction = servlet.prepareAddExpense(account, Long.toString(expenseId), null, null);
@@ -228,7 +228,7 @@ public class AddExpenseServletTest {
 		expense.setReason(REASON);
 		expense.setCategoryId(CATEGORY_ID);
 		List<Category> categories = new ArrayList<Category>();
-		when(servlet.expenseDAO.read(expenseId)).thenReturn(expense);
+		when(servlet.expenseDAO.read(ACCOUNT_ID, expenseId)).thenReturn(expense);
 		when(servlet.categoryDAO.readByAccountId(ACCOUNT_ID)).thenReturn(categories);
 
 		ServletReaction reaction = servlet.prepareAddExpense(account, Long.toString(expenseId), REASON_2_IGNORE,
@@ -256,7 +256,7 @@ public class AddExpenseServletTest {
 		account.setId(ACCOUNT_ID);
 		long nonExistingExpenseId = 123;
 		List<Category> categories = new ArrayList<Category>();
-		when(servlet.expenseDAO.read(nonExistingExpenseId)).thenReturn(null);
+		when(servlet.expenseDAO.read(ACCOUNT_ID, nonExistingExpenseId)).thenReturn(null);
 		when(servlet.categoryDAO.readByAccountId(ACCOUNT_ID)).thenReturn(categories);
 
 		ServletReaction reaction = servlet.prepareAddExpense(account, Long.toString(nonExistingExpenseId), null, null);
@@ -280,7 +280,7 @@ public class AddExpenseServletTest {
 		expense.setAccountId(foreignAccountId);
 		expense.setId(expenseId);
 		List<Category> categories = new ArrayList<Category>();
-		when(servlet.expenseDAO.read(expenseId)).thenReturn(expense);
+		when(servlet.expenseDAO.read(foreignAccountId, expenseId)).thenReturn(expense);
 		when(servlet.categoryDAO.readByAccountId(ACCOUNT_ID)).thenReturn(categories);
 
 		ServletReaction reaction = servlet.prepareAddExpense(account, Long.toString(expenseId), null, null);

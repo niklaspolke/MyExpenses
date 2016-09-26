@@ -47,7 +47,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void read() {
-		Expense expense = expenseDAO.read(101);
+		Expense expense = expenseDAO.read(1, 101);
 
 		assertNotNull(expense);
 		assertEquals(101, expense.getId());
@@ -63,7 +63,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void readNotExisting() {
-		Expense expense = expenseDAO.read(999);
+		Expense expense = expenseDAO.read(1, 999);
 
 		assertNull(expense);
 	}
@@ -86,7 +86,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void update() {
-		Expense expense = expenseDAO.read(101);
+		Expense expense = expenseDAO.read(1, 101);
 		expense.setAmount(12.2);
 		expense.setCategoryId(13);
 		expense.setReadableDayAsString("01.01.15");
@@ -99,7 +99,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 		assertTrue(success);
 		assertEquals("sports", expense.getCategoryName());
 
-		expense = expenseDAO.read(expense.getId());
+		expense = expenseDAO.read(expense.getAccountId(), expense.getId());
 		assertEquals(101, expense.getId());
 		assertEquals("01.01.15", expense.getReadableDayAsString());
 		assertEquals(12.2, expense.getAmount(), 0.01);
@@ -113,7 +113,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void updateNotExisting() {
-		Expense expense = expenseDAO.read(101);
+		Expense expense = expenseDAO.read(1, 101);
 		expense.setId(999);
 		expense.setAmount(12.2);
 		expense.setCategoryId(13);
@@ -123,7 +123,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 		expense.setIncome(true);
 
 		boolean success = expenseDAO.update(expense);
-		expense = expenseDAO.read(999);
+		expense = expenseDAO.read(1, 999);
 
 		assertFalse(success);
 		assertNull(expense);
@@ -150,7 +150,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void readMonthlyByAccountId() {
-		List<Expense> expenses = expenseDAO.readMonthlyByAccountId(1);
+		List<Expense> expenses = expenseDAO.readMonthlyByAccountAndMonth(1, "2015.06");
 
 		assertNotNull(expenses);
 		assertEquals(2, expenses.size());
@@ -221,7 +221,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 	@Test
 	public void delete() {
 		boolean success = expenseDAO.deleteById(101);
-		Expense expense = expenseDAO.read(101);
+		Expense expense = expenseDAO.read(1, 101);
 
 		assertTrue(success);
 		assertNull(expense);
