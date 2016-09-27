@@ -65,7 +65,7 @@ the License.
                     <c:if test="${sessionScope.topten.size() gt 0}"><div class="w3-dropdown-hover"></c:if>
                         <a ${disabled ? '' : 'href="addexpense"'} title="add expense">
                             <img class="w3-left w3-margin-right" src="img/sign-add_48.png" style="width:40px" alt="add expense" title="add expense">
-                            <span class="w3-xlarge">Add Expense${sessionScope.topten.size() gt 0 ? ' &#9947;' : ''}</span>
+                            <span class="w3-xlarge">Add Expense${sessionScope.topten.size() gt 0 ? ' &#x23EC;' : ''}</span>
                         </a>
                         <c:if test="${sessionScope.topten.size() gt 0}"><div class="w3-dropdown-content w3-white w3-card-4">
                             <c:forEach var="expense" items="${sessionScope.topten}">
