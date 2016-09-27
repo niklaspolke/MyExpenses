@@ -3,6 +3,7 @@ package vu.de.npolke.myexpenses.services;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static vu.de.npolke.myexpenses.util.Month.createMonth;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.junit.Test;
 
 import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
+import vu.de.npolke.myexpenses.util.Month;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -56,18 +58,18 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void readDistinctMonthsByAccountId_ValidAccount() {
-		List<String> months = statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID);
+		List<Month> months = statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID);
 
 		assertNotNull(months);
 		assertEquals(3, months.size());
-		assertEquals("2015.07", months.get(0));
-		assertEquals("2015.06", months.get(1));
-		assertEquals("2015.05", months.get(2));
+		assertEquals("2015.07", months.get(0).toString());
+		assertEquals("2015.06", months.get(1).toString());
+		assertEquals("2015.05", months.get(2).toString());
 	}
 
 	@Test
 	public void readDistinctMonthsByAccountId_InvalidAccount() {
-		List<String> months = statisticsDAO.readDistinctMonthsByAccountId(9);
+		List<Month> months = statisticsDAO.readDistinctMonthsByAccountId(9);
 
 		assertNotNull(months);
 		assertTrue(months.isEmpty());
@@ -75,7 +77,8 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void readStatisticsByMonthsAndAccountId_201506() {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId("2015.06", ACCOUNT_ID);
+		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId(createMonth("2015.06"),
+				ACCOUNT_ID);
 
 		assertNotNull(statistics);
 		assertEquals(4, statistics.size());
@@ -103,7 +106,8 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void readStatisticsByMonthsAndAccountId_201505() {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId("2015.05", ACCOUNT_ID);
+		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId(createMonth("2015.05"),
+				ACCOUNT_ID);
 
 		assertNotNull(statistics);
 		assertEquals(5, statistics.size());
@@ -136,7 +140,8 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void readStatisticsByMonthsAndAccountId_InvalidMonth() {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId("2002.01", ACCOUNT_ID);
+		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId(createMonth("2002.01"),
+				ACCOUNT_ID);
 
 		assertNotNull(statistics);
 		assertEquals(4, statistics.size());
@@ -156,7 +161,7 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void readStatisticsByMonthsAndAccountId_InvalidAccount() {
-		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId("2015.06", 9);
+		List<StatisticsPair> statistics = statisticsDAO.readStatisticsByMonthAndAccountId(createMonth("2015.06"), 9);
 
 		assertNotNull(statistics);
 		assertEquals(0, statistics.size());

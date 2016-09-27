@@ -9,6 +9,7 @@ import java.util.List;
 
 import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
+import vu.de.npolke.myexpenses.util.Month;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -70,8 +71,8 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 			") WHERE rownum() <= 10";
 	//@formatter:on
 
-	public List<String> readDistinctMonthsByAccountId(final long accountId) {
-		List<String> months = new ArrayList<String>();
+	public List<Month> readDistinctMonthsByAccountId(final long accountId) {
+		List<Month> months = new ArrayList<Month>();
 
 		try (Connection connection = getConnection()) {
 			PreparedStatement readStatement;
@@ -79,7 +80,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 			readStatement.setLong(1, accountId);
 			ResultSet result = readStatement.executeQuery();
 			while (result.next()) {
-				months.add(result.getString("month"));
+				months.add(Month.createMonth(result.getString("month")));
 			}
 			connection.rollback();
 		} catch (SQLException e) {
@@ -89,13 +90,13 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 		return months;
 	}
 
-	public List<StatisticsPair> readStatisticsByMonthAndAccountId(final String month, final long accountId) {
+	public List<StatisticsPair> readStatisticsByMonthAndAccountId(final Month month, final long accountId) {
 		List<StatisticsPair> statisticsPairs = new ArrayList<StatisticsPair>();
 
 		try (Connection connection = getConnection()) {
 			PreparedStatement readStatement;
 			readStatement = connection.prepareStatement(SQL_SELECT_STATISTICS_FOR_MONTH);
-			readStatement.setString(1, month);
+			readStatement.setString(1, month.toString());
 			readStatement.setLong(2, accountId);
 			readStatement.setLong(3, accountId);
 			ResultSet result = readStatement.executeQuery();

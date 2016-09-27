@@ -18,6 +18,7 @@ import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.JsonObject;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
+import vu.de.npolke.myexpenses.util.Month;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -60,7 +61,7 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 		reaction.setSessionAttribute("barchartoptions", barchartOptions.toString());
 	}
 
-	protected void readStatisticsForMonth(final ServletReaction reaction, final String month, final Account account) {
+	protected void readStatisticsForMonth(final ServletReaction reaction, final Month month, final Account account) {
 		List<StatisticsPair> statisticsAll = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId());
 		List<StatisticsPair> statistics = new ArrayList<StatisticsPair>();
 		List<StatisticsPair> statisticsMonthlyCosts = new ArrayList<StatisticsPair>();
@@ -117,8 +118,8 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 	public ServletReaction prepareStatistics(final Account account) {
 		ServletReaction reaction = new ServletReaction();
 
-		List<String> months = statisticsDAO.readDistinctMonthsByAccountId(account.getId());
-		final String month = months.size() > 0 ? months.get(0) : null;
+		List<Month> months = statisticsDAO.readDistinctMonthsByAccountId(account.getId());
+		final Month month = months.size() > 0 ? months.get(0) : null;
 		readStatisticsForMonth(reaction, month, account);
 
 		reaction.setSessionAttribute("months", months);
@@ -139,7 +140,7 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 	public ServletReaction showStatistics(final Account account, final String month) {
 		ServletReaction reaction = new ServletReaction();
 
-		readStatisticsForMonth(reaction, month, account);
+		readStatisticsForMonth(reaction, Month.createMonth(month), account);
 
 		reaction.setRedirect("showstatistics.jsp");
 
