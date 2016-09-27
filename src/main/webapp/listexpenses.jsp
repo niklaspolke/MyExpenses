@@ -26,7 +26,7 @@ the License.
         List Expenses - Top10 <b><c:out value="${requestScope.category}"/></b> within <b><c:out value="${requestScope.month}"/></b>
     </c:when>
     <c:when test="${requestScope.mode eq 'monthly'}">
-        List Monthly Expenses
+        List Monthly Expenses - <c:out value="${requestScope.monthCurrent}"/>
     </c:when>
     <c:otherwise>
         List Expenses
@@ -54,6 +54,24 @@ the License.
                 </c:when>
                 <c:otherwise>
                     <a href="listexpenses?page=${requestScope.page + 1}"><img src="img/sign-right_24.png" alt="active arrow right" title="go to further results" width="24" height="24"/></a>
+                </c:otherwise>
+                </c:choose>
+            </th></c:if>
+            <c:if test="${requestScope.mode eq 'monthly'}"><th class="w3-light-grey" colspan="5">
+                <c:choose>
+                <c:when test="${requestScope.monthMax eq requestScope.monthCurrent}">
+                    <img src="img/sign-left_24_inactive.png" alt="inactive arrow left" title="no next month" width="24" height="24"/>
+                </c:when>
+                <c:otherwise>
+                    <a href="listexpenses?monthly=true&month=${requestScope.monthCurrent.next()}"><img src="img/sign-left_24.png" alt="active arrow left" title="go to next month" width="24" height="24"/></a>
+                </c:otherwise>
+                </c:choose>
+                <c:choose>
+                <c:when test="${requestScope.monthMin eq requestScope.monthCurrent}">
+                    <img src="img/sign-right_24_inactive.png" alt="inactive arrow right" title="no previous month" width="24" height="24"/>
+                </c:when>
+                <c:otherwise>
+                    <a href="listexpenses?monthly=true&month=${requestScope.monthCurrent.previous()}"><img src="img/sign-right_24.png" alt="active arrow right" title="go to previous month" width="24" height="24"/></a>
                 </c:otherwise>
                 </c:choose>
             </th></c:if>

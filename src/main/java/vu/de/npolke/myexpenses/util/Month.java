@@ -68,6 +68,14 @@ public class Month implements Comparable<Month> {
 		}
 	}
 
+	public Month previous() {
+		if (month == 1) {
+			return new Month(year - 1, 12);
+		} else {
+			return new Month(year, month - 1);
+		}
+	}
+
 	@Override
 	public String toString() {
 		return FORMAT_YEAR.format(year) + DELIMITER_YEAR_MONTH + FORMAT_MONTH.format(month);

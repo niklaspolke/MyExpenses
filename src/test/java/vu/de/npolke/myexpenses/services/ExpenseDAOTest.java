@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import vu.de.npolke.myexpenses.model.Expense;
+import vu.de.npolke.myexpenses.util.Month;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -150,7 +151,7 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void readMonthlyByAccountId() {
-		List<Expense> expenses = expenseDAO.readMonthlyByAccountAndMonth(1, "2015.06");
+		List<Expense> expenses = expenseDAO.readMonthlyByAccountAndMonth(1, Month.createMonth("2015.06"));
 
 		assertNotNull(expenses);
 		assertEquals(2, expenses.size());

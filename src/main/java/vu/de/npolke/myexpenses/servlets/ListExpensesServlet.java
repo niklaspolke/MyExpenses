@@ -1,7 +1,6 @@
 package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +18,7 @@ import vu.de.npolke.myexpenses.services.ExpenseDAO;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
+import vu.de.npolke.myexpenses.util.Month;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -47,9 +47,6 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 	protected static final String MODE_MONTHLY = "monthly";
 
 	private static final int AMOUNT_OF_ENTRIES_PER_PAGE = 10;
-	
-	private final DecimalFormat FORMAT_YEAR = new DecimalFormat("0000");
-	private final DecimalFormat FORMAT_MONTH = new DecimalFormat("00");
 
 	ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
 	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsPair.class);
@@ -65,30 +62,56 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 
 		return prepareListExpenses(account, requestedPage, requestedMonth, requestedCategoryId, requestedMonthly);
 	}
-	
-	protected String getYearMonthString(final long timeInMillis) {
+
+	protected Month getCurrentMonth() {
 		final Calendar now = Calendar.getInstance(Locale.GERMANY);
-		now.setTimeInMillis(timeInMillis);
+		now.setTimeInMillis(System.currentTimeMillis());
 		final int year = now.get(Calendar.YEAR);
 		final int month = now.get(Calendar.MONTH) + 1;
-		return FORMAT_YEAR.format(year) + "." + FORMAT_MONTH.format(month);
+		return Month.createMonth(year, month);
 	}
 
-	public ServletReaction prepareListExpenses(final Account account, final String requestedPage,
-			final String monthForTopTen, final String categoryIdForTopTen, final String monthly) {
+	protected Month calcMaxMonth(final Month current, final List<Month> all) {
+		Month max = current;
+		if (all.size() > 0 && all.get(0).compareTo(current) > 0) {
+			max = all.get(0);
+		}
+		return max;
+	}
+
+	protected Month calcMinMonth(final Month current, final List<Month> all) {
+		Month min = current;
+		if (all.size() > 0 && all.get(all.size() - 1).compareTo(current) < 0) {
+			min = all.get(all.size() - 1);
+		}
+		return min;
+	}
+
+	public ServletReaction prepareListExpenses(final Account account, final String requestedPage, final String month,
+			final String categoryIdForTopTen, final String monthly) {
 		ServletReaction reaction = new ServletReaction();
 		List<Expense> expenses = null;
 		boolean getMonthly = Boolean.parseBoolean(monthly);
 
 		if (getMonthly) {
-			expenses = expenseDAO.readMonthlyByAccountAndMonth(account.getId(), getYearMonthString(System.currentTimeMillis()));
+			List<Month> monthsWithExpenses = statisticsDAO.readDistinctMonthsByAccountId(account.getId());
+			Month currentMonth = getCurrentMonth();
+			Month maxMonth = calcMaxMonth(currentMonth, monthsWithExpenses);
+			Month minMonth = calcMinMonth(currentMonth, monthsWithExpenses);
+			Month monthToShow = Month.createMonth(month);
+			if (monthToShow == null || monthToShow.compareTo(maxMonth) > 0 || monthToShow.compareTo(minMonth) < 0) {
+				monthToShow = currentMonth;
+			}
+			expenses = expenseDAO.readMonthlyByAccountAndMonth(account.getId(), monthToShow);
 			reaction.setRequestAttribute("mode", MODE_MONTHLY);
-		} else if (monthForTopTen != null || categoryIdForTopTen != null) {
+			reaction.setRequestAttribute("monthMax", maxMonth);
+			reaction.setRequestAttribute("monthCurrent", monthToShow);
+			reaction.setRequestAttribute("monthMin", minMonth);
+		} else if (month != null || categoryIdForTopTen != null) {
 			final long parsedCategoryIdForTopTen = parseLongDefault0(categoryIdForTopTen);
-			expenses = statisticsDAO.readTopTenByMonthAndCategory(account.getId(), monthForTopTen,
-					parsedCategoryIdForTopTen);
+			expenses = statisticsDAO.readTopTenByMonthAndCategory(account.getId(), month, parsedCategoryIdForTopTen);
 			reaction.setRequestAttribute("mode", MODE_TOP_10);
-			reaction.setRequestAttribute("month", monthForTopTen);
+			reaction.setRequestAttribute("month", month);
 			reaction.setRequestAttribute("category",
 					expenses.size() > 0 ? expenses.get(0).getCategoryName() : categoryIdForTopTen);
 		} else {

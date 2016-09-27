@@ -6,6 +6,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,6 +21,7 @@ import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
+import vu.de.npolke.myexpenses.util.Month;
 
 public class ShowStatisticsServletTest {
 
@@ -33,7 +35,7 @@ public class ShowStatisticsServletTest {
 	private ShowStatisticsServlet servlet;
 
 	private Account account;
-	private List<String> months;
+	private List<Month> months;
 
 	private String fillTemplate(String template, String... params) {
 		int index = 0;
@@ -52,15 +54,15 @@ public class ShowStatisticsServletTest {
 		account = new Account();
 		account.setId(ACCOUNT_ID);
 
-		months = new ArrayList<String>();
+		months = new ArrayList<Month>();
 	}
 
 	@Test
 	public void prepareStatistics_WithMonths() {
 		servlet = spy(servlet);
-		final String MONTH = "2015.06";
+		final Month MONTH = Month.createMonth("2015.06");
 		months.add(MONTH);
-		months.add("2015.05");
+		months.add(Month.createMonth("2015.05"));
 		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
 
 		final ServletReaction reaction = servlet.prepareStatistics(account);
@@ -79,7 +81,7 @@ public class ShowStatisticsServletTest {
 
 		final ServletReaction reaction = servlet.prepareStatistics(account);
 
-		verify(servlet).readStatisticsForMonth(any(ServletReaction.class), isNull(String.class), eq(account));
+		verify(servlet, never()).readStatisticsForMonth(any(ServletReaction.class), isNull(Month.class), eq(account));
 		assertNotNull(reaction);
 		assertEquals(months, reaction.getSessionAttributes().get("months"));
 		assertEquals("showstatistics.jsp", reaction.getRedirect());
@@ -88,9 +90,9 @@ public class ShowStatisticsServletTest {
 	@Test
 	public void showStatistics() {
 		servlet = spy(servlet);
-		final String MONTH = "2015.05";
+		final Month MONTH = Month.createMonth("2015.05");
 
-		final ServletReaction reaction = servlet.showStatistics(account, MONTH);
+		final ServletReaction reaction = servlet.showStatistics(account, MONTH.toString());
 
 		verify(servlet).readStatisticsForMonth(any(ServletReaction.class), eq(MONTH), eq(account));
 		assertNotNull(reaction);
@@ -131,7 +133,7 @@ public class ShowStatisticsServletTest {
 	@Test
 	public void readStatisticsForMonth_NoStatistics() {
 		final ServletReaction reaction = new ServletReaction();
-		final String MONTH = "2015.05";
+		final Month MONTH = Month.createMonth("2015.05");
 		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(MONTH, ACCOUNT_ID))
 				.thenReturn(new ArrayList<StatisticsPair>());
 
@@ -151,7 +153,7 @@ public class ShowStatisticsServletTest {
 	@Test
 	public void readStatisticsForMonth_WithStatistics() {
 		final ServletReaction reaction = new ServletReaction();
-		final String MONTH = "2015.05";
+		final Month MONTH = Month.createMonth("2015.05");
 		final List<StatisticsPair> statistic = new ArrayList<StatisticsPair>();
 		statistic.add(new StatisticsPair(1l, "Sports", 4d, false, false));
 		statistic.add(new StatisticsPair(2l, "Income", 4d, true, true));

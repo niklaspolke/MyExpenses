@@ -51,6 +51,16 @@ public class MonthTest {
 	}
 
 	@Test
+	public void previousMonth() {
+		assertEquals("2015.04", month.previous().toString());
+	}
+
+	@Test
+	public void previousMonthInPreviousYear() {
+		assertEquals("2015.12", createMonth(2016, 1).previous().toString());
+	}
+
+	@Test
 	public void testToString() {
 		assertEquals("2015.05", month.toString());
 	}

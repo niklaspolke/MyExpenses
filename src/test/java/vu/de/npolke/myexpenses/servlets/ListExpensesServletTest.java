@@ -3,7 +3,6 @@ package vu.de.npolke.myexpenses.servlets;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -11,7 +10,9 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +22,7 @@ import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.ExpenseDAO;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
+import vu.de.npolke.myexpenses.util.Month;
 
 public class ListExpensesServletTest {
 
@@ -42,12 +44,80 @@ public class ListExpensesServletTest {
 	}
 
 	@Test
-	public void getYearMonthString() {
-		final long TIME_IN_MILLIS = 1474841394643l;
+	public void getCurrentMonth() {
+		final Calendar now = Calendar.getInstance(Locale.GERMANY);
+		now.setTimeInMillis(System.currentTimeMillis());
 
-		final String RESULT = servlet.getYearMonthString(TIME_IN_MILLIS);
+		final Month RESULT = servlet.getCurrentMonth();
 
-		assertEquals("2016.09", RESULT);
+		assertEquals(now.get(Calendar.YEAR), RESULT.getYear());
+		assertEquals(now.get(Calendar.MONTH) + 1, RESULT.getMonth());
+	}
+
+	@Test
+	public void calcMaxMonth_NoMonths() {
+		Month month = Month.createMonth(2015, 5);
+
+		Month maxMonth = servlet.calcMaxMonth(month, new ArrayList<Month>());
+
+		assertEquals(month, maxMonth);
+	}
+
+	@Test
+	public void calcMaxMonth_CurrentIsBigger() {
+		Month month = Month.createMonth(2015, 5);
+		List<Month> months = new ArrayList<Month>();
+		months.add(Month.createMonth(2015, 4));
+		months.add(Month.createMonth(2015, 3));
+
+		Month maxMonth = servlet.calcMaxMonth(month, months);
+
+		assertEquals(month, maxMonth);
+	}
+
+	@Test
+	public void calcMaxMonth_MaxFromList() {
+		Month month = Month.createMonth(2015, 5);
+		List<Month> months = new ArrayList<Month>();
+		months.add(Month.createMonth(2015, 6));
+		months.add(Month.createMonth(2015, 3));
+
+		Month maxMonth = servlet.calcMaxMonth(month, months);
+
+		assertEquals("2015.06", maxMonth.toString());
+	}
+
+	@Test
+	public void calcMinMonth_NoMonths() {
+		Month month = Month.createMonth(2015, 5);
+
+		Month minMonth = servlet.calcMinMonth(month, new ArrayList<Month>());
+
+		assertEquals(month, minMonth);
+	}
+
+	@Test
+	public void calcMinMonth_CurrentIsSmaller() {
+		Month month = Month.createMonth(2015, 5);
+		List<Month> months = new ArrayList<Month>();
+		months.add(Month.createMonth(2015, 7));
+		months.add(Month.createMonth(2015, 6));
+
+		Month minMonth = servlet.calcMinMonth(month, months);
+
+		assertEquals(month, minMonth);
+	}
+
+	@Test
+	public void calcMinMonth_MinFromList() {
+		Month month = Month.createMonth(2015, 5);
+		List<Month> months = new ArrayList<Month>();
+		months.add(Month.createMonth(2015, 6));
+		months.add(Month.createMonth(2015, 3));
+
+		Month minMonth = servlet.calcMinMonth(month, months);
+
+		assertEquals("2015.03", minMonth.toString());
 	}
 
 	@Test
@@ -217,14 +287,82 @@ public class ListExpensesServletTest {
 		expense.setCategoryId(CATEGORY_ID);
 		expense.setCategoryName(CATEGORY);
 		expenses.add(expense);
-		when(servlet.getYearMonthString(any(Long.class))).thenReturn("2016.09");
-		when(servlet.expenseDAO.readMonthlyByAccountAndMonth(ACCOUNT_ID, "2016.09")).thenReturn(expenses);
+		List<Month> months = new ArrayList<Month>();
+		months.add(Month.createMonth("2016.10"));
+		months.add(Month.createMonth("2016.08"));
+		when(servlet.getCurrentMonth()).thenReturn(Month.createMonth("2016.09"));
+		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
+		when(servlet.expenseDAO.readMonthlyByAccountAndMonth(eq(ACCOUNT_ID), eq(Month.createMonth("2016.09"))))
+				.thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, null, "true");
 
 		assertNotNull(reaction);
 		// correct mode in request
 		assertEquals(ListExpensesServlet.MODE_MONTHLY, reaction.getRequestAttributes().get("mode"));
+		assertEquals("2016.09", reaction.getRequestAttributes().get("monthCurrent").toString());
+		assertEquals("2016.10", reaction.getRequestAttributes().get("monthMax").toString());
+		assertEquals("2016.08", reaction.getRequestAttributes().get("monthMin").toString());
+		// correct expenses in session
+		assertSame(expenses, reaction.getSessionAttributes().get("expenses"));
+		// correct navigation
+		assertEquals("listexpenses.jsp", reaction.getForward());
+	}
+
+	@Test
+	public void prepareListExpenses_Monthly_ChoosenMonth() {
+		servlet = spy(servlet);
+		final ArrayList<Expense> expenses = new ArrayList<Expense>();
+		Expense expense = new Expense();
+		expense.setCategoryId(CATEGORY_ID);
+		expense.setCategoryName(CATEGORY);
+		expenses.add(expense);
+		List<Month> months = new ArrayList<Month>();
+		months.add(Month.createMonth("2016.10"));
+		months.add(Month.createMonth("2016.08"));
+		when(servlet.getCurrentMonth()).thenReturn(Month.createMonth("2016.12"));
+		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
+		when(servlet.expenseDAO.readMonthlyByAccountAndMonth(eq(ACCOUNT_ID), eq(Month.createMonth("2016.11"))))
+				.thenReturn(expenses);
+
+		final ServletReaction reaction = servlet.prepareListExpenses(account, null, "2016.11", null, "true");
+
+		assertNotNull(reaction);
+		// correct mode in request
+		assertEquals(ListExpensesServlet.MODE_MONTHLY, reaction.getRequestAttributes().get("mode"));
+		assertEquals("2016.11", reaction.getRequestAttributes().get("monthCurrent").toString());
+		assertEquals("2016.12", reaction.getRequestAttributes().get("monthMax").toString());
+		assertEquals("2016.08", reaction.getRequestAttributes().get("monthMin").toString());
+		// correct expenses in session
+		assertSame(expenses, reaction.getSessionAttributes().get("expenses"));
+		// correct navigation
+		assertEquals("listexpenses.jsp", reaction.getForward());
+	}
+
+	@Test
+	public void prepareListExpenses_Monthly_ChoosenWrongMonth() {
+		servlet = spy(servlet);
+		final ArrayList<Expense> expenses = new ArrayList<Expense>();
+		Expense expense = new Expense();
+		expense.setCategoryId(CATEGORY_ID);
+		expense.setCategoryName(CATEGORY);
+		expenses.add(expense);
+		List<Month> months = new ArrayList<Month>();
+		months.add(Month.createMonth("2016.10"));
+		months.add(Month.createMonth("2016.08"));
+		when(servlet.getCurrentMonth()).thenReturn(Month.createMonth("2016.09"));
+		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
+		when(servlet.expenseDAO.readMonthlyByAccountAndMonth(eq(ACCOUNT_ID), eq(Month.createMonth("2016.09"))))
+				.thenReturn(expenses);
+
+		final ServletReaction reaction = servlet.prepareListExpenses(account, null, "2016.11", null, "true");
+
+		assertNotNull(reaction);
+		// correct mode in request
+		assertEquals(ListExpensesServlet.MODE_MONTHLY, reaction.getRequestAttributes().get("mode"));
+		assertEquals("2016.09", reaction.getRequestAttributes().get("monthCurrent").toString());
+		assertEquals("2016.10", reaction.getRequestAttributes().get("monthMax").toString());
+		assertEquals("2016.08", reaction.getRequestAttributes().get("monthMin").toString());
 		// correct expenses in session
 		assertSame(expenses, reaction.getSessionAttributes().get("expenses"));
 		// correct navigation

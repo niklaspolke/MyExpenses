@@ -119,8 +119,9 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 		ServletReaction reaction = new ServletReaction();
 
 		List<Month> months = statisticsDAO.readDistinctMonthsByAccountId(account.getId());
-		final Month month = months.size() > 0 ? months.get(0) : null;
-		readStatisticsForMonth(reaction, month, account);
+		if (months.size() > 0) {
+			readStatisticsForMonth(reaction, months.get(0), account);
+		}
 
 		reaction.setSessionAttribute("months", months);
 		reaction.setRedirect("showstatistics.jsp");

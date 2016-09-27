@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import vu.de.npolke.myexpenses.model.Expense;
+import vu.de.npolke.myexpenses.util.Month;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -178,14 +179,14 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 		return expenses;
 	}
 
-	public List<Expense> readMonthlyByAccountAndMonth(final long accountId, final String month) {
+	public List<Expense> readMonthlyByAccountAndMonth(final long accountId, final Month month) {
 		List<Expense> monthlyCosts = new ArrayList<Expense>();
 
 		try (Connection connection = getConnection()) {
 			PreparedStatement readStatement;
 			readStatement = connection.prepareStatement(SQL_READ_MONTHLY_BY_ACCOUNT_AND_MONTH);
 			readStatement.setLong(1, accountId);
-			readStatement.setString(2, month);
+			readStatement.setString(2, month.toString());
 			ResultSet result = readStatement.executeQuery();
 			while (result.next()) {
 				Expense expense = mapResultRow(result);
