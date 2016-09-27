@@ -23,6 +23,16 @@ function w3_close() {
     document.getElementById("mySidenav").style.display = "none";
     document.getElementById("mySidenav").style.top = "";
 }
+function myAccFunc() {
+    var x = document.getElementById("topten");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+        x.previousElementSibling.className += " w3-green";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+        x.previousElementSibling.className = x.previousElementSibling.className.replace(" w3-green", "");
+    }
+}
 </script>
             </section>
         </div>

@@ -62,12 +62,13 @@ the License.
             <a href="javascript:void(0)" onclick="w3_close()" class="w3-closenav w3-xlarge w3-hide-large">Close X</a>
             <ul class="w3-ul">
                 <li class="${disabled ? '' : 'w3-hover-yellow'}">
-                    <c:if test="${sessionScope.topten.size() gt 0}"><div class="w3-dropdown-hover"></c:if>
-                        <a ${disabled ? '' : 'href="addexpense"'} title="add expense">
+                    <c:if test="${sessionScope.topten.size() gt 0}"><div class="w3-accordion"></c:if>
+                        <a ${sessionScope.topten.size() gt 0 ? 'onclick="myAccFunc()"' : 'href="addexpense"'} title="add expense">
                             <img class="w3-left w3-margin-right" src="img/sign-add_48.png" style="width:40px" alt="add expense" title="add expense">
                             <span class="w3-xlarge">Add Expense${sessionScope.topten.size() gt 0 ? ' &#x23EC;' : ''}</span>
                         </a>
-                        <c:if test="${sessionScope.topten.size() gt 0}"><div class="w3-dropdown-content w3-white w3-card-4">
+                        <c:if test="${sessionScope.topten.size() gt 0}"><div id="topten" class="w3-accordion-content w3-white w3-card-4">
+                            <a href="addexpense">Default</a>
                             <c:forEach var="expense" items="${sessionScope.topten}">
                                 <a href="addexpense?category=${expense.categoryId}&reason=${expense.reason}">${expense.categoryName} - ${expense.reason}</a>
                             </c:forEach>
