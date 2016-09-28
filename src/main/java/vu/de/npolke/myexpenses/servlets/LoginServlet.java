@@ -64,7 +64,7 @@ public class LoginServlet extends AbstractBasicServlet {
 			reaction.setSessionAttribute("topten", topten);
 			if (redirectURL != null && redirectURL.length() > 0) {
 				reaction.setRedirect(redirectURL);
-				reaction.setSessionAttribute("redirectURL", null);
+				reaction.setSessionAttribute("redirectAfterLogin", null);
 			} else {
 				reaction.setRedirect("listexpenses");
 			}

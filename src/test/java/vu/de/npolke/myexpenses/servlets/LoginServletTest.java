@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -65,6 +66,8 @@ public class LoginServletTest {
 		final ServletReaction reaction = servlet.login(LOGIN, PASSWORD, "addExpense");
 
 		assertNotNull(reaction);
+		assertTrue(reaction.getSessionAttributes().containsKey("redirectAfterLogin"));
+		assertNull(reaction.getSessionAttributes().get("redirectAfterLogin"));
 		// correct navigation
 		assertEquals("addExpense", reaction.getRedirect());
 	}
@@ -77,6 +80,8 @@ public class LoginServletTest {
 		final ServletReaction reaction = servlet.login(LOGIN, PASSWORD, "addExpense?id=445&test=true");
 
 		assertNotNull(reaction);
+		assertTrue(reaction.getSessionAttributes().containsKey("redirectAfterLogin"));
+		assertNull(reaction.getSessionAttributes().get("redirectAfterLogin"));
 		// correct navigation
 		assertEquals("addExpense?id=445&test=true", reaction.getRedirect());
 	}

@@ -1,6 +1,8 @@
 package vu.de.npolke.myexpenses.filter;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -125,11 +127,15 @@ public class LoginFilter implements Filter {
 		String redirectURL = extractOrignalRequest(requestURI);
 		String param = null;
 		if (parameter.size() > 0) {
-			for (String paramKey : parameter.keySet()) {
-				param = param == null ? "?" : param + "&";
-				param += paramKey + "=" + parameter.get(paramKey)[0];
+			try {
+				for (String paramKey : parameter.keySet()) {
+					param = param == null ? "?" : param + "&";
+					param += paramKey + "=" + URLEncoder.encode(parameter.get(paramKey)[0], "UTF-8");
+				}
+				redirectURL += param;
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
 			}
-			redirectURL += param;
 		}
 		return redirectURL;
 	}

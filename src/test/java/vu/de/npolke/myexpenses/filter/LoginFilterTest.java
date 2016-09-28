@@ -97,7 +97,13 @@ public class LoginFilterTest {
 		Map<String, String[]> params = new LinkedHashMap<String, String[]>();
 		params.put("id", new String[] { "445" });
 		params.put("test", new String[] { "true" });
-		assertEquals("addExpense?id=445&test=true",
-				filter.getRedirectURL("/myexpenses/addExpense", params));
+		assertEquals("addExpense?id=445&test=true", filter.getRedirectURL("/myexpenses/addExpense", params));
+	}
+
+	@Test
+	public void redirectURL_paramWithSpecialCharacter() {
+		Map<String, String[]> params = new LinkedHashMap<String, String[]>();
+		params.put("text", new String[] { "Bäcker" });
+		assertEquals("addExpense?text=B%C3%A4cker", filter.getRedirectURL("/myexpenses/addExpense", params));
 	}
 }
