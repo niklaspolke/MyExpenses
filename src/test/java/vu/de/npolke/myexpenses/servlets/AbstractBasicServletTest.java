@@ -1,6 +1,7 @@
 package vu.de.npolke.myexpenses.servlets;
 
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -22,6 +23,8 @@ import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 
@@ -56,6 +59,13 @@ public class AbstractBasicServletTest {
 		servlet = new AbstractBasicServlet();
 		request = mock(HttpServletRequest.class);
 		response = mock(HttpServletResponse.class);
+		when(response.encodeRedirectURL(any(String.class))).thenAnswer(new Answer<String>() {
+			@Override
+			public String answer(InvocationOnMock invocation) throws Throwable {
+				Object[] args = invocation.getArguments();
+				return (String) args[0];
+			}
+		});
 		session = mock(HttpSession.class);
 		dispatcher = mock(RequestDispatcher.class);
 	}
