@@ -59,8 +59,10 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 		final String requestedMonth = request.getParameter("month");
 		final String requestedCategoryId = request.getParameter("category");
 		final String requestedMonthly = request.getParameter("monthly");
+		final String message = (String) session.getAttribute("message");
 
-		return prepareListExpenses(account, requestedPage, requestedMonth, requestedCategoryId, requestedMonthly);
+		return prepareListExpenses(account, requestedPage, requestedMonth, requestedCategoryId, requestedMonthly,
+				message);
 	}
 
 	protected Month getCurrentMonth() {
@@ -88,10 +90,15 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 	}
 
 	public ServletReaction prepareListExpenses(final Account account, final String requestedPage, final String month,
-			final String categoryIdForTopTen, final String monthly) {
+			final String categoryIdForTopTen, final String monthly, final String message) {
 		ServletReaction reaction = new ServletReaction();
 		List<Expense> expenses = null;
 		boolean getMonthly = Boolean.parseBoolean(monthly);
+
+		if (message != null && message.trim().length() > 0) {
+			reaction.setRequestAttribute("message", message);
+		}
+		reaction.setSessionAttribute("message", null);
 
 		if (getMonthly) {
 			List<Month> monthsWithExpenses = statisticsDAO.readDistinctMonthsByAccountId(account.getId());

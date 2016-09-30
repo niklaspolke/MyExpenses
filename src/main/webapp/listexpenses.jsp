@@ -34,6 +34,15 @@ the License.
 </c:choose></h3>
 </div>
 
+<c:if test="${requestScope.mode eq 'monthly'}"><div class="w3-panel">
+    <a href="importmonthly?month=${requestScope.monthCurrent}" title="import monthly expenses & income from previous month">
+        Import Monthly<img src="img/box-in_24.png" alt="import expenses" title="import monthly expenses & income from previous month" width="24" height="24"/>
+    </a>
+</div></c:if>
+<c:if test="${not empty requestScope.message}"><div class="w3-panel w3-leftbar w3-pale-orange w3-border-orange">
+    ${requestScope.message}
+</div></c:if>
+
 <div class="w3-panel w3-padding-8">
 <fmt:setLocale value="de_DE"/>
 <table class="w3-table-all">
