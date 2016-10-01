@@ -82,10 +82,7 @@ the License.
             <c:forEach var="category" items="${sessionScope.statisticsIncome}">
                 <tr ${category.name eq 'Total' ? 'class="total-income"' : ''}>
                     <td>
-                        <c:choose>
-                        <c:when test="${category.name ne 'Total' and category.value gt 0}"><a href="listexpenses?month=${sessionScope.month}&category=${category.id}">${category.name}</a></c:when>
-                        <c:otherwise>${category.name}</c:otherwise>
-                        </c:choose>
+                        ${category.name}
                     </td><td class="number" style="text-align:right">
                         <fmt:formatNumber value="${category.value}" type="currency"/>
                     </td>
@@ -106,10 +103,7 @@ the License.
             <c:forEach var="category" items="${sessionScope.statisticsMonthlyCosts}">
                 <tr ${category.name eq 'Total' ? 'class="total-cost"' : ''}>
                     <td>
-                        <c:choose>
-                        <c:when test="${category.name ne 'Total' and category.value gt 0}"><a href="listexpenses?month=${sessionScope.month}&category=${category.id}">${category.name}</a></c:when>
-                        <c:otherwise>${category.name}</c:otherwise>
-                        </c:choose>
+                        ${category.name}
                     </td><td class="number" style="text-align:right">
                         <fmt:formatNumber value="${category.value}" type="currency"/>
                     </td>
