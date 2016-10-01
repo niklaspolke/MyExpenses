@@ -40,7 +40,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 	private static final String SQL_SELECT_STATISTICS_FOR_MONTH =
 			"SELECT c.id as id, c.name as category, sum(e.amount) as sumofamount, monthly, income " +
 			"FROM category c " +
-			"LEFT OUTER JOIN ( " +
+			"JOIN ( " +
 					"SELECT category_id, amount, monthly, income " +
 					"FROM expense " +
 					"WHERE year(day)+'.'+lpad(month(day),2,'0') = ? AND account_id = ? ) e " +
