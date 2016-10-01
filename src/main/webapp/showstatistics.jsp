@@ -43,7 +43,7 @@ the License.
 </div>
 
 <div class="w3-panel w3-row-padding">
-    <div class="w3-col m6" id="myChart" style="height: 300px"></div>
+    <div class="w3-col m6" id="myChart" style="${sessionScope.statistics.size() > 1 ? 'height: 300px' : ''}"></div>
 
     <div class="w3-col m6">
         <h4>Expenses</h4>
