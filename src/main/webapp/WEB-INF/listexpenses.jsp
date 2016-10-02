@@ -95,7 +95,7 @@ the License.
     </thead>
     <tbody>
         <c:forEach var="expense" items="${requestScope.expenses}">
-            <tr>
+            <tr style="${expense.income ? 'color:green' : ''}">
                 <c:if test="${requestScope.mode ne 'monthly'}"><td><c:out value="${expense.getReadableDayAsString()}"/></td></c:if>
                 <c:if test="${requestScope.mode ne 'topten'}"><td><c:out value="${expense.categoryName}"/></td></c:if>
                 <td class="number" style="text-align:right"><fmt:formatNumber value="${expense.amount}" type="currency"/></td>
