@@ -56,14 +56,12 @@ public class RegisterServlet extends AbstractBasicServlet {
 			account = accountDAO.create(login, password1);
 			if (account != null) {
 				reaction.setSessionAttribute("account", account);
-				reaction.setRedirect("listexpenses");
+				reaction.setRedirect("listexpenses.jsp");
 			} else {
-				reaction.setRequestAttribute("errorMessage", "user \"" + login + "\" already exists");
-				reaction.setForward("register.jsp");
+				reaction.setRedirect("register.jsp").add("error", "user \"" + login + "\" already exists");
 			}
 		} else {
-			reaction.setRequestAttribute("errorMessage", "password1 wasn't equal to password2");
-			reaction.setForward("register.jsp");
+			reaction.setRedirect("register.jsp").add("error", "password1 wasn't equal to password2");
 		}
 
 		return reaction;

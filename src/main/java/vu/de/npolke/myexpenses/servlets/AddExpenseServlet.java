@@ -36,7 +36,7 @@ import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
  *
  * @author Niklas Polke
  */
-@WebServlet("/addexpense")
+@WebServlet("/addexpense.jsp")
 public class AddExpenseServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -65,7 +65,7 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 
 		boolean errorOccured = false;
 		ServletReaction reaction = new ServletReaction();
-		reaction.setSessionAttribute("categoryPreset", null);
+		reaction.setRequestAttribute("categoryPreset", null);
 
 		try {
 			long id = Long.parseLong(expenseId);
@@ -75,8 +75,8 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 			} else {
 				expense.setId(0);
 				expense.setDay(now.getTime());
-				reaction.setSessionAttribute("expense", expense);
-				reaction.setSessionAttribute("categoryPreset", Boolean.TRUE);
+				reaction.setRequestAttribute("expense", expense);
+				reaction.setRequestAttribute("categoryPreset", Boolean.TRUE);
 			}
 		} catch (NumberFormatException nfe) {
 			Expense defaultExpense = new Expense();
@@ -90,22 +90,22 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 				for (Category category : categories) {
 					if (category.getId() == categoryIdAsLong) {
 						defaultExpense.setCategoryId(category.getId());
-						reaction.setSessionAttribute("categoryPreset", Boolean.TRUE);
+						reaction.setRequestAttribute("categoryPreset", Boolean.TRUE);
 						break;
 					}
 				}
 			} catch (NumberFormatException nfe2) {
 			}
-			reaction.setSessionAttribute("expense", defaultExpense);
+			reaction.setRequestAttribute("expense", defaultExpense);
 		}
 
 		if (errorOccured) {
 			reaction.setRequestAttribute("errorMessage",
 					"You tried to clone a non existing expense or an expense that isn't yours!");
-			reaction.setForward("error.jsp");
+			reaction.setForward("WEB-INF/error.jsp");
 		} else {
-			reaction.setSessionAttribute("categories", categories);
-			reaction.setRedirect("addexpense.jsp");
+			reaction.setRequestAttribute("categories", categories);
+			reaction.setForward("WEB-INF/addexpense.jsp");
 		}
 
 		return reaction;
@@ -140,9 +140,9 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 
 		ServletReaction reaction = new ServletReaction();
 		if (isMonthly) {
-			reaction.setRedirect("listexpenses?monthly=true");
+			reaction.setRedirect("listexpenses.jsp").add("monthly", true);
 		} else {
-			reaction.setRedirect("listexpenses");
+			reaction.setRedirect("listexpenses.jsp");
 		}
 
 		return reaction;

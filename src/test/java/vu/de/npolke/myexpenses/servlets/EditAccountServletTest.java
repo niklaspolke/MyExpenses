@@ -2,7 +2,6 @@ package vu.de.npolke.myexpenses.servlets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -59,13 +58,8 @@ public class EditAccountServletTest {
 		ServletReaction reaction = servlet.prepareEditAccount(account);
 
 		assertNotNull(reaction);
-		// correct session attribute: account to edit
-		Object accountObject = reaction.getSessionAttributes().get("account");
-		assertTrue(accountObject instanceof Account);
-		Account accountInSession = (Account) accountObject;
-		assertEquals(account, accountInSession);
 		// correct navigation
-		assertEquals("editaccount.jsp", reaction.getRedirect());
+		assertEquals("WEB-INF/editaccount.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -82,7 +76,7 @@ public class EditAccountServletTest {
 		// correct persisting
 		verify(servlet.accountDAO).update(eq(accountToUpdate));
 		// correct navigation
-		assertEquals("listexpenses", reaction.getRedirect());
+		assertEquals("listexpenses.jsp", reaction.getRedirect());
 	}
 
 	@Test
@@ -99,7 +93,7 @@ public class EditAccountServletTest {
 		// correct persisting
 		verify(servlet.accountDAO).update(eq(accountToUpdate));
 		// correct navigation
-		assertEquals("listexpenses", reaction.getRedirect());
+		assertEquals("listexpenses.jsp", reaction.getRedirect());
 	}
 
 	@Test
@@ -117,7 +111,7 @@ public class EditAccountServletTest {
 		// correct persisting
 		verify(servlet.accountDAO).update(eq(accountToUpdate));
 		// correct navigation
-		assertEquals("listexpenses", reaction.getRedirect());
+		assertEquals("listexpenses.jsp", reaction.getRedirect());
 	}
 
 	@Test
@@ -133,7 +127,7 @@ public class EditAccountServletTest {
 		// correct error message
 		assertEquals("old password wasn't correct", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
-		assertEquals("editaccount.jsp", reaction.getForward());
+		assertEquals("WEB-INF/editaccount.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -150,7 +144,7 @@ public class EditAccountServletTest {
 		assertEquals("new password 1 wasn't equal to new password 2",
 				reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
-		assertEquals("editaccount.jsp", reaction.getForward());
+		assertEquals("WEB-INF/editaccount.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -166,7 +160,7 @@ public class EditAccountServletTest {
 		assertEquals("login has to be at least 4 characters long<br/>new password 1 wasn't equal to new password 2",
 				reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
-		assertEquals("editaccount.jsp", reaction.getForward());
+		assertEquals("WEB-INF/editaccount.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -185,6 +179,6 @@ public class EditAccountServletTest {
 		// correct error message
 		assertEquals("login \"" + LOGIN_NEW + "\" already in use", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
-		assertEquals("editaccount.jsp", reaction.getForward());
+		assertEquals("WEB-INF/editaccount.jsp", reaction.getForward());
 	}
 }

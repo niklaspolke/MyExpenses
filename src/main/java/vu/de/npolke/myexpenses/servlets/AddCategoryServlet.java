@@ -31,12 +31,25 @@ import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
  *
  * @author Niklas Polke
  */
-@WebServlet("/addcategory")
+@WebServlet("/addcategory.jsp")
 public class AddCategoryServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
 	CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
+
+	@Override
+	public ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
+			final HttpSession session, Account account) throws ServletException, IOException {
+
+		return forward();
+	}
+
+	public ServletReaction forward() {
+		ServletReaction reaction = new ServletReaction();
+		reaction.setForward("WEB-INF/addcategory.jsp");
+		return reaction;
+	}
 
 	@Override
 	public ServletReaction doPost(final HttpServletRequest request, final HttpServletResponse response,
@@ -51,8 +64,7 @@ public class AddCategoryServlet extends AbstractBasicServlet {
 		categoryDAO.create(name, account.getId());
 
 		final ServletReaction reaction = new ServletReaction();
-		reaction.setRedirect("listcategories");
-		reaction.setSessionAttribute("account", account);
+		reaction.setRedirect("listcategories.jsp");
 
 		return reaction;
 	}

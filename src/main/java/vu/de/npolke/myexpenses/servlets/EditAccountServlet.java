@@ -31,7 +31,7 @@ import vu.de.npolke.myexpenses.util.HashUtil;
  *
  * @author Niklas Polke
  */
-@WebServlet("/editaccount")
+@WebServlet("/editaccount.jsp")
 public class EditAccountServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -47,8 +47,7 @@ public class EditAccountServlet extends AbstractBasicServlet {
 
 	public ServletReaction prepareEditAccount(final Account account) {
 		ServletReaction reaction = new ServletReaction();
-		reaction.setRedirect("editaccount.jsp");
-		reaction.setSessionAttribute("account", account);
+		reaction.setForward("WEB-INF/editaccount.jsp");
 		return reaction;
 	}
 
@@ -95,7 +94,7 @@ public class EditAccountServlet extends AbstractBasicServlet {
 				if (success) {
 					account.setLogin(accountUpdate.getLogin());
 					account.setPassword(accountUpdate.getPassword());
-					reaction.setRedirect("listexpenses");
+					reaction.setRedirect("listexpenses.jsp");
 				} else {
 					handleIncorrectInput(reaction, "login \"" + accountUpdate.getLogin() + "\" already in use");
 				}
@@ -112,6 +111,6 @@ public class EditAccountServlet extends AbstractBasicServlet {
 			String formerErrorMessage = (String) reaction.getRequestAttributes().get("errorMessage");
 			reaction.setRequestAttribute("errorMessage", formerErrorMessage + "<br/>" + errorMessage);
 		}
-		reaction.setForward("editaccount.jsp");
+		reaction.setForward("WEB-INF/editaccount.jsp");
 	}
 }

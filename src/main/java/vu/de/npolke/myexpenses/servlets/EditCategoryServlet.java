@@ -31,7 +31,7 @@ import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
  *
  * @author Niklas Polke
  */
-@WebServlet("/editcategory")
+@WebServlet("/editcategory.jsp")
 public class EditCategoryServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -51,15 +51,15 @@ public class EditCategoryServlet extends AbstractBasicServlet {
 		ServletReaction reaction = new ServletReaction();
 
 		long id = Long.parseLong(idAsString);
-		Category category = categoryDAO.read(id);
+		Category category = categoryDAO.read(account.getId(), id);
 
 		if (category == null || category.getAccountId() != account.getId()) {
 			reaction.setRequestAttribute("errorMessage",
 					"You tried to edit a non existing category or a category that isn't yours!");
-			reaction.setForward("error.jsp");
+			reaction.setForward("WEB-INF/error.jsp");
 		} else {
-			reaction.setSessionAttribute("category", category);
-			reaction.setRedirect("editcategory.jsp");
+			reaction.setRequestAttribute("category", category);
+			reaction.setForward("WEB-INF/editcategory.jsp");
 		}
 
 		return reaction;
@@ -69,18 +69,20 @@ public class EditCategoryServlet extends AbstractBasicServlet {
 	public ServletReaction doPost(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
 
+		final String id = request.getParameter("id");
 		final String name = request.getParameter("name");
-		Category category = (Category) session.getAttribute("category");
 
-		return editCategory(category, name);
+		return editCategory(account, id, name);
 	}
 
-	public ServletReaction editCategory(final Category category, final String name) {
+	public ServletReaction editCategory(final Account account, final String idAsString, final String name) {
+		long id = Long.parseLong(idAsString);
+		Category category = categoryDAO.read(account.getId(), id);
 		category.setName(name);
 		categoryDAO.update(category);
 
 		ServletReaction reaction = new ServletReaction();
-		reaction.setRedirect("listcategories");
+		reaction.setRedirect("listcategories.jsp");
 		return reaction;
 	}
 }

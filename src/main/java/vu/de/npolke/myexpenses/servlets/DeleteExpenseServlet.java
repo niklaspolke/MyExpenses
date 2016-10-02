@@ -31,7 +31,7 @@ import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
  *
  * @author Niklas Polke
  */
-@WebServlet("/deleteexpense")
+@WebServlet("/deleteexpense.jsp")
 public class DeleteExpenseServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -52,16 +52,20 @@ public class DeleteExpenseServlet extends AbstractBasicServlet {
 		long expenseId = Long.parseLong(idAsString);
 
 		ServletReaction reaction = new ServletReaction();
-		reaction.setForward("listexpenses");
+		Expense expense = expenseDAO.read(account.getId(), expenseId);
+		if (expense != null && expense.isMonthly()) {
+			reaction.setRedirect("listexpenses.jsp").add("monthly", true);
+		} else {
+			reaction.setRedirect("listexpenses.jsp");
+		}
 
 		if ("yes".equalsIgnoreCase(confirmed)) {
-			Expense expense = expenseDAO.read(account.getId(), expenseId);
-			if (expense != null && expense.getAccountId() == account.getId()) {
+			if (expense != null) {
 				expenseDAO.deleteById(expenseId);
 			} else {
 				reaction.setRequestAttribute("errorMessage",
 						"You tried to delete a non existing expense or an expense that isn't yours!");
-				reaction.setForward("error.jsp");
+				reaction.setForward("WEB-INF/error.jsp");
 			}
 		}
 

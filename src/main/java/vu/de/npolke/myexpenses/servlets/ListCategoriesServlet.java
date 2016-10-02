@@ -32,7 +32,7 @@ import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
  *
  * @author Niklas Polke
  */
-@WebServlet("/listcategories")
+@WebServlet("/listcategories.jsp")
 public class ListCategoriesServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -51,8 +51,8 @@ public class ListCategoriesServlet extends AbstractBasicServlet {
 
 		List<Category> categories = categoryDAO.readByAccountId(account.getId());
 
-		reaction.setSessionAttribute("categories", categories);
-		reaction.setRedirect("listcategories.jsp");
+		reaction.setRequestAttribute("categories", categories);
+		reaction.setForward("WEB-INF/listcategories.jsp");
 
 		return reaction;
 	}

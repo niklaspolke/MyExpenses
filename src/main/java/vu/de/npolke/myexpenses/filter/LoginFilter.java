@@ -40,7 +40,7 @@ import vu.de.npolke.myexpenses.model.Account;
 public class LoginFilter implements Filter {
 
 	//@formatter:off
-	public static final String LOGIN_PAGE           = "index.jsp";
+	public static final String LOGIN_PAGE           = "login.jsp";
 	public static final String LOGIN_URL            = "login";
 	public static final String LOGIN_METHOD         = "POST";
 	public static final String[] POSTFIX_RESSOURCES = { ".css", ".js", ".png", ".ico" };

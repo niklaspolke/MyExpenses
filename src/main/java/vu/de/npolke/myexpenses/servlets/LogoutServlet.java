@@ -28,7 +28,7 @@ import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
  *
  * @author Niklas Polke
  */
-@WebServlet("/logout")
+@WebServlet("/logout.jsp")
 public class LogoutServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -45,7 +45,7 @@ public class LogoutServlet extends AbstractBasicServlet {
 	public ServletReaction logout() {
 		ServletReaction reaction = new ServletReaction();
 
-		reaction.setRedirect("index.jsp");
+		reaction.setRedirect("login.jsp").add("info", "You've successfully logged out.");
 
 		return reaction;
 	}

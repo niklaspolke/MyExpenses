@@ -39,7 +39,7 @@ public class RegisterServletTest {
 		// correct account in session
 		assertSame(account, reaction.getSessionAttributes().get("account"));
 		// correct navigation
-		assertEquals("listexpenses", reaction.getRedirect());
+		assertEquals("listexpenses.jsp", reaction.getRedirect());
 	}
 
 	@Test
@@ -51,10 +51,8 @@ public class RegisterServletTest {
 		assertNotNull(reaction);
 		// correct account in session
 		assertNull(reaction.getSessionAttributes().get("account"));
-		// correct error message
-		assertEquals("password1 wasn't equal to password2", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
-		assertEquals("register.jsp", reaction.getForward());
+		assertEquals("register.jsp?error=password1+wasn%27t+equal+to+password2", reaction.getRedirect());
 	}
 
 	@Test
@@ -66,10 +64,8 @@ public class RegisterServletTest {
 		assertNotNull(reaction);
 		// correct account in session
 		assertNull(reaction.getSessionAttributes().get("account"));
-		// correct error message
-		assertEquals("password1 wasn't equal to password2", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
-		assertEquals("register.jsp", reaction.getForward());
+		assertEquals("register.jsp?error=password1+wasn%27t+equal+to+password2", reaction.getRedirect());
 	}
 
 	@Test
@@ -81,9 +77,7 @@ public class RegisterServletTest {
 		assertNotNull(reaction);
 		// correct account in session
 		assertNull(reaction.getSessionAttributes().get("account"));
-		// correct error message
-		assertEquals("user \"" + LOGIN + "\" already exists", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
-		assertEquals("register.jsp", reaction.getForward());
+		assertEquals("register.jsp?error=user+%22" + LOGIN + "%22+already+exists", reaction.getRedirect());
 	}
 }

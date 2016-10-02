@@ -64,18 +64,18 @@ public class AddExpenseServletTest {
 		ServletReaction reaction = servlet.prepareAddExpense(account, expenseId, null, null);
 
 		assertNotNull(reaction);
-		assertEquals(3, reaction.getSessionAttributes().size());
+		assertEquals(3, reaction.getRequestAttributes().size());
 		// correct session attribute: prepared expense
-		Object expenseObject = reaction.getSessionAttributes().get("expense");
+		Object expenseObject = reaction.getRequestAttributes().get("expense");
 		assertTrue(expenseObject instanceof Expense);
 		Expense expense = (Expense) expenseObject;
 		assertTrue(System.currentTimeMillis() - expense.getDay().getTimeInMillis() < 10000);
 		// correct session attribute: categories
-		assertSame(categories, reaction.getSessionAttributes().get("categories"));
+		assertSame(categories, reaction.getRequestAttributes().get("categories"));
 		// no preset of category
-		assertEquals(null, reaction.getSessionAttributes().get("categoryPreset"));
+		assertEquals(null, reaction.getRequestAttributes().get("categoryPreset"));
 		// correct navigation
-		assertEquals("addexpense.jsp", reaction.getRedirect());
+		assertEquals("WEB-INF/addexpense.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -89,19 +89,19 @@ public class AddExpenseServletTest {
 		ServletReaction reaction = servlet.prepareAddExpense(account, expenseId, REASON, null);
 
 		assertNotNull(reaction);
-		assertEquals(3, reaction.getSessionAttributes().size());
+		assertEquals(3, reaction.getRequestAttributes().size());
 		// correct session attribute: prepared expense
-		Object expenseObject = reaction.getSessionAttributes().get("expense");
+		Object expenseObject = reaction.getRequestAttributes().get("expense");
 		assertTrue(expenseObject instanceof Expense);
 		Expense expense = (Expense) expenseObject;
 		assertTrue(System.currentTimeMillis() - expense.getDay().getTimeInMillis() < 10000);
 		assertEquals(REASON, expense.getReason());
 		// correct session attribute: categories
-		assertSame(categories, reaction.getSessionAttributes().get("categories"));
+		assertSame(categories, reaction.getRequestAttributes().get("categories"));
 		// no preset of category
-		assertEquals(null, reaction.getSessionAttributes().get("categoryPreset"));
+		assertEquals(null, reaction.getRequestAttributes().get("categoryPreset"));
 		// correct navigation
-		assertEquals("addexpense.jsp", reaction.getRedirect());
+		assertEquals("WEB-INF/addexpense.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -119,19 +119,19 @@ public class AddExpenseServletTest {
 		ServletReaction reaction = servlet.prepareAddExpense(account, expenseId, null, "" + CATEGORY_ID);
 
 		assertNotNull(reaction);
-		assertEquals(3, reaction.getSessionAttributes().size());
+		assertEquals(3, reaction.getRequestAttributes().size());
 		// correct session attribute: prepared expense
-		Object expenseObject = reaction.getSessionAttributes().get("expense");
+		Object expenseObject = reaction.getRequestAttributes().get("expense");
 		assertTrue(expenseObject instanceof Expense);
 		Expense expense = (Expense) expenseObject;
 		assertTrue(System.currentTimeMillis() - expense.getDay().getTimeInMillis() < 10000);
 		assertEquals(CATEGORY_ID, expense.getCategoryId());
 		// correct session attribute: categories
-		assertSame(categories, reaction.getSessionAttributes().get("categories"));
+		assertSame(categories, reaction.getRequestAttributes().get("categories"));
 		// preset of category
-		assertEquals(Boolean.TRUE, reaction.getSessionAttributes().get("categoryPreset"));
+		assertEquals(Boolean.TRUE, reaction.getRequestAttributes().get("categoryPreset"));
 		// correct navigation
-		assertEquals("addexpense.jsp", reaction.getRedirect());
+		assertEquals("WEB-INF/addexpense.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -145,19 +145,19 @@ public class AddExpenseServletTest {
 		ServletReaction reaction = servlet.prepareAddExpense(account, expenseId, null, "" + NON_EXISTING_CATEGORY_ID);
 
 		assertNotNull(reaction);
-		assertEquals(3, reaction.getSessionAttributes().size());
+		assertEquals(3, reaction.getRequestAttributes().size());
 		// correct session attribute: prepared expense
-		Object expenseObject = reaction.getSessionAttributes().get("expense");
+		Object expenseObject = reaction.getRequestAttributes().get("expense");
 		assertTrue(expenseObject instanceof Expense);
 		Expense expense = (Expense) expenseObject;
 		assertTrue(System.currentTimeMillis() - expense.getDay().getTimeInMillis() < 10000);
 		assertEquals(0, expense.getCategoryId());
 		// correct session attribute: categories
-		assertSame(categories, reaction.getSessionAttributes().get("categories"));
+		assertSame(categories, reaction.getRequestAttributes().get("categories"));
 		// no preset of category
-		assertEquals(null, reaction.getSessionAttributes().get("categoryPreset"));
+		assertEquals(null, reaction.getRequestAttributes().get("categoryPreset"));
 		// correct navigation
-		assertEquals("addexpense.jsp", reaction.getRedirect());
+		assertEquals("WEB-INF/addexpense.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -175,20 +175,20 @@ public class AddExpenseServletTest {
 		ServletReaction reaction = servlet.prepareAddExpense(account, expenseId, REASON, "" + CATEGORY_ID);
 
 		assertNotNull(reaction);
-		assertEquals(3, reaction.getSessionAttributes().size());
+		assertEquals(3, reaction.getRequestAttributes().size());
 		// correct session attribute: prepared expense
-		Object expenseObject = reaction.getSessionAttributes().get("expense");
+		Object expenseObject = reaction.getRequestAttributes().get("expense");
 		assertTrue(expenseObject instanceof Expense);
 		Expense expense = (Expense) expenseObject;
 		assertTrue(System.currentTimeMillis() - expense.getDay().getTimeInMillis() < 10000);
 		assertEquals(REASON, expense.getReason());
 		assertEquals(CATEGORY_ID, expense.getCategoryId());
 		// correct session attribute: categories
-		assertSame(categories, reaction.getSessionAttributes().get("categories"));
+		assertSame(categories, reaction.getRequestAttributes().get("categories"));
 		// preset of category
-		assertEquals(Boolean.TRUE, reaction.getSessionAttributes().get("categoryPreset"));
+		assertEquals(Boolean.TRUE, reaction.getRequestAttributes().get("categoryPreset"));
 		// correct navigation
-		assertEquals("addexpense.jsp", reaction.getRedirect());
+		assertEquals("WEB-INF/addexpense.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -206,15 +206,15 @@ public class AddExpenseServletTest {
 		ServletReaction reaction = servlet.prepareAddExpense(account, Long.toString(expenseId), null, null);
 
 		assertNotNull(reaction);
-		assertEquals(3, reaction.getSessionAttributes().size());
+		assertEquals(3, reaction.getRequestAttributes().size());
 		// correct session attribute: prepared expense
-		assertEquals(expense, reaction.getSessionAttributes().get("expense"));
+		assertEquals(expense, reaction.getRequestAttributes().get("expense"));
 		// correct session attribute: categories
-		assertSame(categories, reaction.getSessionAttributes().get("categories"));
+		assertSame(categories, reaction.getRequestAttributes().get("categories"));
 		// preset of category
-		assertEquals(Boolean.TRUE, reaction.getSessionAttributes().get("categoryPreset"));
+		assertEquals(Boolean.TRUE, reaction.getRequestAttributes().get("categoryPreset"));
 		// correct navigation
-		assertEquals("addexpense.jsp", reaction.getRedirect());
+		assertEquals("WEB-INF/addexpense.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -235,19 +235,19 @@ public class AddExpenseServletTest {
 				"" + NON_EXISTING_CATEGORY_ID);
 
 		assertNotNull(reaction);
-		assertEquals(3, reaction.getSessionAttributes().size());
+		assertEquals(3, reaction.getRequestAttributes().size());
 		// correct session attribute: prepared expense
-		assertEquals(expense, reaction.getSessionAttributes().get("expense"));
-		final Expense sessionExpense = (Expense) reaction.getSessionAttributes().get("expense");
+		assertEquals(expense, reaction.getRequestAttributes().get("expense"));
+		final Expense sessionExpense = (Expense) reaction.getRequestAttributes().get("expense");
 		// ignore other parameters
 		assertEquals(CATEGORY_ID, sessionExpense.getCategoryId());
 		assertEquals(REASON, sessionExpense.getReason());
 		// correct session attribute: categories
-		assertSame(categories, reaction.getSessionAttributes().get("categories"));
+		assertSame(categories, reaction.getRequestAttributes().get("categories"));
 		// preset of category
-		assertEquals(Boolean.TRUE, reaction.getSessionAttributes().get("categoryPreset"));
+		assertEquals(Boolean.TRUE, reaction.getRequestAttributes().get("categoryPreset"));
 		// correct navigation
-		assertEquals("addexpense.jsp", reaction.getRedirect());
+		assertEquals("WEB-INF/addexpense.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -262,12 +262,11 @@ public class AddExpenseServletTest {
 		ServletReaction reaction = servlet.prepareAddExpense(account, Long.toString(nonExistingExpenseId), null, null);
 
 		assertNotNull(reaction);
-		assertEquals(1, reaction.getRequestAttributes().size());
 		// correct request attribute: error message
 		assertEquals("You tried to clone a non existing expense or an expense that isn't yours!",
 				reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
-		assertEquals("error.jsp", reaction.getForward());
+		assertEquals("WEB-INF/error.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -286,12 +285,11 @@ public class AddExpenseServletTest {
 		ServletReaction reaction = servlet.prepareAddExpense(account, Long.toString(expenseId), null, null);
 
 		assertNotNull(reaction);
-		assertEquals(1, reaction.getRequestAttributes().size());
 		// correct request attribute: error message
 		assertEquals("You tried to clone a non existing expense or an expense that isn't yours!",
 				reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
-		assertEquals("error.jsp", reaction.getForward());
+		assertEquals("WEB-INF/error.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -310,7 +308,7 @@ public class AddExpenseServletTest {
 
 		assertNotNull(reaction);
 		// correct navigation
-		assertEquals("listexpenses", reaction.getRedirect());
+		assertEquals("listexpenses.jsp", reaction.getRedirect());
 		// correct creation of Expense
 		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, false, false, categoryId,
 				ACCOUNT_ID);
@@ -332,7 +330,7 @@ public class AddExpenseServletTest {
 
 		assertNotNull(reaction);
 		// correct navigation
-		assertEquals("listexpenses?monthly=true", reaction.getRedirect());
+		assertEquals("listexpenses.jsp?monthly=true", reaction.getRedirect());
 		// correct creation of Expense
 		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, true, true, categoryId,
 				ACCOUNT_ID);

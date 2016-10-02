@@ -63,7 +63,7 @@ public class DeleteExpenseServletTest {
 		// correct deletion
 		verify(servlet.expenseDAO).deleteById(expenseId);
 		// correct navigation
-		assertEquals("listexpenses", reaction.getForward());
+		assertEquals("listexpenses.jsp", reaction.getRedirect());
 	}
 
 	@Test
@@ -80,7 +80,25 @@ public class DeleteExpenseServletTest {
 		// no deletion
 		verify(servlet.expenseDAO, never()).deleteById(anyLong());
 		// correct navigation
-		assertEquals("listexpenses", reaction.getForward());
+		assertEquals("listexpenses.jsp", reaction.getRedirect());
+	}
+
+	@Test
+	public void deleteExpense_notConfirmedMonthly() {
+		long expenseId = 22;
+		Expense expense = new Expense();
+		expense.setId(expenseId);
+		expense.setAccountId(ACCOUNT_ID);
+		expense.setMonthly(true);
+		when(servlet.expenseDAO.read(ACCOUNT_ID, expenseId)).thenReturn(expense);
+
+		ServletReaction reaction = servlet.deleteExpense(account, Long.toString(expenseId), null);
+
+		assertNotNull(reaction);
+		// no deletion
+		verify(servlet.expenseDAO, never()).deleteById(anyLong());
+		// correct navigation
+		assertEquals("listexpenses.jsp?monthly=true", reaction.getRedirect());
 	}
 
 	@Test
@@ -97,7 +115,7 @@ public class DeleteExpenseServletTest {
 		// no deletion
 		verify(servlet.expenseDAO, never()).deleteById(anyLong());
 		// correct navigation
-		assertEquals("error.jsp", reaction.getForward());
+		assertEquals("WEB-INF/error.jsp", reaction.getForward());
 		assertEquals(1, reaction.getRequestAttributes().size());
 		assertEquals("You tried to delete a non existing expense or an expense that isn't yours!",
 				reaction.getRequestAttributes().get("errorMessage"));
@@ -117,7 +135,7 @@ public class DeleteExpenseServletTest {
 		// no deletion
 		verify(servlet.expenseDAO, never()).deleteById(anyLong());
 		// correct navigation
-		assertEquals("error.jsp", reaction.getForward());
+		assertEquals("WEB-INF/error.jsp", reaction.getForward());
 		assertEquals(1, reaction.getRequestAttributes().size());
 		assertEquals("You tried to delete a non existing expense or an expense that isn't yours!",
 				reaction.getRequestAttributes().get("errorMessage"));

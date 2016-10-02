@@ -37,7 +37,7 @@ import vu.de.npolke.myexpenses.util.Month;
  *
  * @author Niklas Polke
  */
-@WebServlet("/showstatistics")
+@WebServlet("/showstatistics.jsp")
 public class ShowStatisticsServlet extends AbstractBasicServlet {
 
 	public static final String TEXT_TOTAL = "Total";
@@ -58,7 +58,7 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 		chartPadding.put("left", 25);
 		barchartOptions.addParameter("chartPadding", chartPadding);
 
-		reaction.setSessionAttribute("barchartoptions", barchartOptions.toString());
+		reaction.setRequestAttribute("barchartoptions", barchartOptions.toString());
 	}
 
 	protected void readStatisticsForMonth(final ServletReaction reaction, final Month month, final Account account) {
@@ -98,33 +98,38 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 		barchart.addParameter("labels", new String[] { "Income", "Fixed Costs", "Expenses" });
 		barchart.addParameter("series", new Double[] { sumIncome, sumMonthlyCosts, sum });
 
-		reaction.setSessionAttribute("chart", json.toString());
-		reaction.setSessionAttribute("barchart", barchart.toString());
+		reaction.setRequestAttribute("chart", json.toString());
+		reaction.setRequestAttribute("barchart", barchart.toString());
 		setBarChartOptions(reaction);
-		reaction.setSessionAttribute("statistics", statistics);
-		reaction.setSessionAttribute("statisticsMonthlyCosts", statisticsMonthlyCosts);
-		reaction.setSessionAttribute("statisticsIncome", statisticsIncome);
-		reaction.setSessionAttribute("sum", sumIncome - sumMonthlyCosts - sum);
-		reaction.setSessionAttribute("month", month);
+		reaction.setRequestAttribute("statistics", statistics);
+		reaction.setRequestAttribute("statisticsMonthlyCosts", statisticsMonthlyCosts);
+		reaction.setRequestAttribute("statisticsIncome", statisticsIncome);
+		reaction.setRequestAttribute("sum", sumIncome - sumMonthlyCosts - sum);
+		reaction.setRequestAttribute("month", month);
 	}
 
 	@Override
 	public ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
 
-		return prepareStatistics(account);
+		final String month = request.getParameter("month");
+
+		return prepareStatistics(account, month);
 	}
 
-	public ServletReaction prepareStatistics(final Account account) {
+	public ServletReaction prepareStatistics(final Account account, final String monthAsString) {
 		ServletReaction reaction = new ServletReaction();
+		Month month = Month.createMonth(monthAsString);
 
 		List<Month> months = statisticsDAO.readDistinctMonthsByAccountId(account.getId());
-		if (months.size() > 0) {
+		if (month != null) {
+			readStatisticsForMonth(reaction, month, account);
+		} else if (months.size() > 0) {
 			readStatisticsForMonth(reaction, months.get(0), account);
 		}
 
-		reaction.setSessionAttribute("months", months);
-		reaction.setRedirect("showstatistics.jsp");
+		reaction.setRequestAttribute("months", months);
+		reaction.setForward("WEB-INF/showstatistics.jsp");
 
 		return reaction;
 	}
@@ -141,9 +146,7 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 	public ServletReaction showStatistics(final Account account, final String month) {
 		ServletReaction reaction = new ServletReaction();
 
-		readStatisticsForMonth(reaction, Month.createMonth(month), account);
-
-		reaction.setRedirect("showstatistics.jsp");
+		reaction.setRedirect("showstatistics.jsp").add("month", month);
 
 		return reaction;
 	}

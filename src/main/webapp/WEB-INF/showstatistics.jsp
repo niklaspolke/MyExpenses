@@ -28,14 +28,14 @@ the License.
 </div>
 
 <div class="w3-panel">
-    <form action="showstatistics" method="post">
+    <form action="showstatistics.jsp" method="post">
         <select class="w3-input w3-border w3-round-large"
             name="month"
             title="month of expense"
             required="required" onchange="this.form.submit()"
             autofocus>
-            <c:forEach var="month" items="${sessionScope.months}">
-                <option value="${month}" ${sessionScope.month eq month ? 'selected' : ''}>${month}</option>
+            <c:forEach var="month" items="${requestScope.months}">
+                <option value="${month}" ${requestScope.month eq month ? 'selected' : ''}>${month}</option>
             </c:forEach>
         </select>
         <label class="w3-label" for="month">Month</label>
@@ -43,7 +43,7 @@ the License.
 </div>
 
 <div class="w3-panel w3-row-padding">
-    <div class="w3-col m6" id="myChart" style="${sessionScope.statistics.size() > 1 ? 'height: 300px' : ''}"></div>
+    <div class="w3-col m6" id="myChart" style="${requestScope.statistics.size() > 1 ? 'height: 300px' : ''}"></div>
 
     <div class="w3-col m6">
         <h4>Expenses</h4>
@@ -53,11 +53,11 @@ the License.
                 <th>Category</th>
                 <th style="width:100px">Value</th>
             </tr>
-            <c:forEach var="category" items="${sessionScope.statistics}">
+            <c:forEach var="category" items="${requestScope.statistics}">
                 <tr ${category.name eq 'Total' ? 'class="total-cost"' : ''}>
                     <td>
                         <c:choose>
-                        <c:when test="${category.name ne 'Total' and category.value gt 0}"><a href="listexpenses?month=${sessionScope.month}&category=${category.id}">${category.name}</a></c:when>
+                        <c:when test="${category.name ne 'Total' and category.value gt 0}"><a href="listexpenses.jsp?month=${requestScope.month}&category=${category.id}">${category.name}</a></c:when>
                         <c:otherwise>${category.name}</c:otherwise>
                         </c:choose>
                     </td><td class="number" style="text-align:right">
@@ -79,7 +79,7 @@ the License.
                 <th>Category</th>
                 <th style="width:100px">Value</th>
             </tr>
-            <c:forEach var="category" items="${sessionScope.statisticsIncome}">
+            <c:forEach var="category" items="${requestScope.statisticsIncome}">
                 <tr ${category.name eq 'Total' ? 'class="total-income"' : ''}>
                     <td>
                         ${category.name}
@@ -100,7 +100,7 @@ the License.
                 <th>Category</th>
                 <th style="width:100px">Value</th>
             </tr>
-            <c:forEach var="category" items="${sessionScope.statisticsMonthlyCosts}">
+            <c:forEach var="category" items="${requestScope.statisticsMonthlyCosts}">
                 <tr ${category.name eq 'Total' ? 'class="total-cost"' : ''}>
                     <td>
                         ${category.name}
@@ -118,17 +118,17 @@ the License.
     <div class="w3-col m6">
         <h4>Result</h4>
         <div id="myBarChart" style="height: 100px"></div>
-        <div class="${sessionScope.sum > 0 ? 'total-income' : 'total-cost'}">Total: <fmt:formatNumber value="${sessionScope.sum}" type="currency"/></div>
+        <div class="${requestScope.sum > 0 ? 'total-income' : 'total-cost'}">Total: <fmt:formatNumber value="${requestScope.sum}" type="currency"/></div>
     </div>
 </div>
 
 <script type="text/javascript">
 document.body.onload = function() {
-    var chart = JSON.parse('${sessionScope.chart}');
+    var chart = JSON.parse('${requestScope.chart}');
     new Chartist.Pie('#myChart', chart);
 
-    var barchart = JSON.parse('${sessionScope.barchart}');
-    var barchartoptions = JSON.parse('${sessionScope.barchartoptions}');
+    var barchart = JSON.parse('${requestScope.barchart}');
+    var barchartoptions = JSON.parse('${requestScope.barchartoptions}');
     new Chartist.Bar('#myBarChart', barchart, barchartoptions);
 }
 </script>

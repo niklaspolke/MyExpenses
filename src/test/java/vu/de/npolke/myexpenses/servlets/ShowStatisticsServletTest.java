@@ -82,12 +82,12 @@ public class ShowStatisticsServletTest {
 		months.add(Month.createMonth("2015.05"));
 		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
 
-		final ServletReaction reaction = servlet.prepareStatistics(account);
+		final ServletReaction reaction = servlet.prepareStatistics(account, null);
 
 		verify(servlet).readStatisticsForMonth(any(ServletReaction.class), eq(MONTH), eq(account));
 		assertNotNull(reaction);
-		assertEquals(months, reaction.getSessionAttributes().get("months"));
-		assertEquals("showstatistics.jsp", reaction.getRedirect());
+		assertEquals(months, reaction.getRequestAttributes().get("months"));
+		assertEquals("WEB-INF/showstatistics.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -96,32 +96,30 @@ public class ShowStatisticsServletTest {
 		months.clear();
 		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
 
-		final ServletReaction reaction = servlet.prepareStatistics(account);
+		final ServletReaction reaction = servlet.prepareStatistics(account, null);
 
 		verify(servlet, never()).readStatisticsForMonth(any(ServletReaction.class), isNull(Month.class), eq(account));
 		assertNotNull(reaction);
-		assertEquals(months, reaction.getSessionAttributes().get("months"));
-		assertEquals("showstatistics.jsp", reaction.getRedirect());
+		assertEquals(months, reaction.getRequestAttributes().get("months"));
+		assertEquals("WEB-INF/showstatistics.jsp", reaction.getForward());
 	}
 
 	@Test
 	public void showStatistics() {
-		servlet = spy(servlet);
 		final Month MONTH = Month.createMonth("2015.05");
 
 		final ServletReaction reaction = servlet.showStatistics(account, MONTH.toString());
 
-		verify(servlet).readStatisticsForMonth(any(ServletReaction.class), eq(MONTH), eq(account));
 		assertNotNull(reaction);
-		assertEquals("showstatistics.jsp", reaction.getRedirect());
+		assertEquals("showstatistics.jsp?month=2015.05", reaction.getRedirect());
 	}
 
 	private void assertStatisticsSizeAndSum(final ServletReaction reaction, final String sessionAttribute,
 			final int expectedSize, final double exptectedSum) {
-		assertNotNull(reaction.getSessionAttributes().get(sessionAttribute));
+		assertNotNull(reaction.getRequestAttributes().get(sessionAttribute));
 
 		@SuppressWarnings("unchecked")
-		List<StatisticsPair> statistics = (List<StatisticsPair>) reaction.getSessionAttributes().get(sessionAttribute);
+		List<StatisticsPair> statistics = (List<StatisticsPair>) reaction.getRequestAttributes().get(sessionAttribute);
 		assertEquals(expectedSize + 1, statistics.size());
 
 		StatisticsPair sum = statistics.get(expectedSize);
@@ -136,15 +134,15 @@ public class ShowStatisticsServletTest {
 
 		servlet.readStatisticsForMonth(reaction, null, account);
 
-		assertEquals(null, reaction.getSessionAttributes().get("month"));
+		assertEquals(null, reaction.getRequestAttributes().get("month"));
 		assertStatisticsSizeAndSum(reaction, "statistics", 0, 0.0);
 		assertStatisticsSizeAndSum(reaction, "statisticsMonthlyCosts", 0, 0.0);
 		assertStatisticsSizeAndSum(reaction, "statisticsIncome", 0, 0.0);
-		assertEquals(fillTemplate(JSON_CHART_TEMPLATE, "", ""), reaction.getSessionAttributes().get("chart"));
+		assertEquals(fillTemplate(JSON_CHART_TEMPLATE, "", ""), reaction.getRequestAttributes().get("chart"));
 		assertEquals(fillTemplate(JSON_BARCHART_TEMPLATE, "0.0,0.0,0.0"),
-				reaction.getSessionAttributes().get("barchart"));
-		assertEquals(JSON_BARCHART_OPTIONS, reaction.getSessionAttributes().get("barchartoptions"));
-		assertEquals(0.0, (Double) reaction.getSessionAttributes().get("sum"), DELTA);
+				reaction.getRequestAttributes().get("barchart"));
+		assertEquals(JSON_BARCHART_OPTIONS, reaction.getRequestAttributes().get("barchartoptions"));
+		assertEquals(0.0, (Double) reaction.getRequestAttributes().get("sum"), DELTA);
 	}
 
 	@Test
@@ -156,15 +154,15 @@ public class ShowStatisticsServletTest {
 
 		servlet.readStatisticsForMonth(reaction, MONTH, account);
 
-		assertEquals(MONTH, reaction.getSessionAttributes().get("month"));
+		assertEquals(MONTH, reaction.getRequestAttributes().get("month"));
 		assertStatisticsSizeAndSum(reaction, "statistics", 0, 0.0);
 		assertStatisticsSizeAndSum(reaction, "statisticsMonthlyCosts", 0, 0.0);
 		assertStatisticsSizeAndSum(reaction, "statisticsIncome", 0, 0.0);
-		assertEquals(fillTemplate(JSON_CHART_TEMPLATE, "", ""), reaction.getSessionAttributes().get("chart"));
+		assertEquals(fillTemplate(JSON_CHART_TEMPLATE, "", ""), reaction.getRequestAttributes().get("chart"));
 		assertEquals(fillTemplate(JSON_BARCHART_TEMPLATE, "0.0,0.0,0.0"),
-				reaction.getSessionAttributes().get("barchart"));
-		assertEquals(JSON_BARCHART_OPTIONS, reaction.getSessionAttributes().get("barchartoptions"));
-		assertEquals(0.0, (Double) reaction.getSessionAttributes().get("sum"), DELTA);
+				reaction.getRequestAttributes().get("barchart"));
+		assertEquals(JSON_BARCHART_OPTIONS, reaction.getRequestAttributes().get("barchartoptions"));
+		assertEquals(0.0, (Double) reaction.getRequestAttributes().get("sum"), DELTA);
 	}
 
 	@Test
@@ -183,15 +181,15 @@ public class ShowStatisticsServletTest {
 
 		servlet.readStatisticsForMonth(reaction, MONTH, account);
 
-		assertEquals(MONTH, reaction.getSessionAttributes().get("month"));
+		assertEquals(MONTH, reaction.getRequestAttributes().get("month"));
 		assertStatisticsSizeAndSum(reaction, "statistics", 3, 12.0);
 		assertStatisticsSizeAndSum(reaction, "statisticsMonthlyCosts", 2, 10.0);
 		assertStatisticsSizeAndSum(reaction, "statisticsIncome", 2, 5.0);
 		assertEquals(fillTemplate(JSON_CHART_TEMPLATE, "\"Sports\",\"Food\",\"Home\"", "4.0,4.0,4.0"),
-				reaction.getSessionAttributes().get("chart"));
+				reaction.getRequestAttributes().get("chart"));
 		assertEquals(fillTemplate(JSON_BARCHART_TEMPLATE, "5.0,10.0,12.0"),
-				reaction.getSessionAttributes().get("barchart"));
-		assertEquals(JSON_BARCHART_OPTIONS, reaction.getSessionAttributes().get("barchartoptions"));
-		assertEquals(-17.0, (Double) reaction.getSessionAttributes().get("sum"), DELTA);
+				reaction.getRequestAttributes().get("barchart"));
+		assertEquals(JSON_BARCHART_OPTIONS, reaction.getRequestAttributes().get("barchartoptions"));
+		assertEquals(-17.0, (Double) reaction.getRequestAttributes().get("sum"), DELTA);
 	}
 }

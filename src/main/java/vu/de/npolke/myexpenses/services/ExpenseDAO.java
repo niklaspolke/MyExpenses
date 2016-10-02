@@ -71,7 +71,7 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 		expense.setMonthly(monthly);
 		expense.setIncome(income);
 		expense.setCategoryId(categoryId);
-		expense.setCategoryName(categoryDAO.read(categoryId).getName());
+		expense.setCategoryName(categoryDAO.read(accountId, categoryId).getName());
 		expense.setAccountId(accountId);
 
 		try (Connection connection = getConnection()) {
@@ -144,7 +144,7 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 			updateStatement.setBoolean(4, expense.isMonthly());
 			updateStatement.setBoolean(5, expense.isIncome());
 			updateStatement.setLong(6, expense.getCategoryId());
-			String categoryName = categoryDAO.read(expense.getCategoryId()).getName();
+			String categoryName = categoryDAO.read(expense.getAccountId(), expense.getCategoryId()).getName();
 			expense.setCategoryName(categoryName);
 			updateStatement.setLong(7, expense.getId());
 			updated = 1 == updateStatement.executeUpdate();

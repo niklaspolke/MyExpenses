@@ -66,11 +66,10 @@ public class LoginServlet extends AbstractBasicServlet {
 				reaction.setRedirect(redirectURL);
 				reaction.setSessionAttribute("redirectAfterLogin", null);
 			} else {
-				reaction.setRedirect("listexpenses");
+				reaction.setRedirect("listexpenses.jsp");
 			}
 		} else {
-			reaction.setRequestAttribute("errorMessage", "unknown login or wrong password");
-			reaction.setForward("index.jsp");
+			reaction.setRedirect("login.jsp").add("error", "unknown login or wrong password");
 		}
 
 		return reaction;

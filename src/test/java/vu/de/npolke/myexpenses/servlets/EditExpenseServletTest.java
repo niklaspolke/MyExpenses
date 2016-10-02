@@ -86,11 +86,11 @@ public class EditExpenseServletTest {
 
 		assertNotNull(reaction);
 		// correct expense in session
-		assertEquals(expense, reaction.getSessionAttributes().get("expense"));
+		assertEquals(expense, reaction.getRequestAttributes().get("expense"));
 		// correct categories in session
-		assertEquals(categories, reaction.getSessionAttributes().get("categories"));
+		assertEquals(categories, reaction.getRequestAttributes().get("categories"));
 		// correct navigation
-		assertEquals("editexpense.jsp", reaction.getRedirect());
+		assertEquals("WEB-INF/editexpense.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -105,7 +105,7 @@ public class EditExpenseServletTest {
 		assertEquals("You tried to edit a non existing expense or an expense that isn't yours!",
 				reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
-		assertEquals("error.jsp", reaction.getForward());
+		assertEquals("WEB-INF/error.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -122,7 +122,7 @@ public class EditExpenseServletTest {
 		assertEquals("You tried to edit a non existing expense or an expense that isn't yours!",
 				reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
-		assertEquals("error.jsp", reaction.getForward());
+		assertEquals("WEB-INF/error.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -130,7 +130,9 @@ public class EditExpenseServletTest {
 		final int DAY_NEW = 15;
 		final int MONTH_NEW = 12;
 		final int YEAR_NEW = 2000;
-		ServletReaction reaction = servlet.editExpense(expense, AMOUNT_NEW, REASON_NEW, null, null,
+		when(servlet.expenseDAO.read(ACCOUNT_ID, EXPENSE_ID)).thenReturn(expense);
+
+		ServletReaction reaction = servlet.editExpense(account, "" + EXPENSE_ID, AMOUNT_NEW, REASON_NEW, null, null,
 				String.valueOf(DAY_NEW), String.valueOf(MONTH_NEW), String.valueOf(YEAR_NEW),
 				String.valueOf(CATEGORY_ID_NEW));
 
@@ -143,7 +145,7 @@ public class EditExpenseServletTest {
 		assertEquals(DAY_NEW + "." + MONTH_NEW + "." + "00", expense.getReadableDayAsString());
 		verify(servlet.expenseDAO).update(expense);
 		// correct navigation
-		assertEquals("listexpenses", reaction.getRedirect());
+		assertEquals("listexpenses.jsp", reaction.getRedirect());
 	}
 
 	@Test
@@ -151,7 +153,9 @@ public class EditExpenseServletTest {
 		final int DAY_NEW = 15;
 		final int MONTH_NEW = 12;
 		final int YEAR_NEW = 2000;
-		ServletReaction reaction = servlet.editExpense(expense, AMOUNT_NEW, REASON_NEW, "true", "true",
+		when(servlet.expenseDAO.read(ACCOUNT_ID, EXPENSE_ID)).thenReturn(expense);
+
+		ServletReaction reaction = servlet.editExpense(account, "" + EXPENSE_ID, AMOUNT_NEW, REASON_NEW, "true", "true",
 				String.valueOf(DAY_NEW), String.valueOf(MONTH_NEW), String.valueOf(YEAR_NEW),
 				String.valueOf(CATEGORY_ID_NEW));
 
@@ -165,6 +169,6 @@ public class EditExpenseServletTest {
 		assertEquals(DAY_NEW + "." + MONTH_NEW + "." + "00", expense.getReadableDayAsString());
 		verify(servlet.expenseDAO).update(expense);
 		// correct navigation
-		assertEquals("listexpenses?monthly=true", reaction.getRedirect());
+		assertEquals("listexpenses.jsp?monthly=true", reaction.getRedirect());
 	}
 }

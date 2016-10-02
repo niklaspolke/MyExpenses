@@ -17,7 +17,7 @@ the License.
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-<jsp:include page="header.jsp">
+<jsp:include page="WEB-INF/header.jsp">
     <jsp:param value="true" name="disabled"/>
 </jsp:include>
 
@@ -84,4 +84,4 @@ function checkPasswords() {
 </script>
 
 
-<jsp:include page="footer.jsp"/>
+<jsp:include page="WEB-INF/footer.jsp"/>

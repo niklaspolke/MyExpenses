@@ -39,7 +39,7 @@ the License.
         <c:if test="${not disabled}"><nav class="w3-col l3 w3-hide-medium w3-hide-small">
             <ul class="w3-ul">
                 <li class="w3-hover-yellow">
-                    <a href="editaccount" title="edit account">
+                    <a href="editaccount.jsp" title="edit account">
                         <img class="w3-left w3-margin-right" src="img/user-id_48.png" style="width:40px" alt="user profile" title="user profile">
                         <span class="w3-xlarge"><c:out value="${sessionScope.account.login}"/></span>
                     </a>
@@ -49,7 +49,7 @@ the License.
         <nav class="w3-col l3 w3-hide-medium w3-hide-small">
             <ul class="w3-ul">
                 <li class="w3-hover-yellow">
-                    <a href="logout" title="logout">
+                    <a href="logout.jsp" title="logout">
                         <img class="w3-left w3-margin-right" src="img/flag-alt_48.png" style="width:40px" alt="logout" title="logout">
                         <span class="w3-xlarge">Logout</span>
                     </a>
@@ -63,44 +63,44 @@ the License.
             <ul class="w3-ul">
                 <li class="${disabled ? '' : 'w3-hover-yellow'}">
                     <c:if test="${sessionScope.topten.size() gt 0}"><div class="w3-accordion"></c:if>
-                        <a ${sessionScope.topten.size() gt 0 ? 'onclick="myAccFunc()"' : 'href="addexpense"'} title="add expense">
+                        <a ${sessionScope.topten.size() gt 0 ? 'onclick="myAccFunc()"' : 'href="addexpense.jsp"'} title="add expense">
                             <img class="w3-left w3-margin-right" src="img/sign-add_48.png" style="width:40px" alt="add expense" title="add expense">
                             <span class="w3-xlarge">Add Expense${sessionScope.topten.size() gt 0 ? ' &#x23EC;' : ''}</span>
                         </a>
                         <c:if test="${sessionScope.topten.size() gt 0}"><div id="topten" class="w3-accordion-content w3-white w3-card-4">
-                            <a href="addexpense">Default</a>
+                            <a href="addexpense.jsp">Default</a>
                             <c:forEach var="expense" items="${sessionScope.topten}">
-                                <a href="addexpense?category=${expense.categoryId}&reason=${expense.reason}">${expense.categoryName} - ${expense.reason}</a>
+                                <a href="addexpense.jsp?category=${expense.categoryId}&reason=${expense.reason}">${expense.categoryName} - ${expense.reason}</a>
                             </c:forEach>
                         </div>
                     </div></c:if>
                 </li><li class="${disabled ? '' : 'w3-hover-yellow'}">
-                    <a ${disabled ? '' : 'href="listexpenses"'} title="list expenses">
+                    <a ${disabled ? '' : 'href="listexpenses.jsp"'} title="list expenses">
                         <img class="w3-left w3-margin-right" src="img/folder_48.png" style="width:40px" alt="list expenses" title="list expenses">
                         <span class="w3-xlarge">List Expenses</span>
                     </a>
                 </li><li class="${disabled ? '' : 'w3-hover-yellow'}">
-                    <a ${disabled ? '' : 'href="listexpenses?monthly=true"'} title="list monthly expenses">
+                    <a ${disabled ? '' : 'href="listexpenses.jsp?monthly=true"'} title="list monthly expenses">
                         <img class="w3-left w3-margin-right" src="img/calendar_48.png" style="width:40px" alt="list monthly expenses" title="list monthly expenses">
                         <span class="w3-xlarge">List Monthly Expenses</span>
                     </a>
                 </li><li class="${disabled ? '' : 'w3-hover-yellow'}">
-                    <a ${disabled ? '' : 'href="listcategories"'} title="list categories">
+                    <a ${disabled ? '' : 'href="listcategories.jsp"'} title="list categories">
                         <img class="w3-left w3-margin-right" src="img/layers_48.png" style="width:40px" alt="list categories" title="list categories">
                         <span class="w3-xlarge">List Categories</span>
                     </a>
                 </li><li class="${disabled ? '' : 'w3-hover-yellow'}">
-                    <a ${disabled ? '' : 'href="showstatistics"'} title="show statistics">
+                    <a ${disabled ? '' : 'href="showstatistics.jsp"'} title="show statistics">
                         <img class="w3-left w3-margin-right" src="img/file-powerpoint_48.png" style="width:40px" alt="show statistics" title="show statistics">
                         <span class="w3-xlarge">Show Statistics</span>
                     </a>
                 </li><li class="w3-hover-yellow w3-hide-large">
-                    <a href="editaccount" title="edit account">
+                    <a href="editaccount.jsp" title="edit account">
                         <img class="w3-left w3-margin-right" src="img/user-id_48.png" style="width:40px" alt="user profile" title="user profile">
                         <span class="w3-xlarge"><c:out value="${sessionScope.account.login}"/></span>
                     </a>
                 </li><li class="w3-hover-yellow w3-hide-large">
-                    <a href="logout" title="logout">
+                    <a href="logout.jsp" title="logout">
                         <img class="w3-left w3-margin-right" src="img/flag-alt_48.png" style="width:40px" alt="logout" title="logout">
                         <span class="w3-xlarge">Logout</span>
                     </a>

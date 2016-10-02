@@ -37,7 +37,7 @@ import vu.de.npolke.myexpenses.util.Month;
  *
  * @author Niklas Polke
  */
-@WebServlet("/listexpenses")
+@WebServlet("/listexpenses.jsp")
 public class ListExpensesServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -134,8 +134,8 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 			reaction.setRequestAttribute("pageMax", pageMax);
 		}
 
-		reaction.setSessionAttribute("expenses", expenses);
-		reaction.setForward("listexpenses.jsp");
+		reaction.setRequestAttribute("expenses", expenses);
+		reaction.setForward("WEB-INF/listexpenses.jsp");
 
 		return reaction;
 	}

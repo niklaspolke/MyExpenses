@@ -16,15 +16,17 @@ the License.
 <%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<jsp:include page="header.jsp">
+<jsp:include page="WEB-INF/header.jsp">
     <jsp:param value="true" name="disabled"/>
 </jsp:include>
 
 <h3>Login</h3>
-
 <form action="login" method="post">
-<c:if test="${not empty requestScope.errorMessage}"><div class="w3-panel w3-leftbar w3-pale-red w3-border-red">
-    ${requestScope.errorMessage}
+<c:if test="${not empty param.error}"><div class="w3-panel w3-leftbar w3-pale-red w3-border-red">
+    ${param.error}
+</div></c:if>
+<c:if test="${not empty param.info}"><div class="w3-panel w3-leftbar w3-pale-green w3-border-green">
+    ${param.info}
 </div></c:if>
 <div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
@@ -58,4 +60,4 @@ the License.
 <a href="register.jsp">Register new user</a>
 
 
-<jsp:include page="footer.jsp"/>
+<jsp:include page="WEB-INF/footer.jsp"/>

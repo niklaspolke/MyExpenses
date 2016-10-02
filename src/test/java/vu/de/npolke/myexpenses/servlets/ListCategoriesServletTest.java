@@ -46,8 +46,8 @@ public class ListCategoriesServletTest {
 
 		assertNotNull(reaction);
 		// correct categories in session
-		assertEquals(categories, reaction.getSessionAttributes().get("categories"));
+		assertEquals(categories, reaction.getRequestAttributes().get("categories"));
 		// correct navigation
-		assertEquals("listcategories.jsp", reaction.getRedirect());
+		assertEquals("WEB-INF/listcategories.jsp", reaction.getForward());
 	}
 }

@@ -16,34 +16,32 @@ the License.
 <%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<script type="text/javascript" src="js/Chart.min.js"></script>
-
 
 <jsp:include page="header.jsp"/>
 
+<div class="w3-container">
+<h3>Add Category</h3>
+</div>
 
-<h3>Test Statistics:</h3>
-
-    <canvas id="myChart" width="300" height="300" style="width:300px; height:300px;"></canvas>
-    <div id="legend"></div>
-
-<script type="text/javascript">
-document.body.onload = function() {
-    var ctx = document.getElementById("myChart").getContext("2d");
-    var values = JSON.parse('${sessionScope.mychart}');
-    var options = {
-            segmentShowStroke:true,
-            segmentStrokeColor:"#fff",
-            segmentStrokeWidth:2,
-            percentageInnerCutout:0,
-            animateRotate:false,
-            animateScale:false
-    };
-    var myPieChart = new Chart(ctx).Pie(values.parts,options);
-    myPieChart.draw();
-    document.getElementById("legend").innerHTML = myPieChart.generateLegend();
-}
-</script>
+<form action="addcategory.jsp" method="post">
+<div class="w3-panel">
+    <input class="w3-input w3-border w3-round-large"
+        type="text"
+        name="name"
+        size="40"
+        maxlength="30"
+        title="name of category"
+        placeholder="category"
+        required="required"
+        autofocus>
+    <label class="w3-label" for="name">Name</label>
+</div><div class="w3-panel">
+    <div class="w3-row">
+        <input class="w3-btn w3-green w3-xlarge w3-round-xxlarge" type="submit" value="Create Category">
+        <input class="w3-btn w3-red w3-tiny w3-round-xxlarge" type="reset" value="Reset">
+    </div>
+</div>
+</form>
 
 
 <jsp:include page="footer.jsp"/>

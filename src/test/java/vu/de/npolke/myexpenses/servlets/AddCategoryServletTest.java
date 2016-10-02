@@ -22,6 +22,13 @@ public class AddCategoryServletTest {
 	}
 
 	@Test
+	public void forward() {
+		ServletReaction reaction = servlet.forward();
+
+		assertEquals("WEB-INF/addcategory.jsp", reaction.getForward());
+	}
+
+	@Test
 	public void addCategory() {
 		final Account account = new Account();
 		account.setId(123);
@@ -31,8 +38,6 @@ public class AddCategoryServletTest {
 
 		verify(servlet.categoryDAO).create(categoryName, account.getId());
 		assertNotNull(reaction);
-		assertEquals("listcategories", reaction.getRedirect());
-		assertEquals(1, reaction.getSessionAttributes().size());
-		assertEquals(account, reaction.getSessionAttributes().get("account"));
+		assertEquals("listcategories.jsp", reaction.getRedirect());
 	}
 }

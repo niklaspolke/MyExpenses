@@ -35,7 +35,7 @@ import vu.de.npolke.myexpenses.util.Month;
  *
  * @author Niklas Polke
  */
-@WebServlet("/importmonthly")
+@WebServlet("/importmonthly.jsp")
 public class ImportMonthlyServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;

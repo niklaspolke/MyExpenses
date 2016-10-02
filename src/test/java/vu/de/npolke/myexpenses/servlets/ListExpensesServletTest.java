@@ -28,6 +28,7 @@ import vu.de.npolke.myexpenses.util.Month;
 
 public class ListExpensesServletTest {
 
+	private static final String LISTEXPENSES_JSP = "WEB-INF/listexpenses.jsp";
 	private static final long ACCOUNT_ID = 123;
 	private static final String MONTH = "2016.01";
 	private static final long CATEGORY_ID = 13;
@@ -140,9 +141,9 @@ public class ListExpensesServletTest {
 		// correct message / no message
 		assertNull(reaction.getRequestAttributes().get("message"));
 		// correct expenses in session
-		assertSame(expenses, reaction.getSessionAttributes().get("expenses"));
+		assertSame(expenses, reaction.getRequestAttributes().get("expenses"));
 		// correct navigation
-		assertEquals("listexpenses.jsp", reaction.getForward());
+		assertEquals(LISTEXPENSES_JSP, reaction.getForward());
 	}
 
 	@Test
@@ -179,9 +180,9 @@ public class ListExpensesServletTest {
 		// correct pageMax in request
 		assertEquals(1, reaction.getRequestAttributes().get("pageMax"));
 		// correct expenses in session
-		assertSame(expenses, reaction.getSessionAttributes().get("expenses"));
+		assertSame(expenses, reaction.getRequestAttributes().get("expenses"));
 		// correct navigation
-		assertEquals("listexpenses.jsp", reaction.getForward());
+		assertEquals(LISTEXPENSES_JSP, reaction.getForward());
 	}
 
 	@Test
@@ -202,9 +203,9 @@ public class ListExpensesServletTest {
 		// correct pageMax in request
 		assertEquals(2, reaction.getRequestAttributes().get("pageMax"));
 		// correct expenses in session
-		assertSame(expenses, reaction.getSessionAttributes().get("expenses"));
+		assertSame(expenses, reaction.getRequestAttributes().get("expenses"));
 		// correct navigation
-		assertEquals("listexpenses.jsp", reaction.getForward());
+		assertEquals(LISTEXPENSES_JSP, reaction.getForward());
 	}
 
 	@Test
@@ -225,9 +226,9 @@ public class ListExpensesServletTest {
 		// correct pageMax in request
 		assertEquals(2, reaction.getRequestAttributes().get("pageMax"));
 		// correct expenses in session
-		assertSame(expenses, reaction.getSessionAttributes().get("expenses"));
+		assertSame(expenses, reaction.getRequestAttributes().get("expenses"));
 		// correct navigation
-		assertEquals("listexpenses.jsp", reaction.getForward());
+		assertEquals(LISTEXPENSES_JSP, reaction.getForward());
 	}
 
 	@Test
@@ -250,9 +251,9 @@ public class ListExpensesServletTest {
 		// correct categoryId in request
 		assertEquals(CATEGORY, reaction.getRequestAttributes().get("category"));
 		// correct expenses in session
-		assertSame(expenses, reaction.getSessionAttributes().get("expenses"));
+		assertSame(expenses, reaction.getRequestAttributes().get("expenses"));
 		// correct navigation
-		assertEquals("listexpenses.jsp", reaction.getForward());
+		assertEquals(LISTEXPENSES_JSP, reaction.getForward());
 	}
 
 	@Test
@@ -271,9 +272,9 @@ public class ListExpensesServletTest {
 		// correct categoryId in request
 		assertEquals("error" + CATEGORY_ID, reaction.getRequestAttributes().get("category"));
 		// correct expenses in session
-		assertSame(expenses, reaction.getSessionAttributes().get("expenses"));
+		assertSame(expenses, reaction.getRequestAttributes().get("expenses"));
 		// correct navigation
-		assertEquals("listexpenses.jsp", reaction.getForward());
+		assertEquals(LISTEXPENSES_JSP, reaction.getForward());
 	}
 
 	@Test
@@ -295,9 +296,9 @@ public class ListExpensesServletTest {
 		// correct categoryId in request
 		assertEquals(CATEGORY, reaction.getRequestAttributes().get("category"));
 		// correct expenses in session
-		assertSame(expenses, reaction.getSessionAttributes().get("expenses"));
+		assertSame(expenses, reaction.getRequestAttributes().get("expenses"));
 		// correct navigation
-		assertEquals("listexpenses.jsp", reaction.getForward());
+		assertEquals(LISTEXPENSES_JSP, reaction.getForward());
 	}
 
 	@Test
@@ -325,9 +326,9 @@ public class ListExpensesServletTest {
 		assertEquals("2016.10", reaction.getRequestAttributes().get("monthMax").toString());
 		assertEquals("2016.08", reaction.getRequestAttributes().get("monthMin").toString());
 		// correct expenses in session
-		assertSame(expenses, reaction.getSessionAttributes().get("expenses"));
+		assertSame(expenses, reaction.getRequestAttributes().get("expenses"));
 		// correct navigation
-		assertEquals("listexpenses.jsp", reaction.getForward());
+		assertEquals(LISTEXPENSES_JSP, reaction.getForward());
 	}
 
 	@Test
@@ -355,9 +356,9 @@ public class ListExpensesServletTest {
 		assertEquals("2016.12", reaction.getRequestAttributes().get("monthMax").toString());
 		assertEquals("2016.08", reaction.getRequestAttributes().get("monthMin").toString());
 		// correct expenses in session
-		assertSame(expenses, reaction.getSessionAttributes().get("expenses"));
+		assertSame(expenses, reaction.getRequestAttributes().get("expenses"));
 		// correct navigation
-		assertEquals("listexpenses.jsp", reaction.getForward());
+		assertEquals(LISTEXPENSES_JSP, reaction.getForward());
 	}
 
 	@Test
@@ -385,9 +386,9 @@ public class ListExpensesServletTest {
 		assertEquals("2016.10", reaction.getRequestAttributes().get("monthMax").toString());
 		assertEquals("2016.08", reaction.getRequestAttributes().get("monthMin").toString());
 		// correct expenses in session
-		assertSame(expenses, reaction.getSessionAttributes().get("expenses"));
+		assertSame(expenses, reaction.getRequestAttributes().get("expenses"));
 		// correct navigation
-		assertEquals("listexpenses.jsp", reaction.getForward());
+		assertEquals(LISTEXPENSES_JSP, reaction.getForward());
 	}
 
 	private void addExpenses(final List<Expense> expenses, final int amount) {

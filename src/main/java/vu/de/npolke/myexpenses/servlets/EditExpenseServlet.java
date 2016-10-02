@@ -34,7 +34,7 @@ import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
  *
  * @author Niklas Polke
  */
-@WebServlet("/editexpense")
+@WebServlet("/editexpense.jsp")
 public class EditExpenseServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -61,11 +61,11 @@ public class EditExpenseServlet extends AbstractBasicServlet {
 		if (expense == null || expense.getAccountId() != account.getId()) {
 			reaction.setRequestAttribute("errorMessage",
 					"You tried to edit a non existing expense or an expense that isn't yours!");
-			reaction.setForward("error.jsp");
+			reaction.setForward("WEB-INF/error.jsp");
 		} else {
-			reaction.setSessionAttribute("expense", expense);
-			reaction.setSessionAttribute("categories", categories);
-			reaction.setRedirect("editexpense.jsp");
+			reaction.setRequestAttribute("expense", expense);
+			reaction.setRequestAttribute("categories", categories);
+			reaction.setForward("WEB-INF/editexpense.jsp");
 		}
 		return reaction;
 	}
@@ -74,6 +74,7 @@ public class EditExpenseServlet extends AbstractBasicServlet {
 	public ServletReaction doPost(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
 
+		String id = request.getParameter("id");
 		String amount = request.getParameter("amount");
 		String reason = request.getParameter("reason");
 		String monthly = request.getParameter("monthly");
@@ -83,19 +84,19 @@ public class EditExpenseServlet extends AbstractBasicServlet {
 		String year = request.getParameter("year");
 		String categoryId = request.getParameter("category");
 
-		Expense expense = (Expense) session.getAttribute("expense");
-
-		return editExpense(expense, amount, reason, monthly, income, day, month, year, categoryId);
+		return editExpense(account, id, amount, reason, monthly, income, day, month, year, categoryId);
 	}
 
-	public ServletReaction editExpense(final Expense expense, final String amountAsString, final String reason,
-			final String monthly, final String income, final String day, final String month, final String year,
-			final String categoryIdAsString) {
+	public ServletReaction editExpense(final Account account, final String idAsString, final String amountAsString,
+			final String reason, final String monthly, final String income, final String day, final String month,
+			final String year, final String categoryIdAsString) {
+		long id = Long.parseLong(idAsString);
 		double amount = Double.parseDouble(amountAsString.replaceAll(",", "."));
 		boolean isMonthly = Boolean.parseBoolean(monthly);
 		boolean isIncome = Boolean.parseBoolean(income);
 		long categoryId = Long.parseLong(categoryIdAsString);
 
+		Expense expense = expenseDAO.read(account.getId(), id);
 		expense.setAmount(amount);
 		expense.setReason(reason);
 		expense.setMonthly(isMonthly);
@@ -106,9 +107,9 @@ public class EditExpenseServlet extends AbstractBasicServlet {
 
 		ServletReaction reaction = new ServletReaction();
 		if (expense.isMonthly()) {
-			reaction.setRedirect("listexpenses?monthly=true");
+			reaction.setRedirect("listexpenses.jsp").add("monthly", true);
 		} else {
-			reaction.setRedirect("listexpenses");
+			reaction.setRedirect("listexpenses.jsp");
 		}
 		return reaction;
 	}

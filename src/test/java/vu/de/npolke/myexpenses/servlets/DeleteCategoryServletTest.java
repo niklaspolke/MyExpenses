@@ -55,7 +55,8 @@ public class DeleteCategoryServletTest {
 		Category category = new Category();
 		category.setId(categoryId);
 		category.setAccountId(ACCOUNT_ID);
-		when(servlet.categoryDAO.read(categoryId)).thenReturn(category);
+		when(servlet.categoryDAO.read(ACCOUNT_ID, categoryId)).thenReturn(category);
+		when(servlet.categoryDAO.deleteById(categoryId)).thenReturn(true);
 
 		ServletReaction reaction = servlet.deleteCategory(account, Long.toString(categoryId), "yes");
 
@@ -63,7 +64,27 @@ public class DeleteCategoryServletTest {
 		// correct deletion
 		verify(servlet.categoryDAO).deleteById(categoryId);
 		// correct navigation
-		assertEquals("listcategories", reaction.getForward());
+		assertEquals("listcategories.jsp", reaction.getRedirect());
+	}
+
+	@Test
+	public void deleteCategory_notAllowedWithExpenses() {
+		long categoryId = 22;
+		Category category = new Category();
+		category.setId(categoryId);
+		category.setAccountId(ACCOUNT_ID);
+		when(servlet.categoryDAO.read(ACCOUNT_ID, categoryId)).thenReturn(category);
+		when(servlet.categoryDAO.deleteById(categoryId)).thenReturn(false);
+
+		ServletReaction reaction = servlet.deleteCategory(account, Long.toString(categoryId), "yes");
+
+		assertNotNull(reaction);
+		// correct deletion
+		verify(servlet.categoryDAO).deleteById(categoryId);
+		// correct navigation
+		assertEquals(
+				"listcategories.jsp?error=You+tried+to+delete+a+category+which+has+expenses+still+connected+to+it.",
+				reaction.getRedirect());
 	}
 
 	@Test
@@ -72,7 +93,7 @@ public class DeleteCategoryServletTest {
 		Category category = new Category();
 		category.setId(categoryId);
 		category.setAccountId(ACCOUNT_ID);
-		when(servlet.categoryDAO.read(categoryId)).thenReturn(category);
+		when(servlet.categoryDAO.read(ACCOUNT_ID, categoryId)).thenReturn(category);
 
 		ServletReaction reaction = servlet.deleteCategory(account, Long.toString(categoryId), null);
 
@@ -80,7 +101,7 @@ public class DeleteCategoryServletTest {
 		// no deletion
 		verify(servlet.categoryDAO, never()).deleteById(anyLong());
 		// correct navigation
-		assertEquals("listcategories", reaction.getForward());
+		assertEquals("listcategories.jsp", reaction.getRedirect());
 	}
 
 	@Test
@@ -89,7 +110,7 @@ public class DeleteCategoryServletTest {
 		Category category = new Category();
 		category.setId(categoryId);
 		category.setAccountId(ACCOUNT_ID);
-		when(servlet.categoryDAO.read(categoryId)).thenReturn(category);
+		when(servlet.categoryDAO.read(ACCOUNT_ID, categoryId)).thenReturn(category);
 
 		ServletReaction reaction = servlet.deleteCategory(account, "44", "yes");
 
@@ -109,7 +130,7 @@ public class DeleteCategoryServletTest {
 		Category category = new Category();
 		category.setId(categoryId);
 		category.setAccountId(666);
-		when(servlet.categoryDAO.read(categoryId)).thenReturn(category);
+		when(servlet.categoryDAO.read(ACCOUNT_ID, categoryId)).thenReturn(category);
 
 		ServletReaction reaction = servlet.deleteCategory(account, Long.toString(categoryId), "yes");
 

@@ -59,20 +59,20 @@ public class EditCategoryServletTest {
 
 	@Test
 	public void prepareEditCategory() {
-		when(servlet.categoryDAO.read(CATEGORY_ID)).thenReturn(category);
+		when(servlet.categoryDAO.read(ACCOUNT_ID, CATEGORY_ID)).thenReturn(category);
 
 		ServletReaction reaction = servlet.prepareEditCategory(account, String.valueOf(CATEGORY_ID));
 
 		assertNotNull(reaction);
 		// correct category in session
-		assertEquals(category, reaction.getSessionAttributes().get("category"));
+		assertEquals(category, reaction.getRequestAttributes().get("category"));
 		// correct navigation
-		assertEquals("editcategory.jsp", reaction.getRedirect());
+		assertEquals("WEB-INF/editcategory.jsp", reaction.getForward());
 	}
 
 	@Test
 	public void prepareEditCategory_nonExistingCategory() {
-		when(servlet.categoryDAO.read(CATEGORY_ID)).thenReturn(category);
+		when(servlet.categoryDAO.read(ACCOUNT_ID, CATEGORY_ID)).thenReturn(category);
 
 		ServletReaction reaction = servlet.prepareEditCategory(account, String.valueOf(CATEGORY_ID_NONEXISTING));
 
@@ -81,7 +81,7 @@ public class EditCategoryServletTest {
 		assertEquals("You tried to edit a non existing category or a category that isn't yours!",
 				reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
-		assertEquals("error.jsp", reaction.getForward());
+		assertEquals("WEB-INF/error.jsp", reaction.getForward());
 	}
 
 	@Test
@@ -89,7 +89,7 @@ public class EditCategoryServletTest {
 		Category foreignCategory = new Category();
 		foreignCategory.setId(CATEGORY_ID_FOREIGN);
 		foreignCategory.setAccountId(ACCOUNT_ID_FOREIGN);
-		when(servlet.categoryDAO.read(CATEGORY_ID_FOREIGN)).thenReturn(foreignCategory);
+		when(servlet.categoryDAO.read(ACCOUNT_ID_FOREIGN, CATEGORY_ID_FOREIGN)).thenReturn(foreignCategory);
 
 		ServletReaction reaction = servlet.prepareEditCategory(account, String.valueOf(CATEGORY_ID_FOREIGN));
 
@@ -98,18 +98,19 @@ public class EditCategoryServletTest {
 		assertEquals("You tried to edit a non existing category or a category that isn't yours!",
 				reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
-		assertEquals("error.jsp", reaction.getForward());
+		assertEquals("WEB-INF/error.jsp", reaction.getForward());
 	}
 
 	@Test
 	public void editCategory() {
-		ServletReaction reaction = servlet.editCategory(category, NAME_NEW);
+		when(servlet.categoryDAO.read(ACCOUNT_ID, CATEGORY_ID)).thenReturn(category);
+		ServletReaction reaction = servlet.editCategory(account, "" + CATEGORY_ID, NAME_NEW);
 
 		assertNotNull(reaction);
 		// correct update
 		assertEquals(NAME_NEW, category.getName());
 		verify(servlet.categoryDAO).update(category);
 		// correct navigation
-		assertEquals("listcategories", reaction.getRedirect());
+		assertEquals("listcategories.jsp", reaction.getRedirect());
 	}
 }

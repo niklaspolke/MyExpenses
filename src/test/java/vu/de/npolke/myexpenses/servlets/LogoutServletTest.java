@@ -23,6 +23,6 @@ public class LogoutServletTest {
 
 		assertNotNull(reaction);
 		// correct navigation
-		assertEquals("index.jsp", reaction.getRedirect());
+		assertEquals("login.jsp?info=You%27ve+successfully+logged+out.", reaction.getRedirect());
 	}
 }

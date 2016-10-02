@@ -31,7 +31,7 @@ public class CategoryDAO extends AbstractConnectionDAO {
 
 	private static final String SQL_INSERT = "INSERT INTO Category (id, name, account_id) VALUES (?, ?, ?)";
 
-	private static final String SQL_READ_BY_ID = "SELECT name, account_id FROM Category WHERE id = ?";
+	private static final String SQL_READ_BY_ID = "SELECT id, name, account_id FROM Category WHERE account_id = ? AND id = ?";
 
 	private static final String SQL_READ_BY_ACCOUNT_ID = "SELECT id, name FROM Category WHERE account_id = ? ORDER BY name ASC";
 
@@ -75,17 +75,18 @@ public class CategoryDAO extends AbstractConnectionDAO {
 		return category;
 	}
 
-	public Category read(final long id) {
+	public Category read(final long accountId, final long id) {
 		Category category = null;
 
 		try (Connection connection = getConnection()) {
 			PreparedStatement readStatement;
 			readStatement = connection.prepareStatement(SQL_READ_BY_ID);
-			readStatement.setLong(1, id);
+			readStatement.setLong(1, accountId);
+			readStatement.setLong(2, id);
 			ResultSet result = readStatement.executeQuery();
 			if (result.next()) {
 				category = new Category();
-				category.setId(id);
+				category.setId(result.getLong("id"));
 				category.setName(result.getString("name"));
 				category.setAccountId(result.getLong("account_id"));
 			}

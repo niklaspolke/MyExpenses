@@ -24,6 +24,10 @@ the License.
 <h3>List Categories</h3>
 </div>
 
+<c:if test="${not empty param.error}"><div class="w3-panel w3-leftbar w3-pale-red w3-border-red">
+    ${param.error}
+</div></c:if>
+
 <div class="w3-panel">
     <a href="addcategory.jsp" title="add category">
         Add Category<img src="img/sign-add_24.png" alt="add category" title="add category" width="24" height="24"/>
@@ -40,12 +44,12 @@ the License.
             </tr>
         </thead>
         <tbody>
-            <c:forEach var="category" items="${sessionScope.categories}">
+            <c:forEach var="category" items="${requestScope.categories}">
                 <tr>
                     <td><c:out value="${category.name}"/></td>
                     <td style="border:none">
-                        <a href="editcategory?id=${category.id}"><img src="img/pencil_24.png" alt="edit category" title="edit category" width="24" height="24"/></a>
-                        <a id="delete${category.id}" href="deletecategory?id=${category.id}" onclick="return prompt('delete${category.id}', '${fn:replace(category, '\"', '&quot;')}')"><img src="img/sign-delete_24.png" alt="delete category" title="delete category" width="24" height="24"/></a>
+                        <a href="editcategory.jsp?id=${category.id}"><img src="img/pencil_24.png" alt="edit category" title="edit category" width="24" height="24"/></a>
+                        <a id="delete${category.id}" href="deletecategory.jsp?id=${category.id}" onclick="return prompt('delete${category.id}', '${fn:replace(category, '\"', '&quot;')}')"><img src="img/sign-delete_24.png" alt="delete category" title="delete category" width="24" height="24"/></a>
                     </td>
                 </tr>
             </c:forEach>

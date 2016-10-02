@@ -20,10 +20,11 @@ the License.
 <jsp:include page="header.jsp"/>
 
 <div class="w3-container">
-<h3>Add Expense</h3>
+<h3>Edit Expense</h3>
 </div>
 
-<form action="addexpense" method="post">
+<form action="editexpense.jsp" method="post">
+<input type="hidden" name="id" value="${requestScope.expense.id}">
 <div class="w3-panel">
     <div class="w3-row-padding">
         <div class="w3-third">
@@ -36,7 +37,7 @@ the License.
                 max="31"
                 title="day - 1-31"
                 placeholder="31"
-                value="${sessionScope.expense.getDay().get(5)}"
+                value="${requestScope.expense.getDay().get(5)}"
                 required="required" >
             <label class="w3-label">Day</label>
         </div><div class="w3-third">
@@ -49,7 +50,7 @@ the License.
                 max="12"
                 title="month - 1-12"
                 placeholder="12"
-                value="${sessionScope.expense.getDay().get(2)+1}"
+                value="${requestScope.expense.getDay().get(2)+1}"
                 required="required">
             <label class="w3-label">Month</label>
         </div><div class="w3-third">
@@ -62,7 +63,7 @@ the License.
                 max="2100"
                 title="year - yyyy"
                 placeholder="2015"
-                value="${sessionScope.expense.getDay().get(1)}"
+                value="${requestScope.expense.getDay().get(1)}"
                 required="required">
             <label class="w3-label" for="year">Year</label>
         </div>
@@ -73,9 +74,9 @@ the License.
         name="category"
         title="category of expense"
         required="required"
-        ${sessionScope.categoryPreset ? '' : 'autofocus'}>
-        <c:forEach items="${sessionScope.categories}" var="singlecategory">
-            <option value="${singlecategory.id}" ${singlecategory.id eq sessionScope.expense.categoryId ? 'selected' : ''}>${singlecategory.name}</option>
+        autofocus>
+        <c:forEach items="${requestScope.categories}" var="singlecategory">
+            <option value="${singlecategory.id}" ${singlecategory.id eq requestScope.expense.categoryId ? 'selected' : ''}>${singlecategory.name}</option>
         </c:forEach>
     </select>
     <label class="w3-label" for="category">Category</label>
@@ -93,14 +94,13 @@ the License.
                 pattern="[-+]?[0-9]*[,.]?[0-9]{0,2}"
                 required="required"
                 autocomplete="off"
-                value="${sessionScope.expense.amount != 0.0 ? sessionScope.expense.amount : ''}"
-                ${sessionScope.categoryPreset ? 'autofocus' : ''}>
+                value="${requestScope.expense.amount}">
             <label class="w3-label" for="amount">Amount (€)</label>
         </div><div class="w3-third">
-            <input class="w3-check" type="checkbox" name="monthly" value="true" ${sessionScope.expense.monthly ? 'checked' : ''}>
+            <input class="w3-check" type="checkbox" name="monthly" value="true" ${requestScope.expense.monthly ? 'checked' : ''}>
             <label class="w3-label" for="fixedcost">Monthly</label>
         </div><div class="w3-third">
-            <input class="w3-check" type="checkbox" name="income" value="true" ${sessionScope.expense.income ? 'checked' : ''}>
+            <input class="w3-check" type="checkbox" name="income" value="true" ${requestScope.expense.income ? 'checked' : ''}>
             <label class="w3-label" for="income">Income</label>
         </div>
     </div>
@@ -115,12 +115,12 @@ the License.
         placeholder="gone shopping"
         pattern=".{3,}"
         required="required"
-        value="${sessionScope.expense.reason}">
+        value="${requestScope.expense.reason}">
     <label class="w3-label" for="reason">Reason</label>
     </div></div>
 </div><div class="w3-panel">
-    <div class="w3-row">
-        <input class="w3-btn w3-green w3-xlarge w3-round-xxlarge" type="submit" value="Create Expense">
+    <div class="w3-row-padding">
+        <input class="w3-btn w3-green w3-xlarge w3-round-xxlarge" type="submit" value="Save Expense">
         <input class="w3-btn w3-red w3-tiny w3-round-xxlarge" type="reset" value="Reset">
     </div>
 </div>

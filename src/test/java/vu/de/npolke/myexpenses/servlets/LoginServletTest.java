@@ -55,7 +55,7 @@ public class LoginServletTest {
 		// correct topten in session
 		assertSame(topten, reaction.getSessionAttributes().get("topten"));
 		// correct navigation
-		assertEquals("listexpenses", reaction.getRedirect());
+		assertEquals("listexpenses.jsp", reaction.getRedirect());
 	}
 
 	@Test
@@ -95,9 +95,7 @@ public class LoginServletTest {
 		assertNotNull(reaction);
 		// no account in session
 		assertNull(reaction.getSessionAttributes().get("account"));
-		// correct error in request
-		assertEquals("unknown login or wrong password", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
-		assertEquals("index.jsp", reaction.getForward());
+		assertEquals("login.jsp?error=unknown+login+or+wrong+password", reaction.getRedirect());
 	}
 }

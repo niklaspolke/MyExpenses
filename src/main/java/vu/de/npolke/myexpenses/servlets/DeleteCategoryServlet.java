@@ -31,7 +31,7 @@ import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
  *
  * @author Niklas Polke
  */
-@WebServlet("/deletecategory")
+@WebServlet("/deletecategory.jsp")
 public class DeleteCategoryServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -52,12 +52,15 @@ public class DeleteCategoryServlet extends AbstractBasicServlet {
 		long categoryId = Long.parseLong(idAsString);
 
 		ServletReaction reaction = new ServletReaction();
-		reaction.setForward("listcategories");
+		reaction.setRedirect("listcategories.jsp");
 
 		if ("yes".equalsIgnoreCase(confirmed)) {
-			Category category = categoryDAO.read(categoryId);
+			Category category = categoryDAO.read(account.getId(), categoryId);
 			if (category != null && category.getAccountId() == account.getId()) {
-				categoryDAO.deleteById(categoryId);
+				boolean deleted = categoryDAO.deleteById(categoryId);
+				if (deleted == false) {
+					reaction.setRedirect("listcategories.jsp").add("error", "You tried to delete a category which has expenses still connected to it.");
+				}
 			} else {
 				reaction.setRequestAttribute("errorMessage",
 						"You tried to delete a non existing category or a category that isn't yours!");

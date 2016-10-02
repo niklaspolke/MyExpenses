@@ -23,7 +23,8 @@ the License.
 <h3>Edit Category</h3>
 </div>
 
-<form action="editcategory" method="post">
+<form action="editcategory.jsp" method="post">
+<input type="hidden" name="id" value="${requestScope.category.id}">
 <div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
         type="text"
@@ -33,7 +34,7 @@ the License.
         title="name of category"
         placeholder="category"
         required="required"
-        value="${sessionScope.category.name}"
+        value="${requestScope.category.name}"
         autofocus>
     <label class="w3-label" for="name">Name</label>
 </div><div class="w3-panel">

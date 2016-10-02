@@ -35,7 +35,7 @@ the License.
 </div>
 
 <c:if test="${requestScope.mode eq 'monthly'}"><div class="w3-panel">
-    <a href="importmonthly?month=${requestScope.monthCurrent}" title="import monthly expenses & income from previous month">
+    <a href="importmonthly.jsp?month=${requestScope.monthCurrent}" title="import monthly expenses & income from previous month">
         Import Monthly<img src="img/box-in_24.png" alt="import expenses" title="import monthly expenses & income from previous month" width="24" height="24"/>
     </a>
 </div></c:if>
@@ -54,7 +54,7 @@ the License.
                     <img src="img/sign-left_24_inactive.png" alt="inactive arrow left" title="no previous results" width="24" height="24"/>
                 </c:when>
                 <c:otherwise>
-                    <a href="listexpenses?page=${requestScope.page - 1}"><img src="img/sign-left_24.png" alt="active arrow left" title="go to previous results" width="24" height="24"/></a>
+                    <a href="listexpenses.jsp?page=${requestScope.page - 1}"><img src="img/sign-left_24.png" alt="active arrow left" title="go to previous results" width="24" height="24"/></a>
                 </c:otherwise>
                 </c:choose>
                 <c:choose>
@@ -62,7 +62,7 @@ the License.
                     <img src="img/sign-right_24_inactive.png" alt="inactive arrow right" title="no further results" width="24" height="24"/>
                 </c:when>
                 <c:otherwise>
-                    <a href="listexpenses?page=${requestScope.page + 1}"><img src="img/sign-right_24.png" alt="active arrow right" title="go to further results" width="24" height="24"/></a>
+                    <a href="listexpenses.jsp?page=${requestScope.page + 1}"><img src="img/sign-right_24.png" alt="active arrow right" title="go to further results" width="24" height="24"/></a>
                 </c:otherwise>
                 </c:choose>
             </th></c:if>
@@ -72,7 +72,7 @@ the License.
                     <img src="img/sign-left_24_inactive.png" alt="inactive arrow left" title="no next month" width="24" height="24"/>
                 </c:when>
                 <c:otherwise>
-                    <a href="listexpenses?monthly=true&month=${requestScope.monthCurrent.next()}"><img src="img/sign-left_24.png" alt="active arrow left" title="go to next month" width="24" height="24"/></a>
+                    <a href="listexpenses.jsp?monthly=true&month=${requestScope.monthCurrent.next()}"><img src="img/sign-left_24.png" alt="active arrow left" title="go to next month" width="24" height="24"/></a>
                 </c:otherwise>
                 </c:choose>
                 <c:choose>
@@ -80,7 +80,7 @@ the License.
                     <img src="img/sign-right_24_inactive.png" alt="inactive arrow right" title="no previous month" width="24" height="24"/>
                 </c:when>
                 <c:otherwise>
-                    <a href="listexpenses?monthly=true&month=${requestScope.monthCurrent.previous()}"><img src="img/sign-right_24.png" alt="active arrow right" title="go to previous month" width="24" height="24"/></a>
+                    <a href="listexpenses.jsp?monthly=true&month=${requestScope.monthCurrent.previous()}"><img src="img/sign-right_24.png" alt="active arrow right" title="go to previous month" width="24" height="24"/></a>
                 </c:otherwise>
                 </c:choose>
             </th></c:if>
@@ -94,16 +94,16 @@ the License.
         </tr>
     </thead>
     <tbody>
-        <c:forEach var="expense" items="${sessionScope.expenses}">
+        <c:forEach var="expense" items="${requestScope.expenses}">
             <tr>
                 <c:if test="${requestScope.mode ne 'monthly'}"><td><c:out value="${expense.getReadableDayAsString()}"/></td></c:if>
                 <c:if test="${requestScope.mode ne 'topten'}"><td><c:out value="${expense.categoryName}"/></td></c:if>
                 <td class="number" style="text-align:right"><fmt:formatNumber value="${expense.amount}" type="currency"/></td>
                 <td><c:out value="${expense.reason}"/></td>
                 <td style="border:none">
-                    <a href="editexpense?id=${expense.id}"><img src="img/pencil_24.png" alt="edit expense" title="edit expense" width="24" height="24"/></a>
-                    <a href="addexpense?id=${expense.id}"><img src="img/sign-add_24.png" alt="copy expense" title="copy expense" width="24" height="24"/></a>
-                    <a id="delete${expense.id}" href="deleteexpense?id=${expense.id}" onclick="return prompt('delete${expense.id}', '${fn:replace(expense, '\"', '&quot;')}')"><img src="img/sign-delete_24.png" alt="delete expense" title="delete expense" width="24" height="24"/></a>
+                    <a href="editexpense.jsp?id=${expense.id}"><img src="img/pencil_24.png" alt="edit expense" title="edit expense" width="24" height="24"/></a>
+                    <a href="addexpense.jsp?id=${expense.id}"><img src="img/sign-add_24.png" alt="copy expense" title="copy expense" width="24" height="24"/></a>
+                    <a id="delete${expense.id}" href="deleteexpense.jsp?id=${expense.id}" onclick="return prompt('delete${expense.id}', '${fn:replace(expense, '\"', '&quot;')}')"><img src="img/sign-delete_24.png" alt="delete expense" title="delete expense" width="24" height="24"/></a>
                 </td>
             </tr>
         </c:forEach>

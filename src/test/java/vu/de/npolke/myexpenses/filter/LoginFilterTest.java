@@ -41,7 +41,7 @@ public class LoginFilterTest {
 
 	@Test
 	public void noRedirectWhen_LogIn() {
-		assertFalse(filter.redirectToLoginPage("/myexpenses/index.jsp", "/myexpenses", "GET", null));
+		assertFalse(filter.redirectToLoginPage("/myexpenses/login.jsp", "/myexpenses", "GET", null));
 		assertFalse(filter.redirectToLoginPage("/myexpenses/", "/myexpenses", "GET", null));
 		assertFalse(filter.redirectToLoginPage("/myexpenses", "/myexpenses", "GET", null));
 	}

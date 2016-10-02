@@ -1,7 +1,9 @@
 package vu.de.npolke.myexpenses.servlets.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -22,22 +24,24 @@ import static org.junit.Assert.*;
  */
 public class ServletReactionTest {
 
+	private static final String DEFAULT_URL = "/myurl/index.jsp";
+
 	private ServletReaction reaction = new ServletReaction();
 
 	@Test
 	public void redirect() {
-		reaction.setRedirect("addexpense");
+		reaction.setRedirect(DEFAULT_URL);
 
-		assertEquals("addexpense", reaction.getRedirect());
+		assertEquals(DEFAULT_URL, reaction.getRedirect());
 		assertNull(reaction.getForward());
 	}
 
 	@Test
 	public void forward() {
-		reaction.setForward("listexpenses");
+		reaction.setForward(DEFAULT_URL);
 
 		assertNull(reaction.getRedirect());
-		assertEquals("listexpenses", reaction.getForward());
+		assertEquals(DEFAULT_URL, reaction.getForward());
 	}
 
 	@Test
@@ -106,5 +110,44 @@ public class ServletReactionTest {
 		assertEquals(attr1, reaction.getRequestAttributes().get("attribute1"));
 		assertNull(reaction.getRequestAttributes().get("attribute2"));
 		assertNull(reaction.getRequestAttributes().get("attribute3"));
+	}
+
+	@Test
+	public void addRequestParameter() {
+		final String KEY = "mykey";
+		final String VALUE = "value";
+
+		URLParameterBuilder parameter = reaction.setRedirect(DEFAULT_URL);
+		parameter.add(KEY, VALUE);
+
+		assertEquals(DEFAULT_URL + "?" + KEY + "=" + VALUE, reaction.getRedirect());
+	}
+
+	@Test
+	public void addTwoRequestParameterWithBuilder() {
+		final String KEY1 = "mykey";
+		final String VALUE1 = "value";
+		final String KEY2 = "mykey2";
+		final String VALUE2 = "value2";
+
+		reaction.setRedirect(DEFAULT_URL).add(KEY1, VALUE1).add(KEY2, VALUE2);
+
+		// expect: /myurl/index.jsp?mykey=value&mykey2=value2
+		assertEquals(DEFAULT_URL + "?" + KEY1 + "=" + VALUE1 + "&" + KEY2 + "=" + VALUE2, reaction.getRedirect());
+	}
+
+	@Test
+	public void changeRequestParameterWithNewRedirect() {
+		final String KEY1 = "mykey";
+		final String VALUE1 = "value";
+		final String KEY2 = "mykey2";
+		final String VALUE2 = "value2";
+		final String OTHER_URL = "otherURL";
+
+		reaction.setRedirect(DEFAULT_URL).add(KEY1, VALUE1);
+		reaction.setRedirect(OTHER_URL).add(KEY2, VALUE2);
+
+		// expect: otherURL?mykey=value
+		assertEquals(OTHER_URL + "?" + KEY2 + "=" + VALUE2, reaction.getRedirect());
 	}
 }

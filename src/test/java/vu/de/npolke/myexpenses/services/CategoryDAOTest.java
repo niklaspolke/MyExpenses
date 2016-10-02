@@ -32,6 +32,8 @@ import vu.de.npolke.myexpenses.model.Category;
  */
 public class CategoryDAOTest extends AbstractDAOTest {
 
+	private static final long ACCOUNT_ID = 1;
+
 	private static CategoryDAO categoryDAO;
 
 	private static long testCounter = 0;
@@ -47,7 +49,7 @@ public class CategoryDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void read() {
-		Category category = categoryDAO.read(11);
+		Category category = categoryDAO.read(ACCOUNT_ID, 11);
 
 		assertNotNull(category);
 		assertEquals(11, category.getId());
@@ -56,7 +58,7 @@ public class CategoryDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void readNotExisting() {
-		Category category = categoryDAO.read(99);
+		Category category = categoryDAO.read(ACCOUNT_ID, 99);
 
 		assertNull(category);
 	}
@@ -72,21 +74,21 @@ public class CategoryDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void update() {
-		Category category = categoryDAO.read(11);
+		Category category = categoryDAO.read(ACCOUNT_ID, 11);
 		category.setName("junk food");
 
 		boolean success = categoryDAO.update(category);
 
 		assertTrue(success);
 
-		category = categoryDAO.read(category.getId());
+		category = categoryDAO.read(ACCOUNT_ID, category.getId());
 		assertEquals(11, category.getId());
 		assertEquals("junk food", category.getName());
 	}
 
 	@Test
 	public void updateNotExisting() {
-		Category category = categoryDAO.read(11);
+		Category category = categoryDAO.read(ACCOUNT_ID, 11);
 		category.setId(99);
 		category.setName("junk food");
 
@@ -94,7 +96,7 @@ public class CategoryDAOTest extends AbstractDAOTest {
 
 		assertFalse(success);
 
-		category = categoryDAO.read(99);
+		category = categoryDAO.read(ACCOUNT_ID, 99);
 		assertNull(category);
 	}
 
@@ -113,7 +115,7 @@ public class CategoryDAOTest extends AbstractDAOTest {
 	@Test
 	public void delete() {
 		boolean success = categoryDAO.deleteById(13);
-		Category category = categoryDAO.read(13);
+		Category category = categoryDAO.read(ACCOUNT_ID, 13);
 
 		assertTrue(success);
 		assertNull(category);
@@ -122,7 +124,7 @@ public class CategoryDAOTest extends AbstractDAOTest {
 	@Test
 	public void deleteWithExpenses() {
 		boolean success = categoryDAO.deleteById(11);
-		Category category = categoryDAO.read(11);
+		Category category = categoryDAO.read(ACCOUNT_ID, 11);
 
 		assertFalse(success);
 		assertNotNull(category);
