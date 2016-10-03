@@ -47,11 +47,6 @@ public class LoginFilterTest {
 	}
 
 	@Test
-	public void noRedirectWhen_LoginRequest() {
-		assertFalse(filter.redirectToLoginPage("/myexpenses/login", "/myexpenses", "POST", null));
-	}
-
-	@Test
 	public void noRedirectWhen_LoginPage() {
 		assertFalse(filter.redirectToLoginPage("/myexpenses/listexpenses", "/myexpenses", "GET", new Account()));
 		assertFalse(filter.redirectToLoginPage("/myexpenses/listexpenses.jsp", "/myexpenses", "GET", new Account()));

@@ -102,8 +102,7 @@ public class EditExpenseServletTest {
 
 		assertNotNull(reaction);
 		// correct error message
-		assertEquals("You tried to edit a non existing expense or an expense that isn't yours!",
-				reaction.getRequestAttributes().get("errorMessage"));
+		assertEquals("error.editexpense.wrongid", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
 		assertEquals("WEB-INF/error.jsp", reaction.getForward());
 	}
@@ -119,8 +118,7 @@ public class EditExpenseServletTest {
 
 		assertNotNull(reaction);
 		// correct error message
-		assertEquals("You tried to edit a non existing expense or an expense that isn't yours!",
-				reaction.getRequestAttributes().get("errorMessage"));
+		assertEquals("error.editexpense.wrongid", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
 		assertEquals("WEB-INF/error.jsp", reaction.getForward());
 	}

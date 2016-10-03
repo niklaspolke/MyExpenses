@@ -45,7 +45,7 @@ public class LogoutServlet extends AbstractBasicServlet {
 	public ServletReaction logout() {
 		ServletReaction reaction = new ServletReaction();
 
-		reaction.setRedirect("login.jsp").add("info", "You've successfully logged out.");
+		reaction.setRedirect("login.jsp").add("info", "info.logout.success");
 
 		return reaction;
 	}

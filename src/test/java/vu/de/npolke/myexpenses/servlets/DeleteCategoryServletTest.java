@@ -82,9 +82,7 @@ public class DeleteCategoryServletTest {
 		// correct deletion
 		verify(servlet.categoryDAO).deleteById(categoryId);
 		// correct navigation
-		assertEquals(
-				"listcategories.jsp?error=You+tried+to+delete+a+category+which+has+expenses+still+connected+to+it.",
-				reaction.getRedirect());
+		assertEquals("listcategories.jsp?error=error.deletecategory.stillinuse", reaction.getRedirect());
 	}
 
 	@Test
@@ -120,8 +118,7 @@ public class DeleteCategoryServletTest {
 		// correct navigation
 		assertEquals("error.jsp", reaction.getForward());
 		assertEquals(1, reaction.getRequestAttributes().size());
-		assertEquals("You tried to delete a non existing category or a category that isn't yours!",
-				reaction.getRequestAttributes().get("errorMessage"));
+		assertEquals("error.deletecategory.wrongid", reaction.getRequestAttributes().get("errorMessage"));
 	}
 
 	@Test
@@ -140,7 +137,6 @@ public class DeleteCategoryServletTest {
 		// correct navigation
 		assertEquals("error.jsp", reaction.getForward());
 		assertEquals(1, reaction.getRequestAttributes().size());
-		assertEquals("You tried to delete a non existing category or a category that isn't yours!",
-				reaction.getRequestAttributes().get("errorMessage"));
+		assertEquals("error.deletecategory.wrongid", reaction.getRequestAttributes().get("errorMessage"));
 	}
 }

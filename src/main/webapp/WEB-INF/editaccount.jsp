@@ -16,16 +16,18 @@ the License.
 <%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="messages"/>
 
 <jsp:include page="header.jsp"/>
 
 <div class="w3-container">
-<h3>Edit Account</h3>
+    <h3><fmt:message key="editaccount.title"/></h3>
 </div>
 
 <form action="editaccount.jsp" method="post">
 <c:if test="${not empty requestScope.errorMessage}"><div class="w3-panel w3-leftbar w3-pale-red w3-border-red">
-    ${requestScope.errorMessage}
+    <fmt:message key="${requestScope.errorMessage}"/>
 </div></c:if>
 <div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
@@ -33,50 +35,50 @@ the License.
         name="login"
         size="40"
         maxlength="20"
-        title="username - at least 4 characters"
-        placeholder="<username>"
+        title="<fmt:message key="editaccount.username.tooltip"/>"
+        placeholder="<fmt:message key="editaccount.username.default"/>"
         pattern=".{4,}"
-        value="${sessionScope.account.login}">
-    <label class="w3-label" for="login">Username</label>
+        value="<c:out value="${sessionScope.account.login}"/>" >
+    <label class="w3-label" for="login"><fmt:message key="editaccount.username.label"/></label>
 </div><div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
         type="password"
         name="oldpassword"
         size="40"
         maxlength="30"
-        title="login password"
-        placeholder="<password>"
+        title="<fmt:message key="editaccount.oldpassword.tooltip"/>"
+        placeholder="<fmt:message key="editaccount.oldpassword.default"/>"
         pattern=".{4,}"
         required="required"
         value=""
         autofocus>
-    <label class="w3-label" for="oldpassword">Old Password</label>
+    <label class="w3-label" for="oldpassword"><fmt:message key="editaccount.oldpassword.label"/></label>
 </div><div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
         type="password"
         name="newpassword1"
         size="40"
         maxlength="30"
-        title="new password"
-        placeholder="<password>"
+        title="<fmt:message key="editaccount.newpassword1.tooltip"/>"
+        placeholder="<fmt:message key="editaccount.newpassword1.default"/>"
         pattern=".{4,}"
         value="">
-    <label class="w3-label" for="newpassword1">New Password</label>
+    <label class="w3-label" for="newpassword1"><fmt:message key="editaccount.newpassword1.label"/></label>
 </div><div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
         type="password"
         name="newpassword2"
         size="40"
         maxlength="30"
-        title="repeat new password"
-        placeholder="<password>"
+        title="<fmt:message key="editaccount.newpassword2.tooltip"/>"
+        placeholder="<fmt:message key="editaccount.newpassword2.default"/>"
         pattern=".{4,}"
         value="">
-    <label class="w3-label" for="newpassword2">Repeat New Password</label>
+    <label class="w3-label" for="newpassword2"><fmt:message key="editaccount.newpassword2.label"/></label>
 </div><div class="w3-panel">
     <div class="w3-row">
-        <input class="w3-btn w3-green w3-xlarge w3-round-xxlarge" type="submit" value="Update Account" onclick="return checkPasswords()">
-        <input class="w3-btn w3-red w3-tiny w3-round-xxlarge" type="reset" value="Reset">
+        <input class="w3-btn w3-green w3-xlarge w3-round-xxlarge" type="submit" value="<fmt:message key="editaccount.button.label"/>" onclick="return checkPasswords()">
+        <input class="w3-btn w3-red w3-tiny w3-round-xxlarge" type="reset" value="<fmt:message key="editaccount.resetbutton.label"/>">
     </div>
 </div>
 </form>
@@ -86,7 +88,7 @@ function checkPasswords() {
 	var passwd1 = document.forms[0]["newpassword1"].value;
 	var passwd2 = document.forms[0]["newpassword2"].value;
 	if (passwd1 != passwd2) {
-	    alert("Error: New Passwords aren't equal!");
+	    alert("<fmt:message key="error.editaccount.passwordsnotequal"/>");
 	    return false;
 	} else {
 		return true;

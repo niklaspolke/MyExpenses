@@ -58,10 +58,10 @@ public class RegisterServlet extends AbstractBasicServlet {
 				reaction.setSessionAttribute("account", account);
 				reaction.setRedirect("listexpenses.jsp");
 			} else {
-				reaction.setRedirect("register.jsp").add("error", "user \"" + login + "\" already exists");
+				reaction.setRedirect("register.jsp").add("error", "error.createaccount.logininuse");
 			}
 		} else {
-			reaction.setRedirect("register.jsp").add("error", "password1 wasn't equal to password2");
+			reaction.setRedirect("register.jsp").add("error", "error.createaccount.passwordsnotequal");
 		}
 
 		return reaction;

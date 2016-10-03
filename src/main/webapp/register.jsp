@@ -16,17 +16,16 @@ the License.
 <%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="messages"/>
 
-<jsp:include page="WEB-INF/header.jsp">
-    <jsp:param value="true" name="disabled"/>
-</jsp:include>
+<jsp:include page="WEB-INF/header.jsp"/>
 
-
-<h3>Register new user</h3>
+<h3><fmt:message key="createaccount.title"/></h3>
 
 <form action="register" method="post">
 <c:if test="${not empty requestScope.errorMessage}"><div class="w3-panel w3-leftbar w3-pale-red w3-border-red">
-    ${requestScope.errorMessage}
+    <c:out value="${requestScope.errorMessage}"/>
 </div></c:if>
 <div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
@@ -34,38 +33,38 @@ the License.
         name="login"
         size="40"
         maxlength="20"
-        title="username - at least 4 characters"
-        placeholder="<username>"
+        title="<fmt:message key="createaccount.username.tooltip"/>"
+        placeholder="<fmt:message key="createaccount.username.default"/>"
         pattern=".{4,}"
         required="required"
         autofocus>
-    <label class="w3-label" for="login">Username</label>
+    <label class="w3-label" for="login"><fmt:message key="createaccount.username.label"/></label>
 </div><div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
         type="password"
         name="password1"
         size="40"
         maxlength="30"
-        title="password"
-        placeholder="<password>"
+        title="<fmt:message key="createaccount.newpassword1.tooltip"/>"
+        placeholder="<fmt:message key="createaccount.newpassword1.default"/>"
         pattern=".{4,}"
         required="required">
-    <label class="w3-label" for="password1">Password</label>
+    <label class="w3-label" for="password1"><fmt:message key="createaccount.newpassword1.label"/></label>
 </div><div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
         type="password"
         name="password2"
         size="40"
         maxlength="30"
-        title="repeat password"
-        placeholder="<password>"
+        title="<fmt:message key="createaccount.newpassword2.tooltip"/>"
+        placeholder="<fmt:message key="createaccount.newpassword2.default"/>"
         pattern=".{4,}"
         required="required">
-    <label class="w3-label" for="password2">Repeat Password</label>
+    <label class="w3-label" for="password2"><fmt:message key="createaccount.newpassword2.label"/></label>
 </div><div class="w3-panel">
     <div class="w3-row">
-        <input class="w3-btn w3-green w3-xlarge w3-round-xxlarge" type="submit" value="Register" onclick="return checkPasswords()">
-        <input class="w3-btn w3-red w3-tiny w3-round-xxlarge" type="reset" value="Reset">
+        <input class="w3-btn w3-green w3-xlarge w3-round-xxlarge" type="submit" value="<fmt:message key="createaccount.button.label"/>" onclick="return checkPasswords()">
+        <input class="w3-btn w3-red w3-tiny w3-round-xxlarge" type="reset" value="<fmt:message key="createaccount.resetbutton.label"/>">
     </div>
 </div>
 </form>
@@ -75,7 +74,7 @@ function checkPasswords() {
 	var passwd1 = document.forms[0]["password1"].value;
 	var passwd2 = document.forms[0]["password2"].value;
 	if (passwd1 != passwd2) {
-	    alert("Error: Passwords aren't equal!");
+	    alert("<fmt:message key="error.createaccount.passwordsnotequal"/>");
 	    return false;
 	} else {
 		return true;

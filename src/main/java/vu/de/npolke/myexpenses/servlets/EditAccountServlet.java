@@ -68,7 +68,7 @@ public class EditAccountServlet extends AbstractBasicServlet {
 		ServletReaction reaction = new ServletReaction();
 		boolean validationErrors = false;
 		if (!account.getPassword().equals(HashUtil.toMD5(oldPassword))) {
-			handleIncorrectInput(reaction, "old password wasn't correct");
+			handleIncorrectInput(reaction, "error.editaccount.wrongpassword");
 			validationErrors = true;
 		} else {
 			Account accountUpdate = account.clone();
@@ -76,7 +76,7 @@ public class EditAccountServlet extends AbstractBasicServlet {
 				if (login != null && login.trim().length() >= 4) {
 					accountUpdate.setLogin(login.trim());
 				} else {
-					handleIncorrectInput(reaction, "login has to be at least 4 characters long");
+					handleIncorrectInput(reaction, "error.editaccount.logintooshort");
 					validationErrors = true;
 				}
 			}
@@ -84,7 +84,7 @@ public class EditAccountServlet extends AbstractBasicServlet {
 				if (newPassword1 != null && newPassword1.trim().length() > 3 && newPassword1.equals(newPassword2)) {
 					accountUpdate.setPassword(HashUtil.toMD5(newPassword1));
 				} else {
-					handleIncorrectInput(reaction, "new password 1 wasn't equal to new password 2");
+					handleIncorrectInput(reaction, "error.editaccount.passwordsnotequal");
 					validationErrors = true;
 				}
 			}
@@ -96,7 +96,7 @@ public class EditAccountServlet extends AbstractBasicServlet {
 					account.setPassword(accountUpdate.getPassword());
 					reaction.setRedirect("listexpenses.jsp");
 				} else {
-					handleIncorrectInput(reaction, "login \"" + accountUpdate.getLogin() + "\" already in use");
+					handleIncorrectInput(reaction, "error.editaccount.logininuse");
 				}
 			}
 		}
@@ -105,12 +105,7 @@ public class EditAccountServlet extends AbstractBasicServlet {
 	}
 
 	private void handleIncorrectInput(final ServletReaction reaction, final String errorMessage) {
-		if (reaction.getRequestAttributes().get("errorMessage") == null) {
-			reaction.setRequestAttribute("errorMessage", errorMessage);
-		} else {
-			String formerErrorMessage = (String) reaction.getRequestAttributes().get("errorMessage");
-			reaction.setRequestAttribute("errorMessage", formerErrorMessage + "<br/>" + errorMessage);
-		}
+		reaction.setRequestAttribute("errorMessage", errorMessage);
 		reaction.setForward("WEB-INF/editaccount.jsp");
 	}
 }

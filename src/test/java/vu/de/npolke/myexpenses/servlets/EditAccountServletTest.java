@@ -125,7 +125,7 @@ public class EditAccountServletTest {
 		// correct persisting
 		verify(servlet.accountDAO, never()).update(any(Account.class));
 		// correct error message
-		assertEquals("old password wasn't correct", reaction.getRequestAttributes().get("errorMessage"));
+		assertEquals("error.editaccount.wrongpassword", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
 		assertEquals("WEB-INF/editaccount.jsp", reaction.getForward());
 	}
@@ -141,15 +141,14 @@ public class EditAccountServletTest {
 		// correct persisting
 		verify(servlet.accountDAO, never()).update(any(Account.class));
 		// correct error message
-		assertEquals("new password 1 wasn't equal to new password 2",
-				reaction.getRequestAttributes().get("errorMessage"));
+		assertEquals("error.editaccount.passwordsnotequal", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
 		assertEquals("WEB-INF/editaccount.jsp", reaction.getForward());
 	}
 
 	@Test
-	public void editAccount_newPasswordsNotEqualAndEmptyLogin() {
-		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, PASSWORD_NEW, "notNewPassword", "");
+	public void editAccount_emptyLogin() {
+		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, PASSWORD_NEW, PASSWORD_NEW, "");
 
 		assertNotNull(reaction);
 		assertEquals(LOGIN_OLD, account.getLogin());
@@ -157,8 +156,7 @@ public class EditAccountServletTest {
 		// correct persisting
 		verify(servlet.accountDAO, never()).update(any(Account.class));
 		// correct error message
-		assertEquals("login has to be at least 4 characters long<br/>new password 1 wasn't equal to new password 2",
-				reaction.getRequestAttributes().get("errorMessage"));
+		assertEquals("error.editaccount.logintooshort", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
 		assertEquals("WEB-INF/editaccount.jsp", reaction.getForward());
 	}
@@ -177,7 +175,7 @@ public class EditAccountServletTest {
 		// correct persisting
 		verify(servlet.accountDAO).update(eq(accountToUpdate));
 		// correct error message
-		assertEquals("login \"" + LOGIN_NEW + "\" already in use", reaction.getRequestAttributes().get("errorMessage"));
+		assertEquals("error.editaccount.logininuse", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
 		assertEquals("WEB-INF/editaccount.jsp", reaction.getForward());
 	}

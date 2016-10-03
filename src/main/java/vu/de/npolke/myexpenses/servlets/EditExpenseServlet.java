@@ -59,8 +59,7 @@ public class EditExpenseServlet extends AbstractBasicServlet {
 		Expense expense = expenseDAO.read(account.getId(), id);
 
 		if (expense == null || expense.getAccountId() != account.getId()) {
-			reaction.setRequestAttribute("errorMessage",
-					"You tried to edit a non existing expense or an expense that isn't yours!");
+			reaction.setRequestAttribute("errorMessage", "error.editexpense.wrongid");
 			reaction.setForward("WEB-INF/error.jsp");
 		} else {
 			reaction.setRequestAttribute("expense", expense);

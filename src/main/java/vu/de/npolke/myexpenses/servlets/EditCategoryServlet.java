@@ -54,8 +54,7 @@ public class EditCategoryServlet extends AbstractBasicServlet {
 		Category category = categoryDAO.read(account.getId(), id);
 
 		if (category == null || category.getAccountId() != account.getId()) {
-			reaction.setRequestAttribute("errorMessage",
-					"You tried to edit a non existing category or a category that isn't yours!");
+			reaction.setRequestAttribute("errorMessage", "error.editcategory.wrongid");
 			reaction.setForward("WEB-INF/error.jsp");
 		} else {
 			reaction.setRequestAttribute("category", category);

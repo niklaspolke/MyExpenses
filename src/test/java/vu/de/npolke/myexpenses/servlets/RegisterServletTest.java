@@ -52,7 +52,7 @@ public class RegisterServletTest {
 		// correct account in session
 		assertNull(reaction.getSessionAttributes().get("account"));
 		// correct navigation
-		assertEquals("register.jsp?error=password1+wasn%27t+equal+to+password2", reaction.getRedirect());
+		assertEquals("register.jsp?error=error.createaccount.passwordsnotequal", reaction.getRedirect());
 	}
 
 	@Test
@@ -65,7 +65,7 @@ public class RegisterServletTest {
 		// correct account in session
 		assertNull(reaction.getSessionAttributes().get("account"));
 		// correct navigation
-		assertEquals("register.jsp?error=password1+wasn%27t+equal+to+password2", reaction.getRedirect());
+		assertEquals("register.jsp?error=error.createaccount.passwordsnotequal", reaction.getRedirect());
 	}
 
 	@Test
@@ -78,6 +78,6 @@ public class RegisterServletTest {
 		// correct account in session
 		assertNull(reaction.getSessionAttributes().get("account"));
 		// correct navigation
-		assertEquals("register.jsp?error=user+%22" + LOGIN + "%22+already+exists", reaction.getRedirect());
+		assertEquals("register.jsp?error=error.createaccount.logininuse", reaction.getRedirect());
 	}
 }
