@@ -78,8 +78,7 @@ public class EditCategoryServletTest {
 
 		assertNotNull(reaction);
 		// correct error message
-		assertEquals("You tried to edit a non existing category or a category that isn't yours!",
-				reaction.getRequestAttributes().get("errorMessage"));
+		assertEquals("error.editcategory.wrongid", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
 		assertEquals("WEB-INF/error.jsp", reaction.getForward());
 	}
@@ -95,8 +94,7 @@ public class EditCategoryServletTest {
 
 		assertNotNull(reaction);
 		// correct error message
-		assertEquals("You tried to edit a non existing category or a category that isn't yours!",
-				reaction.getRequestAttributes().get("errorMessage"));
+		assertEquals("error.editcategory.wrongid", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
 		assertEquals("WEB-INF/error.jsp", reaction.getForward());
 	}

@@ -16,15 +16,17 @@ the License.
 <%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="messages"/>
 
 <jsp:include page="header.jsp"/>
 
 
-<h3>An error occured</h3>
+<h3><fmt:message key="errorpage.title"/></h3>
 
 <div class="w3-panel w3-leftbar w3-pale-red w3-border-red">
     <img src="img/sign-ban_96.png" alt="error sign" title="an error occured" />
-    ${requestScope.errorMessage}
+    <fmt:message key="${requestScope.errorMessage}"/>
 </div>
 
 <jsp:include page="footer.jsp"/>

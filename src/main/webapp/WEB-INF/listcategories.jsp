@@ -17,30 +17,31 @@ the License.
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="messages"/>
 
 <jsp:include page="header.jsp"/>
 
 <div class="w3-container">
-<h3>List Categories</h3>
+    <h3><fmt:message key="listcategories.title"/></h3>
 </div>
 
 <c:if test="${not empty param.error}"><div class="w3-panel w3-leftbar w3-pale-red w3-border-red">
-    ${param.error}
+    <fmt:message key="${param.error}"/>
 </div></c:if>
 
 <div class="w3-panel">
-    <a href="addcategory.jsp" title="add category">
-        Add Category<img src="img/sign-add_24.png" alt="add category" title="add category" width="24" height="24"/>
+    <a href="addcategory.jsp" title="<fmt:message key="listcategories.addcategories.tooltip"/>">
+        <fmt:message key="listcategories.addcategories.label"/><img src="img/sign-add_24.png" alt="<fmt:message key="listcategories.addcategories.tooltip"/>" title="<fmt:message key="listcategories.addcategories.tooltip"/>" width="24" height="24"/>
     </a>
 </div>
 
 <div class="w3-panel w3-padding-8">
-    <fmt:setLocale value="de_DE"/>
     <table class="w3-table-all">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Modify</th>
+                <th><fmt:message key="listcategories.table.header.name"/></th>
+                <th><fmt:message key="listcategories.table.header.modify"/></th>
             </tr>
         </thead>
         <tbody>
@@ -48,8 +49,8 @@ the License.
                 <tr>
                     <td><c:out value="${category.name}"/></td>
                     <td style="border:none">
-                        <a href="editcategory.jsp?id=${category.id}"><img src="img/pencil_24.png" alt="edit category" title="edit category" width="24" height="24"/></a>
-                        <a id="delete${category.id}" href="deletecategory.jsp?id=${category.id}" onclick="return prompt('delete${category.id}', '${fn:replace(category, '\"', '&quot;')}')"><img src="img/sign-delete_24.png" alt="delete category" title="delete category" width="24" height="24"/></a>
+                        <a href="editcategory.jsp?id=${category.id}"><img src="img/pencil_24.png" alt="<fmt:message key="listcategories.table.editcategory.tooltip"/>" title="<fmt:message key="listcategories.table.editcategory.tooltip"/>" width="24" height="24"/></a>
+                        <a id="delete${category.id}" href="deletecategory.jsp?id=${category.id}" onclick="return prompt('delete${category.id}', '${fn:replace(category, '\"', '&quot;')}')"><img src="img/sign-delete_24.png" alt="<fmt:message key="listcategories.table.deletecategory.tooltip"/>" title="<fmt:message key="listcategories.table.deletecategory.tooltip"/>" width="24" height="24"/></a>
                     </td>
                 </tr>
             </c:forEach>
@@ -59,7 +60,7 @@ the License.
 
 <script type="text/javascript">
 function prompt(id, category) {
-    var confirmed = confirm("Attention: Unrecoverable Delete Action\n\nDo you really want to delete:\n" + category + " ?");
+    var confirmed = confirm('<fmt:message key="warn.deletecategory"><fmt:param value="' + category + '"/></fmt:message>');
     if (confirmed) {
         var deleteLink = document.getElementById(id);
         deleteLink.setAttribute('href', deleteLink.getAttribute('href') + '&confirmed=yes');

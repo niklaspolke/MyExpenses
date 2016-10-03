@@ -59,11 +59,10 @@ public class DeleteCategoryServlet extends AbstractBasicServlet {
 			if (category != null && category.getAccountId() == account.getId()) {
 				boolean deleted = categoryDAO.deleteById(categoryId);
 				if (deleted == false) {
-					reaction.setRedirect("listcategories.jsp").add("error", "You tried to delete a category which has expenses still connected to it.");
+					reaction.setRedirect("listcategories.jsp").add("error", "error.deletecategory.stillinuse");
 				}
 			} else {
-				reaction.setRequestAttribute("errorMessage",
-						"You tried to delete a non existing category or a category that isn't yours!");
+				reaction.setRequestAttribute("errorMessage", "error.deletecategory.wrongid");
 				reaction.setForward("error.jsp");
 			}
 		}
