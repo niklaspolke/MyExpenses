@@ -7,5 +7,5 @@ target/
 *.db
 *.lck
 *.log
-*.properties
+*hsqldb.properties
 *.script

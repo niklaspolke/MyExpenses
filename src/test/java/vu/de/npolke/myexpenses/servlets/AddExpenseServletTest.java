@@ -263,8 +263,7 @@ public class AddExpenseServletTest {
 
 		assertNotNull(reaction);
 		// correct request attribute: error message
-		assertEquals("You tried to clone a non existing expense or an expense that isn't yours!",
-				reaction.getRequestAttributes().get("errorMessage"));
+		assertEquals("error.addexpense.wrongid", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
 		assertEquals("WEB-INF/error.jsp", reaction.getForward());
 	}
@@ -286,8 +285,7 @@ public class AddExpenseServletTest {
 
 		assertNotNull(reaction);
 		// correct request attribute: error message
-		assertEquals("You tried to clone a non existing expense or an expense that isn't yours!",
-				reaction.getRequestAttributes().get("errorMessage"));
+		assertEquals("error.addexpense.wrongid", reaction.getRequestAttributes().get("errorMessage"));
 		// correct navigation
 		assertEquals("WEB-INF/error.jsp", reaction.getForward());
 	}

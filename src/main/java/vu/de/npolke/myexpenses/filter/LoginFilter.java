@@ -41,8 +41,6 @@ public class LoginFilter implements Filter {
 
 	//@formatter:off
 	public static final String LOGIN_PAGE           = "login.jsp";
-	public static final String LOGIN_URL            = "login";
-	public static final String LOGIN_METHOD         = "POST";
 	public static final String[] POSTFIX_RESSOURCES = { ".css", ".js", ".png", ".ico" };
 	public static final String REGISTER_PAGE        = "register.jsp";
 	public static final String REGISTER_URL         = "register";
@@ -89,8 +87,6 @@ public class LoginFilter implements Filter {
 		boolean isLoggedIn = account != null;
 		boolean indirectLoginPage = requestURI.equals(contextPath + URI_DELIMITER) || requestURI.equals(contextPath);
 		boolean loginPage = requestURI.startsWith(contextPath + URI_DELIMITER + LOGIN_PAGE);
-		boolean loginRequest = requestURI.startsWith(contextPath + URI_DELIMITER + LOGIN_URL)
-				&& LOGIN_METHOD.equalsIgnoreCase(method);
 		boolean resourceRequest = false;
 		if (requestURI.startsWith(contextPath)) {
 			for (int index = 0; index < POSTFIX_RESSOURCES.length; index++) {
@@ -104,8 +100,7 @@ public class LoginFilter implements Filter {
 		boolean registerRequest = requestURI.startsWith(contextPath + URI_DELIMITER + REGISTER_URL)
 				&& REGISTER_METHOD.equalsIgnoreCase(method);
 
-		return !(isLoggedIn || indirectLoginPage || loginPage || loginRequest || resourceRequest || registerPage
-				|| registerRequest);
+		return !(isLoggedIn || indirectLoginPage || loginPage || resourceRequest || registerPage || registerRequest);
 	}
 
 	protected String extractOrignalRequest(final String requestURI) {

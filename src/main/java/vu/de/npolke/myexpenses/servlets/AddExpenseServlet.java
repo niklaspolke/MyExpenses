@@ -100,8 +100,7 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 		}
 
 		if (errorOccured) {
-			reaction.setRequestAttribute("errorMessage",
-					"You tried to clone a non existing expense or an expense that isn't yours!");
+			reaction.setRequestAttribute("errorMessage", "error.addexpense.wrongid");
 			reaction.setForward("WEB-INF/error.jsp");
 		} else {
 			reaction.setRequestAttribute("categories", categories);
