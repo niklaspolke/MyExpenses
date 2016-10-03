@@ -41,7 +41,7 @@ the License.
         <thead>
             <tr>
                 <th><fmt:message key="listcategories.table.header.name"/></th>
-                <th><fmt:message key="listcategories.table.header.modify"/></th>
+                <th><fmt:message key="listcategories.table.header.actions"/></th>
             </tr>
         </thead>
         <tbody>

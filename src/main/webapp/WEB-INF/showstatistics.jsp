@@ -16,7 +16,8 @@ the License.
 <%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="messages"/>
 
 <jsp:include page="header.jsp"/>
 <link rel="stylesheet" href="css/chartist.min.css">
@@ -24,21 +25,21 @@ the License.
 <script type="text/javascript" src="js/chartist.min.js"></script>
 
 <div class="w3-container">
-<h3>Statistics</h3>
+    <h3><fmt:message key="statistics.title"/></h3>
 </div>
 
 <div class="w3-panel">
     <form action="showstatistics.jsp" method="post">
         <select class="w3-input w3-border w3-round-large"
             name="month"
-            title="month of expense"
+            title="<fmt:message key="statistics.month.tooltip"/>"
             required="required" onchange="this.form.submit()"
             autofocus>
             <c:forEach var="month" items="${requestScope.months}">
-                <option value="${month}" ${requestScope.month eq month ? 'selected' : ''}>${month}</option>
+                <option value="${month}" ${requestScope.month eq month ? 'selected' : ''}><c:out value="${month}"/></option>
             </c:forEach>
         </select>
-        <label class="w3-label" for="month">Month</label>
+        <label class="w3-label" for="month"><fmt:message key="statistics.month.label"/></label>
     </form>
 </div>
 
@@ -46,22 +47,22 @@ the License.
     <div class="w3-col m6" id="myChart" style="${requestScope.statistics.size() > 1 ? 'height: 300px' : ''}"></div>
 
     <div class="w3-col m6">
-        <h4>Expenses</h4>
+        <h4><fmt:message key="statistics.expenses.title"/></h4>
         <fmt:setLocale value="de_DE"/>
         <table class="w3-table-all">
             <tr>
-                <th>Category</th>
-                <th style="width:100px">Value</th>
+                <th><fmt:message key="statistics.header.category"/></th>
+                <th style="width:100px"><fmt:message key="statistics.header.amount"/></th>
             </tr>
             <c:forEach var="category" items="${requestScope.statistics}">
                 <tr ${category.name eq 'Total' ? 'class="total-cost"' : ''}>
                     <td>
                         <c:choose>
-                        <c:when test="${category.name ne 'Total' and category.value gt 0}"><a href="listexpenses.jsp?month=${requestScope.month}&category=${category.id}">${category.name}</a></c:when>
-                        <c:otherwise>${category.name}</c:otherwise>
+                        <c:when test="${category.name ne 'Total' and category.value gt 0}"><a href="listexpenses.jsp?month=${requestScope.month}&category=${category.id}"><c:out value="${category.name}"/></a></c:when>
+                        <c:otherwise><fmt:message key="statistics.total"/></c:otherwise>
                         </c:choose>
                     </td><td class="number" style="text-align:right">
-                        <fmt:formatNumber value="${category.value}" type="currency"/>
+                        <fmt:formatNumber value="${category.value}" type="currency" pattern="0.00 €"/>
                     </td>
                 </tr>
             </c:forEach>
@@ -72,19 +73,22 @@ the License.
 </div>
 <div class="w3-row-padding">
     <div class="w3-col m6">
-        <h4>Income</h4>
+        <h4><fmt:message key="statistics.income.title"/></h4>
         <fmt:setLocale value="de_DE"/>
         <table class="w3-table-all">
             <tr>
-                <th>Category</th>
-                <th style="width:100px">Value</th>
+                <th><fmt:message key="statistics.header.category"/></th>
+                <th style="width:100px"><fmt:message key="statistics.header.amount"/></th>
             </tr>
             <c:forEach var="category" items="${requestScope.statisticsIncome}">
                 <tr ${category.name eq 'Total' ? 'class="total-income"' : ''}>
                     <td>
-                        ${category.name}
+                        <c:choose>
+                        <c:when test="${category.name eq 'Total'}"><fmt:message key="statistics.total"/></c:when>
+                        <c:otherwise><c:out value="${category.name}"/></c:otherwise>
+                        </c:choose>
                     </td><td class="number" style="text-align:right">
-                        <fmt:formatNumber value="${category.value}" type="currency"/>
+                        <fmt:formatNumber value="${category.value}" type="currency" pattern="0.00 €"/>
                     </td>
                 </tr>
             </c:forEach>
@@ -93,19 +97,22 @@ the License.
         </table>
     </div>
     <div class="w3-col m6">
-    <h4>Monthly Costs</h4>
+    <h4><fmt:message key="statistics.monthlycosts.title"/></h4>
         <fmt:setLocale value="de_DE"/>
         <table class="w3-table-all">
             <tr>
-                <th>Category</th>
-                <th style="width:100px">Value</th>
+                <th><fmt:message key="statistics.header.category"/></th>
+                <th style="width:100px"><fmt:message key="statistics.header.amount"/></th>
             </tr>
             <c:forEach var="category" items="${requestScope.statisticsMonthlyCosts}">
                 <tr ${category.name eq 'Total' ? 'class="total-cost"' : ''}>
                     <td>
-                        ${category.name}
+                        <c:choose>
+                        <c:when test="${category.name eq 'Total'}"><fmt:message key="statistics.total"/></c:when>
+                        <c:otherwise><c:out value="${category.name}"/></c:otherwise>
+                        </c:choose>
                     </td><td class="number" style="text-align:right">
-                        <fmt:formatNumber value="${category.value}" type="currency"/>
+                        <fmt:formatNumber value="${category.value}" type="currency" pattern="0.00 €"/>
                     </td>
                 </tr>
             </c:forEach>
@@ -116,9 +123,9 @@ the License.
 </div>
 <div class="w3-row-padding">
     <div class="w3-col m6">
-        <h4>Result</h4>
+        <h4><fmt:message key="statistics.result.title"/></h4>
         <div id="myBarChart" style="height: 100px"></div>
-        <div class="${requestScope.sum > 0 ? 'total-income' : 'total-cost'}">Total: <fmt:formatNumber value="${requestScope.sum}" type="currency"/></div>
+        <div class="${requestScope.sum > 0 ? 'total-income' : 'total-cost'}"><fmt:message key="statistics.result.sum"/> <fmt:formatNumber value="${requestScope.sum}" type="currency" pattern="0.00 €"/></div>
     </div>
 </div>
 
