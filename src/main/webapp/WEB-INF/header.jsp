@@ -73,7 +73,7 @@ the License.
                         <c:if test="${sessionScope.topten.size() gt 0}"><div id="topten" class="w3-accordion-content w3-white w3-card-4">
                             <a href="addexpense.jsp" title="<fmt:message key="menu.addexpense.tooltip"/>"><fmt:message key="menu.addexpense.default"/></a>
                             <c:forEach var="expense" items="${sessionScope.topten}">
-                                <a href="addexpense.jsp?category=${expense.categoryId}&reason=${expense.reason}" title="<fmt:message key="menu.addexpense.tooltip"/>"><c:out value="${sessionScope.account.login += '-' += expense.reason}"/></a>
+                                <a href="addexpense.jsp?category=${expense.categoryId}&reason=${expense.reason}" title="<fmt:message key="menu.addexpense.tooltip"/>"><c:out value="${expense.categoryName += ' - ' += expense.reason}"/></a>
                             </c:forEach>
                         </div>
                     </div></c:if>
