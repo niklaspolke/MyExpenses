@@ -16,6 +16,7 @@ import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.ExpenseDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
+import vu.de.npolke.myexpenses.servlets.util.URLParameterBuilder;
 import vu.de.npolke.myexpenses.util.Month;
 
 /**
@@ -54,7 +55,7 @@ public class ImportMonthlyServlet extends AbstractBasicServlet {
 	public ServletReaction duplicateMonthlyExpenses(final Account account, final String monthAsString) {
 		ServletReaction reaction = new ServletReaction();
 		Month month = Month.createMonth(monthAsString);
-		String redirectToMonth = "";
+		int countNewExpenses = 0;
 
 		if (month != null) {
 			final List<Expense> previousMonth = expenseDAO.readMonthlyByAccountAndMonth(account.getId(),
@@ -62,7 +63,6 @@ public class ImportMonthlyServlet extends AbstractBasicServlet {
 			final List<Expense> currentMonth = expenseDAO.readMonthlyByAccountAndMonth(account.getId(), month);
 
 			final List<Expense> expensesToCopy = findMissing(previousMonth, currentMonth);
-			int countNewExpenses = 0;
 			for (Expense toCopy : expensesToCopy) {
 				Calendar date = toCopy.getDay();
 				date.add(Calendar.MONTH, 1);
@@ -73,16 +73,18 @@ public class ImportMonthlyServlet extends AbstractBasicServlet {
 					countNewExpenses++;
 				}
 			}
-			if (countNewExpenses > 0) {
-				reaction.setSessionAttribute("message",
-						countNewExpenses + " monthly expenses imported from previous month");
-			} else {
-				reaction.setSessionAttribute("message", "no monthly expenses importable from previous month");
-			}
-			redirectToMonth = "&month=" + month.toString();
 		}
 
-		reaction.setRedirect("listexpenses?monthly=true" + redirectToMonth);
+		URLParameterBuilder parameter = reaction.setRedirect("listexpenses.jsp").add("monthly", true);
+		if (month != null) {
+			parameter.add("month", month.toString());
+			if (countNewExpenses > 0) {
+				parameter.add("message", "info.imports");
+				parameter.add("msgparam", countNewExpenses);
+			} else {
+				parameter.add("message", "warn.noimports");
+			}
+		}
 		return reaction;
 	}
 

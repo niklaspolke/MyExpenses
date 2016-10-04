@@ -25,10 +25,13 @@ the License.
 <div class="w3-container">
 <h3><c:choose>
     <c:when test="${requestScope.mode eq 'topten'}">
+        <c:set var="title" scope="page">
         <fmt:message key="listexpenses.topten.title">
             <fmt:param value="${requestScope.category}"/>
             <fmt:param value="${requestScope.month}"/>
         </fmt:message>
+        </c:set>
+        <c:out value="${title}"/>
     </c:when>
     <c:when test="${requestScope.mode eq 'monthly'}">
         <fmt:message key="listexpenses.monthly.title">
@@ -46,8 +49,10 @@ the License.
         <fmt:message key="listexpenses.importmonthly.label"/><img src="img/box-in_24.png" alt="<fmt:message key="listexpenses.importmonthly.tooltip"/>" title="<fmt:message key="listexpenses.importmonthly.tooltip"/>" width="24" height="24"/>
     </a>
 </div></c:if>
-<c:if test="${not empty requestScope.message}"><div class="w3-panel w3-leftbar w3-pale-orange w3-border-orange">
-    <fmt:message key="${requestScope.message}"/>
+<c:if test="${not empty param.message}"><div class="w3-panel w3-leftbar w3-pale-orange w3-border-orange">
+    <fmt:message key="${param.message}">
+        <fmt:param value="${param.msgparam}"/>
+    </fmt:message>
 </div></c:if>
 
 <div class="w3-panel w3-padding-8">
