@@ -22,7 +22,7 @@ the License.
 <jsp:include page="header.jsp"/>
 
 <div class="w3-container">
-    <h3><fmt:message key="editcategory.title"/></h3>
+    <h3><fmt:message key="editexpense.title"/></h3>
 </div>
 
 <form action="editexpense.jsp" method="post">
@@ -37,11 +37,11 @@ the License.
                 maxlength="2"
                 min="1"
                 max="31"
-                title="<fmt:message key="editcategory.day.tooltip"/>"
-                placeholder="<fmt:message key="editcategory.day.default"/>"
+                title="<fmt:message key="editexpense.day.tooltip"/>"
+                placeholder="<fmt:message key="editexpense.day.default"/>"
                 value="<c:out value="${requestScope.expense.getDay().get(5)}"/>"
                 required="required" >
-            <label class="w3-label"><fmt:message key="editcategory.day.label"/></label>
+            <label class="w3-label"><fmt:message key="editexpense.day.label"/></label>
         </div><div class="w3-third">
             <input class="w3-input w3-border w3-round-large"
                 type="number"
@@ -50,11 +50,11 @@ the License.
                 maxlength="2"
                 min="1"
                 max="12"
-                title="<fmt:message key="editcategory.month.tooltip"/>"
-                placeholder="<fmt:message key="editcategory.month.default"/>"
+                title="<fmt:message key="editexpense.month.tooltip"/>"
+                placeholder="<fmt:message key="editexpense.month.default"/>"
                 value="<c:out value="${requestScope.expense.getDay().get(2)+1}"/>"
                 required="required">
-            <label class="w3-label"><fmt:message key="editcategory.month.label"/></label>
+            <label class="w3-label"><fmt:message key="editexpense.month.label"/></label>
         </div><div class="w3-third">
             <input class="w3-input w3-border w3-round-large"
                 type="number"
@@ -63,25 +63,25 @@ the License.
                 maxlength="4"
                 min="2000"
                 max="2100"
-                title="<fmt:message key="editcategory.year.tooltip"/>"
-                placeholder="<fmt:message key="editcategory.year.default"/>"
+                title="<fmt:message key="editexpense.year.tooltip"/>"
+                placeholder="<fmt:message key="editexpense.year.default"/>"
                 value="<c:out value="${requestScope.expense.getDay().get(1)}"/>"
                 required="required">
-            <label class="w3-label" for="year"><fmt:message key="editcategory.year.label"/></label>
+            <label class="w3-label" for="year"><fmt:message key="editexpense.year.label"/></label>
         </div>
     </div>
 </div><div class="w3-panel">
     <div class="w3-row-padding"><div class="w3-col s12">
     <select class="w3-input w3-border w3-round-large"
         name="category"
-        title="<fmt:message key="editcategory.category.tooltip"/>"
+        title="<fmt:message key="editexpense.category.tooltip"/>"
         required="required"
         autofocus>
         <c:forEach items="${requestScope.categories}" var="singlecategory">
             <option value="${singlecategory.id}" ${singlecategory.id eq requestScope.expense.categoryId ? 'selected' : ''}><c:out value="${singlecategory.name}"/></option>
         </c:forEach>
     </select>
-    <label class="w3-label" for="category"><fmt:message key="editcategory.category.label"/></label>
+    <label class="w3-label" for="category"><fmt:message key="editexpense.category.label"/></label>
     </div></div>
 </div><div class="w3-panel">
     <div class="w3-row-padding">
@@ -91,19 +91,19 @@ the License.
                 name="amount"
                 size="40"
                 maxlength="40"
-                title="<fmt:message key="editcategory.amount.tooltip"/>"
-                placeholder="<fmt:message key="editcategory.amount.default"/>"
+                title="<fmt:message key="editexpense.amount.tooltip"/>"
+                placeholder="<fmt:message key="editexpense.amount.default"/>"
                 pattern="[-+]?[0-9]*[,.]?[0-9]{0,2}"
                 required="required"
                 autocomplete="off"
                 value="<c:out value="${requestScope.expense.amount}"/>">
-            <label class="w3-label" for="amount"><fmt:message key="editcategory.amount.label"/></label>
+            <label class="w3-label" for="amount"><fmt:message key="editexpense.amount.label"/></label>
         </div><div class="w3-third">
-            <input class="w3-check" type="checkbox" name="monthly" title="<fmt:message key="editcategory.monthly.tooltip"/>" value="true" ${requestScope.expense.monthly ? 'checked' : ''}>
-            <label class="w3-label" for="fixedcost"><fmt:message key="editcategory.monthly.label"/></label>
+            <input class="w3-check" type="checkbox" name="monthly" title="<fmt:message key="editexpense.monthly.tooltip"/>" value="true" ${requestScope.expense.monthly ? 'checked' : ''}>
+            <label class="w3-label" for="fixedcost"><fmt:message key="editexpense.monthly.label"/></label>
         </div><div class="w3-third">
-            <input class="w3-check" type="checkbox" name="income" title="<fmt:message key="editcategory.income.tooltip"/> "value="true" ${requestScope.expense.income ? 'checked' : ''}>
-            <label class="w3-label" for="income"><fmt:message key="editcategory.income.label"/></label>
+            <input class="w3-check" type="checkbox" name="income" title="<fmt:message key="editexpense.income.tooltip"/> "value="true" ${requestScope.expense.income ? 'checked' : ''}>
+            <label class="w3-label" for="income"><fmt:message key="editexpense.income.label"/></label>
         </div>
     </div>
 </div><div class="w3-panel">
@@ -113,17 +113,17 @@ the License.
         name="reason"
         size="40"
         maxlength="40"
-        title="<fmt:message key="editcategory.reason.tooltip"/>"
-        placeholder="<fmt:message key="editcategory.reason.default"/>"
+        title="<fmt:message key="editexpense.reason.tooltip"/>"
+        placeholder="<fmt:message key="editexpense.reason.default"/>"
         pattern=".{3,}"
         required="required"
         value="<c:out value="${requestScope.expense.reason}"/>">
-    <label class="w3-label" for="reason"><fmt:message key="editcategory.reason.label"/></label>
+    <label class="w3-label" for="reason"><fmt:message key="editexpense.reason.label"/></label>
     </div></div>
 </div><div class="w3-panel">
     <div class="w3-row-padding">
-        <input class="w3-btn w3-green w3-xlarge w3-round-xxlarge" type="submit" value="<fmt:message key="editcategory.button.label"/>">
-        <input class="w3-btn w3-red w3-tiny w3-round-xxlarge" type="reset" value="<fmt:message key="editcategory.resetbutton.label"/>">
+        <input class="w3-btn w3-green w3-xlarge w3-round-xxlarge" type="submit" value="<fmt:message key="editexpense.button.label"/>">
+        <input class="w3-btn w3-red w3-tiny w3-round-xxlarge" type="reset" value="<fmt:message key="editexpense.resetbutton.label"/>">
     </div>
 </div>
 </form>
