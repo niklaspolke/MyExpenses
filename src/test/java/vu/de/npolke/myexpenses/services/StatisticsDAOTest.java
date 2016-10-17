@@ -3,9 +3,12 @@ package vu.de.npolke.myexpenses.services;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 import static vu.de.npolke.myexpenses.util.Month.createMonth;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -152,10 +155,17 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 
 	@Test
 	public void readTopTenByAccountId() {
-		List<Expense> expenses = statisticsDAO.readTopTenByAccountId(ACCOUNT_ID);
+		Calendar fakeActualDay = Calendar.getInstance(Locale.GERMANY);
+		fakeActualDay.set(Calendar.YEAR, 2015);
+		fakeActualDay.set(Calendar.MONTH, 6); // July
+		fakeActualDay.set(Calendar.DAY_OF_MONTH, 4);
+		StatisticsDAO statisticsDAOspy = spy(statisticsDAO);
+		when(statisticsDAOspy.getToday()).thenReturn(fakeActualDay);
+
+		List<Expense> expenses = statisticsDAOspy.readTopTenByAccountId(ACCOUNT_ID);
 
 		assertNotNull(expenses);
-		assertEquals(4, expenses.size());
+		assertEquals(3, expenses.size());
 		assertEquals("climbing", expenses.get(0).getReason());
 		assertEquals("sports", expenses.get(0).getCategoryName());
 		assertEquals(21, expenses.get(0).getCategoryId());
@@ -165,9 +175,6 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 		assertEquals("jewels", expenses.get(2).getReason());
 		assertEquals("luxury", expenses.get(2).getCategoryName());
 		assertEquals(23, expenses.get(2).getCategoryId());
-		assertEquals("climbing", expenses.get(3).getReason());
-		assertEquals("luxury", expenses.get(3).getCategoryName());
-		assertEquals(23, expenses.get(3).getCategoryId());
 	}
 
 	@Test

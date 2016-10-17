@@ -4,8 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
@@ -29,6 +32,9 @@ import vu.de.npolke.myexpenses.util.Month;
  * @author Niklas Polke
  */
 public class StatisticsDAO extends AbstractConnectionDAO {
+
+	private final DecimalFormat FORMAT_2DIGIT = new DecimalFormat("00");
+	private static final int TOPTENPERIOD_STARTBEFOREDAYS = -35; // 5 Weeks
 
 	//@formatter:off
 	private static final String SQL_SELECT_DISTINCT_MONTHS =
@@ -55,7 +61,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 				"FROM Expense e " +
 				"JOIN Category c " +
 				"ON e.category_id = c.id " +
-				"WHERE account_id = ? AND income = false AND monthly = false " +
+				"WHERE account_id = ? AND income = false AND monthly = false AND year(e.day)+'.'+lpad(month(e.day),2,'0')+'.'+lpad(day(e.day),2,'0') >= ? " +
 				"GROUP BY e.category_id, c.name, e.reason " +
 				"ORDER BY COUNT(e.reason) DESC " +
 			") WHERE rownum() <= 10";
@@ -116,13 +122,24 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 		return statisticsPairs;
 	}
 
+	protected Calendar getToday() {
+		return Calendar.getInstance(Locale.GERMANY);
+	}
+
 	public List<Expense> readTopTenByAccountId(final long accountId) {
 		List<Expense> expenses = new ArrayList<Expense>();
+
+		Calendar startOfPeriod = getToday();
+		startOfPeriod.add(Calendar.DAY_OF_MONTH, TOPTENPERIOD_STARTBEFOREDAYS);
+		final String STARTDAYOFPERIOD = startOfPeriod.get(Calendar.YEAR) + "."
+				+ FORMAT_2DIGIT.format(startOfPeriod.get(Calendar.MONTH) + 1) + "."
+				+ FORMAT_2DIGIT.format(startOfPeriod.get(Calendar.DAY_OF_MONTH));
 
 		try (Connection connection = getConnection()) {
 			PreparedStatement readStatement;
 			readStatement = connection.prepareStatement(SQL_READ_TOPTEN_BY_ACCOUNT_ID);
 			readStatement.setLong(1, accountId);
+			readStatement.setString(2, STARTDAYOFPERIOD);
 			ResultSet result = readStatement.executeQuery();
 			while (result.next()) {
 				Expense expense = new Expense();
