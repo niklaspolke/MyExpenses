@@ -2,6 +2,7 @@ package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import vu.de.npolke.myexpenses.servlets.util.JsonObject;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.Timer;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -45,6 +47,8 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 	private static final long serialVersionUID = 1L;
 
 	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsPair.class);
+
+	Timer timer = new Timer();
 
 	private void setBarChartOptions(final ServletReaction reaction) {
 		JsonObject barchartOptions = new JsonObject();
@@ -117,15 +121,31 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 		return prepareStatistics(account, month);
 	}
 
+	Month getSelectedMonth(final Month wantedMonth, final List<Month> existingMonths) {
+		Month selectedMonth = null;
+		List<Month> sortedMonths = new ArrayList<Month>(existingMonths);
+		Collections.sort(sortedMonths);
+		for (Month month : sortedMonths) {
+			if (selectedMonth == null || month.compareTo(wantedMonth) <= 0) {
+				selectedMonth = month;
+			} else {
+				break;
+			}
+		}
+		return selectedMonth;
+	}
+
 	public ServletReaction prepareStatistics(final Account account, final String monthAsString) {
 		ServletReaction reaction = new ServletReaction();
 		Month month = Month.createMonth(monthAsString);
+		if (month == null) {
+			month = Month.createMonthFromTimeMillis(timer.getCurrentTimeMillis());
+		}
 
 		List<Month> months = statisticsDAO.readDistinctMonthsByAccountId(account.getId());
+		month = getSelectedMonth(month, months);
 		if (month != null) {
 			readStatisticsForMonth(reaction, month, account);
-		} else if (months.size() > 0) {
-			readStatisticsForMonth(reaction, months.get(0), account);
 		}
 
 		reaction.setRequestAttribute("months", months);

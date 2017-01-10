@@ -1,6 +1,8 @@
 package vu.de.npolke.myexpenses.util;
 
 import java.text.DecimalFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -32,6 +34,12 @@ public class Month implements Comparable<Month> {
 	Month(final int year, final int month) {
 		this.year = year;
 		this.month = month;
+	}
+
+	public static Month createMonthFromTimeMillis(final long timeMillis) {
+		Calendar now = Calendar.getInstance(Locale.GERMANY);
+		now.setTimeInMillis(timeMillis);
+		return new Month(now.get(Calendar.YEAR), now.get(Calendar.MONTH) + 1);
 	}
 
 	public static Month createMonth(final int year, final int month) {

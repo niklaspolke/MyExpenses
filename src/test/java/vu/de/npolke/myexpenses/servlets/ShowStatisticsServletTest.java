@@ -2,9 +2,9 @@ package vu.de.npolke.myexpenses.servlets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -22,6 +22,7 @@ import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.TimerMock;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -45,6 +46,8 @@ public class ShowStatisticsServletTest {
 	private static final long ACCOUNT_ID = 123;
 	private static final double DELTA = 0.001;
 
+	public static final long FAKE_TIME = 1483999598469L; // within 2017.01
+
 	public static final String JSON_BARCHART_OPTIONS = "{\"chartPadding\":{\"top\":5,\"right\":5,\"buttom\":5,\"left\":25},\"distributeSeries\":true,\"horizontalBars\":true,\"reverseData\":true}";
 	public static final String JSON_CHART_TEMPLATE = "{\"labels\":[{1}],\"series\":[{2}]}";
 	public static final String JSON_BARCHART_TEMPLATE = "{\"labels\":[\"Income\",\"Fixed Costs\",\"Expenses\"],\"series\":[{1}]}";
@@ -67,6 +70,7 @@ public class ShowStatisticsServletTest {
 	public void init() {
 		servlet = new ShowStatisticsServlet();
 		servlet.statisticsDAO = mock(StatisticsDAO.class);
+		servlet.timer = new TimerMock(FAKE_TIME);
 
 		account = new Account();
 		account.setId(ACCOUNT_ID);
@@ -75,15 +79,87 @@ public class ShowStatisticsServletTest {
 	}
 
 	@Test
-	public void prepareStatistics_WithMonths() {
+	public void getSelectedMonths_NoMonth() {
+		final Month MONTH = Month.createMonth(2017, 1);
+
+		assertNull(servlet.getSelectedMonth(MONTH, months));
+	}
+
+	@Test
+	public void getSelectedMonths_SmallerMonths() {
+		final Month MONTH = Month.createMonth(2017, 1);
+		months.add(Month.createMonth(2016, 10));
+		months.add(Month.createMonth(2016, 11));
+		Month nearestMonth = Month.createMonth(2016, 12);
+		months.add(nearestMonth);
+
+		assertEquals(nearestMonth, servlet.getSelectedMonth(MONTH, months));
+	}
+
+	@Test
+	public void getSelectedMonths_BiggerMonths() {
+		final Month MONTH = Month.createMonth(2017, 1);
+		Month nearestMonth = Month.createMonth(2017, 2);
+		months.add(nearestMonth);
+		months.add(Month.createMonth(2017, 3));
+		months.add(Month.createMonth(2017, 4));
+
+		assertEquals(nearestMonth, servlet.getSelectedMonth(MONTH, months));
+	}
+
+	@Test
+	public void getSelectedMonths_BiggerMonths_ReverseOrder() {
+		final Month MONTH = Month.createMonth(2017, 1);
+		months.add(Month.createMonth(2017, 4));
+		months.add(Month.createMonth(2017, 3));
+		Month nearestMonth = Month.createMonth(2017, 2);
+		months.add(nearestMonth);
+
+		assertEquals(nearestMonth, servlet.getSelectedMonth(MONTH, months));
+	}
+
+	@Test
+	public void getSelectedMonths_SmallerAndBiggerMonths() {
+		final Month MONTH = Month.createMonth(2017, 1);
+		months.add(Month.createMonth(2016, 10));
+		months.add(Month.createMonth(2016, 11));
+		Month nearestMonth = Month.createMonth(2016, 12);
+		months.add(nearestMonth);
+		months.add(Month.createMonth(2017, 2));
+		months.add(Month.createMonth(2017, 3));
+		months.add(Month.createMonth(2017, 4));
+
+		assertEquals(nearestMonth, servlet.getSelectedMonth(MONTH, months));
+	}
+
+	@Test
+	public void getSelectedMonths_SmallerAndEqualAndBiggerMonths() {
+		final Month MONTH = Month.createMonth(2017, 1);
+		months.add(Month.createMonth(2016, 10));
+		months.add(Month.createMonth(2016, 11));
+		months.add(Month.createMonth(2016, 12));
+		Month equalMonth = Month.createMonth(2017, 1);
+		months.add(equalMonth);
+		months.add(Month.createMonth(2017, 2));
+		months.add(Month.createMonth(2017, 3));
+		months.add(Month.createMonth(2017, 4));
+
+		assertEquals(equalMonth, servlet.getSelectedMonth(MONTH, months));
+	}
+
+	@Test
+	public void prepareStatistics_WithMonth() {
 		servlet = spy(servlet);
-		final Month MONTH = Month.createMonth("2015.06");
+		// equal to FAKE TIME, even if it is not used within this test
+		final Month MONTH = Month.createMonth("2017.01");
 		months.add(MONTH);
+		months.add(Month.createMonth("2015.06"));
 		months.add(Month.createMonth("2015.05"));
 		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
 
-		final ServletReaction reaction = servlet.prepareStatistics(account, null);
+		final ServletReaction reaction = servlet.prepareStatistics(account, MONTH.toString());
 
+		verify(servlet).getSelectedMonth(MONTH, months);
 		verify(servlet).readStatisticsForMonth(any(ServletReaction.class), eq(MONTH), eq(account));
 		assertNotNull(reaction);
 		assertEquals(months, reaction.getRequestAttributes().get("months"));
@@ -98,7 +174,7 @@ public class ShowStatisticsServletTest {
 
 		final ServletReaction reaction = servlet.prepareStatistics(account, null);
 
-		verify(servlet, never()).readStatisticsForMonth(any(ServletReaction.class), isNull(Month.class), eq(account));
+		verify(servlet, never()).readStatisticsForMonth(any(ServletReaction.class), any(Month.class), eq(account));
 		assertNotNull(reaction);
 		assertEquals(months, reaction.getRequestAttributes().get("months"));
 		assertEquals("WEB-INF/showstatistics.jsp", reaction.getForward());

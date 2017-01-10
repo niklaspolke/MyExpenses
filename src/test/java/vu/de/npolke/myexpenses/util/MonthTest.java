@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static vu.de.npolke.myexpenses.util.Month.createMonth;
+import static vu.de.npolke.myexpenses.util.Month.*;
 
 import org.junit.Test;
 
@@ -124,5 +124,10 @@ public class MonthTest {
 	@Test
 	public void compareBiggerYear() {
 		assertTrue(month.compareTo(createMonth(month.getYear() - 1, month.getMonth())) > 0);
+	}
+
+	@Test
+	public void createMonthFromTimeMillis1() {
+		assertEquals("2017.01", createMonthFromTimeMillis(1483999598469L).toString());
 	}
 }
