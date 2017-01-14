@@ -202,6 +202,24 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 	}
 
 	@Test
+	public void readAmountOfExpensesInFuture() {
+		assertEquals(2, expenseDAO.readAmountOfExpensesInFuture(1, "2015-05-10"));
+
+		expenseDAO.create("25.06.15", 13.3, "junk food", false, false, 11, 1);
+
+		assertEquals(3, expenseDAO.readAmountOfExpensesInFuture(1, "2015-05-10"));
+	}
+
+	@Test
+	public void readAmountOfExpensesUpToNow() {
+		assertEquals(2, expenseDAO.readAmountOfExpensesUpToNow(1, "2015-05-10"));
+
+		expenseDAO.create("25.04.15", 13.3, "junk food", false, false, 11, 1);
+
+		assertEquals(3, expenseDAO.readAmountOfExpensesUpToNow(1, "2015-05-10"));
+	}
+
+	@Test
 	public void readByCategoryId() {
 		List<Expense> expenses = expenseDAO.readByCategoryId(11);
 

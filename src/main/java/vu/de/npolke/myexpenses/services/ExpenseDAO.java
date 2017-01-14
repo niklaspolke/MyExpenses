@@ -43,6 +43,10 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 
 	private static final String SQL_READ_AMOUNT_BY_ACCOUNT_ID = "SELECT COUNT(id) as amountofexpenses FROM Expense WHERE account_id = ? AND monthly = false";
 
+	private static final String SQL_READ_AMOUNT_IN_FUTURE_BY_ACCOUNT_ID = "SELECT COUNT(id) as amountofexpenses FROM Expense WHERE account_id = ? AND monthly = false AND day > ?";
+
+	private static final String SQL_READ_AMOUNT_UP_TO_NOW_BY_ACCOUNT_ID = "SELECT COUNT(id) as amountofexpenses FROM Expense WHERE account_id = ? AND monthly = false AND day <= ?";
+
 	private static final String SQL_READ_BY_CATEGORY_ID = "SELECT e.id, e.day, e.amount, e.reason, e.monthly, e.income, e.category_id, e.account_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE e.category_id = ? ORDER BY day DESC";
 
 	private static final String SQL_UPDATE_BY_ID = "UPDATE Expense SET day = ?, amount = ?, reason = ?, monthly = ?, income = ?, category_id = ? WHERE id = ?";
@@ -207,6 +211,46 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 			PreparedStatement readStatement;
 			readStatement = connection.prepareStatement(SQL_READ_AMOUNT_BY_ACCOUNT_ID);
 			readStatement.setLong(1, accountId);
+			ResultSet result = readStatement.executeQuery();
+			if (result.next()) {
+				amountOfExpenses = result.getLong("amountofexpenses");
+			}
+			connection.rollback();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return amountOfExpenses;
+	}
+
+	public long readAmountOfExpensesInFuture(final long accountId, final String today) {
+		long amountOfExpenses = -1;
+
+		try (Connection connection = getConnection()) {
+			PreparedStatement readStatement;
+			readStatement = connection.prepareStatement(SQL_READ_AMOUNT_IN_FUTURE_BY_ACCOUNT_ID);
+			readStatement.setLong(1, accountId);
+			readStatement.setString(2, today);
+			ResultSet result = readStatement.executeQuery();
+			if (result.next()) {
+				amountOfExpenses = result.getLong("amountofexpenses");
+			}
+			connection.rollback();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return amountOfExpenses;
+	}
+
+	public long readAmountOfExpensesUpToNow(final long accountId, final String today) {
+		long amountOfExpenses = -1;
+
+		try (Connection connection = getConnection()) {
+			PreparedStatement readStatement;
+			readStatement = connection.prepareStatement(SQL_READ_AMOUNT_UP_TO_NOW_BY_ACCOUNT_ID);
+			readStatement.setLong(1, accountId);
+			readStatement.setString(2, today);
 			ResultSet result = readStatement.executeQuery();
 			if (result.next()) {
 				amountOfExpenses = result.getLong("amountofexpenses");

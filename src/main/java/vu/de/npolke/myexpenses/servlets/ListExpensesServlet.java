@@ -2,6 +2,7 @@ package vu.de.npolke.myexpenses.servlets;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -19,6 +20,7 @@ import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.Timer;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -50,6 +52,8 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 
 	ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
 	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsPair.class);
+
+	Timer timer = new Timer();
 
 	@Override
 	public ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
@@ -122,15 +126,22 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 			reaction.setRequestAttribute("category",
 					expenses.size() > 0 ? expenses.get(0).getCategoryName() : categoryIdForTopTen);
 		} else {
-			final long amountOfExpenses = expenseDAO.readAmountOfExpenses(account.getId());
+			Expense calcToday = new Expense();
+			calcToday.setDay(new Date(timer.getCurrentTimeMillis()));
+			final String TODAY = calcToday.getReadableDayAsString();
+			final long amountOfExpensesInFuture = expenseDAO.readAmountOfExpensesInFuture(account.getId(), TODAY);
+			final long amountOfExpensesUpToNow = expenseDAO.readAmountOfExpensesUpToNow(account.getId(), TODAY);
 
-			final int pageMax = calcAmountOfPages(amountOfExpenses, AMOUNT_OF_ENTRIES_PER_PAGE);
-			final int page = parseRequestedPage(requestedPage, pageMax);
+			final int pageMax = calcAmountOfPages(amountOfExpensesInFuture, AMOUNT_OF_ENTRIES_PER_PAGE); // future on pages 1 -> x
+			final int pageMin = Math.min(0, -1 * calcAmountOfPages(amountOfExpensesUpToNow, AMOUNT_OF_ENTRIES_PER_PAGE) + 1); // past/present on pages -x+1 -> 0
+			final int page = parseRequestedPage(requestedPage, pageMin, pageMax);
 
+			// TODO: (inklusive Tests!)
 			expenses = expenseDAO.readByAccountId(account.getId(), (page - 1) * AMOUNT_OF_ENTRIES_PER_PAGE + 1,
 					page * AMOUNT_OF_ENTRIES_PER_PAGE);
 			reaction.setRequestAttribute("mode", MODE_EXPENSES);
 			reaction.setRequestAttribute("page", page);
+			reaction.setRequestAttribute("pageMin", pageMin);
 			reaction.setRequestAttribute("pageMax", pageMax);
 		}
 
@@ -149,14 +160,14 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 		return parsedLong;
 	}
 
-	public int parseRequestedPage(final String requestedPage, final int pageMax) {
-		int page = 1;
+	public int parseRequestedPage(final String requestedPage, final int pageMin, final int pageMax) {
+		int page = 0;
 		try {
 			page = Integer.parseInt(requestedPage);
 		} catch (NumberFormatException nfe) {
 		}
-		if (page < 1) {
-			page = 1;
+		if (page < pageMin) {
+			page = pageMin;
 		}
 		if (page > pageMax) {
 			page = pageMax;
@@ -165,6 +176,9 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 	}
 
 	public int calcAmountOfPages(final long amountOfEntries, final int amountOfEntriesPerPage) {
-		return (int) Math.max(1, Math.ceil((double) amountOfEntries / amountOfEntriesPerPage));
+		if (amountOfEntries == 0)
+			return 0;
+		else
+			return (int) Math.ceil((double) amountOfEntries / amountOfEntriesPerPage);
 	}
 }
