@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -34,7 +35,7 @@ public class TimerMock extends Timer {
 	}
 
 	public TimerMock(final String readableDate) {
-		calendar = Calendar.getInstance(Locale.GERMANY);
+		calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Berlin"), Locale.GERMANY);
 		try {
 			calendar.setTime(DATA_FORMATTER.parse(readableDate));
 		} catch (ParseException pe) {
