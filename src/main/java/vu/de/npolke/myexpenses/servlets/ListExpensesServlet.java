@@ -122,15 +122,23 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 			reaction.setRequestAttribute("category",
 					expenses.size() > 0 ? expenses.get(0).getCategoryName() : categoryIdForTopTen);
 		} else {
-			final long amountOfExpenses = expenseDAO.readAmountOfExpenses(account.getId());
+			final long amountOfExpensesInFuture = expenseDAO.readAmountOfExpensesInFuture(account.getId());
+			final long amountOfExpensesUpToNow = expenseDAO.readAmountOfExpensesUpToNow(account.getId());
 
-			final int pageMax = calcAmountOfPages(amountOfExpenses, AMOUNT_OF_ENTRIES_PER_PAGE);
-			final int page = parseRequestedPage(requestedPage, pageMax);
+			final int pageMax = calcAmountOfPages(amountOfExpensesInFuture, AMOUNT_OF_ENTRIES_PER_PAGE); // future on pages 1 -> x
+			final int pageMin = Math.min(0, -1 * calcAmountOfPages(amountOfExpensesUpToNow, AMOUNT_OF_ENTRIES_PER_PAGE) + 1); // past/present on pages -x+1 -> 0
+			final int page = parseRequestedPage(requestedPage, pageMin, pageMax);
 
-			expenses = expenseDAO.readByAccountId(account.getId(), (page - 1) * AMOUNT_OF_ENTRIES_PER_PAGE + 1,
-					page * AMOUNT_OF_ENTRIES_PER_PAGE);
+			if (page >= 1) { // expenses of the future
+				expenses = expenseDAO.readByAccountId(account.getId(), (page - 1) * AMOUNT_OF_ENTRIES_PER_PAGE + 1,
+						page * AMOUNT_OF_ENTRIES_PER_PAGE, true);
+			} else { // expenses of the past and the present
+				expenses = expenseDAO.readByAccountId(account.getId(), Math.abs(page) * AMOUNT_OF_ENTRIES_PER_PAGE + 1,
+						(Math.abs(page) + 1) * AMOUNT_OF_ENTRIES_PER_PAGE, false);
+			}
 			reaction.setRequestAttribute("mode", MODE_EXPENSES);
 			reaction.setRequestAttribute("page", page);
+			reaction.setRequestAttribute("pageMin", pageMin);
 			reaction.setRequestAttribute("pageMax", pageMax);
 		}
 
@@ -149,14 +157,14 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 		return parsedLong;
 	}
 
-	public int parseRequestedPage(final String requestedPage, final int pageMax) {
-		int page = 1;
+	public int parseRequestedPage(final String requestedPage, final int pageMin, final int pageMax) {
+		int page = 0;
 		try {
 			page = Integer.parseInt(requestedPage);
 		} catch (NumberFormatException nfe) {
 		}
-		if (page < 1) {
-			page = 1;
+		if (page < pageMin) {
+			page = pageMin;
 		}
 		if (page > pageMax) {
 			page = pageMax;
@@ -165,6 +173,9 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 	}
 
 	public int calcAmountOfPages(final long amountOfEntries, final int amountOfEntriesPerPage) {
-		return (int) Math.max(1, Math.ceil((double) amountOfEntries / amountOfEntriesPerPage));
+		if (amountOfEntries == 0)
+			return 0;
+		else
+			return (int) Math.ceil((double) amountOfEntries / amountOfEntriesPerPage);
 	}
 }

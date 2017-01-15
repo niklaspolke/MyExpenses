@@ -1,5 +1,10 @@
 package vu.de.npolke.myexpenses.util;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Locale;
+
 /**
  * Copyright 2015 Niklas Polke
  *
@@ -19,14 +24,25 @@ package vu.de.npolke.myexpenses.util;
  */
 public class TimerMock extends Timer {
 
-	private final long time;
+	private final DateFormat DATA_FORMATTER = DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMANY);
+
+	private final Calendar calendar;
 
 	public TimerMock(final long timeMillis) {
-		this.time = timeMillis;
+		calendar = Calendar.getInstance(Locale.GERMANY);
+		calendar.setTimeInMillis(timeMillis);
+	}
+
+	public TimerMock(final String readableDate) {
+		calendar = Calendar.getInstance(Locale.GERMANY);
+		try {
+			calendar.setTime(DATA_FORMATTER.parse(readableDate));
+		} catch (ParseException pe) {
+		}
 	}
 
 	@Override
 	public long getCurrentTimeMillis() {
-		return this.time;
+		return calendar.getTimeInMillis();
 	}
 }

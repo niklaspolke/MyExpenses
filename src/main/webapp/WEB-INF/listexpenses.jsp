@@ -59,9 +59,9 @@ the License.
 <table class="w3-table-all">
     <thead>
         <tr>
-            <c:if test="${requestScope.pageMax gt 1}"><th class="w3-light-grey" colspan="5">
+            <c:if test="${requestScope.pageMax - requestScope.pageMin + 1 gt 1}"><th class="w3-light-grey" colspan="5">
                 <c:choose>
-                <c:when test="${requestScope.page eq 1}">
+                <c:when test="${requestScope.page <= requestScope.pageMin}">
                     <img src="img/sign-left_24_inactive.png" alt="<fmt:message key="listexpenses.navigation.left.inactive.tooltip"/>" title="<fmt:message key="listexpenses.navigation.left.inactive.tooltip"/>" width="24" height="24"/>
                 </c:when>
                 <c:otherwise>
@@ -122,26 +122,26 @@ the License.
                 </td>
             </tr>
         </c:forEach>
-        <c:if test="${requestScope.pageMax gt 1}"><th class="w3-light-grey" colspan="5">
-            <c:choose>
-            <c:when test="${requestScope.page eq 1}">
-                <img src="img/sign-left_24_inactive.png" alt="<fmt:message key="listexpenses.navigation.left.inactive.tooltip"/>" title="<fmt:message key="listexpenses.navigation.left.inactive.tooltip"/>" width="24" height="24"/>
-            </c:when>
-            <c:otherwise>
-                <a href="listexpenses.jsp?page=${requestScope.page - 1}"><img src="img/sign-left_24.png" alt="<fmt:message key="listexpenses.navigation.left.active.tooltip"/>" title="<fmt:message key="listexpenses.navigation.left.active.tooltip"/>" width="24" height="24"/></a>
-            </c:otherwise>
-            </c:choose>
-            <c:choose>
-            <c:when test="${requestScope.page >= requestScope.pageMax}">
-                <img src="img/sign-right_24_inactive.png" alt="<fmt:message key="listexpenses.navigation.right.inactive.tooltip"/>" title="<fmt:message key="listexpenses.navigation.right.inactive.tooltip"/>" width="24" height="24"/>
-            </c:when>
-            <c:otherwise>
-                <a href="listexpenses.jsp?page=${requestScope.page + 1}">
-                    <img src="img/sign-right_24.png" alt="<fmt:message key="listexpenses.navigation.right.active.tooltip"/>" title="<fmt:message key="listexpenses.navigation.right.active.tooltip"/>" width="24" height="24"/>
-                </a>
-            </c:otherwise>
-            </c:choose>
-        </th></c:if>
+        <c:if test="${requestScope.pageMax - requestScope.pageMin + 1 gt 1}"><th class="w3-light-grey" colspan="5">
+                <c:choose>
+                <c:when test="${requestScope.page <= requestScope.pageMin}">
+                    <img src="img/sign-left_24_inactive.png" alt="<fmt:message key="listexpenses.navigation.left.inactive.tooltip"/>" title="<fmt:message key="listexpenses.navigation.left.inactive.tooltip"/>" width="24" height="24"/>
+                </c:when>
+                <c:otherwise>
+                    <a href="listexpenses.jsp?page=${requestScope.page - 1}"><img src="img/sign-left_24.png" alt="<fmt:message key="listexpenses.navigation.left.active.tooltip"/>" title="<fmt:message key="listexpenses.navigation.left.active.tooltip"/>" width="24" height="24"/></a>
+                </c:otherwise>
+                </c:choose>
+                <c:choose>
+                <c:when test="${requestScope.page >= requestScope.pageMax}">
+                    <img src="img/sign-right_24_inactive.png" alt="<fmt:message key="listexpenses.navigation.right.inactive.tooltip"/>" title="<fmt:message key="listexpenses.navigation.right.inactive.tooltip"/>" width="24" height="24"/>
+                </c:when>
+                <c:otherwise>
+                    <a href="listexpenses.jsp?page=${requestScope.page + 1}">
+                        <img src="img/sign-right_24.png" alt="<fmt:message key="listexpenses.navigation.right.active.tooltip"/>" title="<fmt:message key="listexpenses.navigation.right.active.tooltip"/>" width="24" height="24"/>
+                    </a>
+                </c:otherwise>
+                </c:choose>
+            </th></c:if>
     </tbody>
 </table>
 </div>

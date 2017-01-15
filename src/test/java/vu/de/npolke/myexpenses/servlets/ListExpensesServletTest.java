@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -126,8 +125,9 @@ public class ListExpensesServletTest {
 	@Test
 	public void prepareListExpenses_NoExpenses_NoPage_NoMessage() {
 		final ArrayList<Expense> expenses = new ArrayList<Expense>();
-		when(servlet.expenseDAO.readAmountOfExpenses(ACCOUNT_ID)).thenReturn(0L);
-		when(servlet.expenseDAO.readByAccountId(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(expenses);
+		when(servlet.expenseDAO.readAmountOfExpensesInFuture(ACCOUNT_ID)).thenReturn(0L);
+		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(0L);
+		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 1, 10, false)).thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, null, null, null);
 
@@ -135,9 +135,11 @@ public class ListExpensesServletTest {
 		// correct mode in request
 		assertEquals(ListExpensesServlet.MODE_EXPENSES, reaction.getRequestAttributes().get("mode"));
 		// correct page in request
-		assertEquals(1, reaction.getRequestAttributes().get("page"));
+		assertEquals(0, reaction.getRequestAttributes().get("page"));
+		// correct pageMin in request
+		assertEquals(0, reaction.getRequestAttributes().get("pageMin"));
 		// correct pageMax in request
-		assertEquals(1, reaction.getRequestAttributes().get("pageMax"));
+		assertEquals(0, reaction.getRequestAttributes().get("pageMax"));
 		// correct message / no message
 		assertNull(reaction.getRequestAttributes().get("message"));
 		// correct expenses in session
@@ -149,8 +151,9 @@ public class ListExpensesServletTest {
 	@Test
 	public void prepareListExpenses_WithMessage() {
 		final ArrayList<Expense> expenses = new ArrayList<Expense>();
-		when(servlet.expenseDAO.readAmountOfExpenses(ACCOUNT_ID)).thenReturn(0L);
-		when(servlet.expenseDAO.readByAccountId(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(expenses);
+		when(servlet.expenseDAO.readAmountOfExpensesInFuture(ACCOUNT_ID)).thenReturn(0L);
+		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(0L);
+		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 1, 10, false)).thenReturn(expenses);
 		final String MESSAGE = "My Message";
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, null, null, MESSAGE);
@@ -167,8 +170,36 @@ public class ListExpensesServletTest {
 		expenses.add(new Expense());
 		expenses.add(new Expense());
 		expenses.add(new Expense());
-		when(servlet.expenseDAO.readAmountOfExpenses(ACCOUNT_ID)).thenReturn(3L);
-		when(servlet.expenseDAO.readByAccountId(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(expenses);
+		when(servlet.expenseDAO.readAmountOfExpensesInFuture(ACCOUNT_ID)).thenReturn(0L);
+		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(3L);
+		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 1, 10, false)).thenReturn(expenses);
+
+		final ServletReaction reaction = servlet.prepareListExpenses(account, "0", null, null, null, null);
+
+		assertNotNull(reaction);
+		// correct mode in request
+		assertEquals(ListExpensesServlet.MODE_EXPENSES, reaction.getRequestAttributes().get("mode"));
+		// correct page in request
+		assertEquals(0, reaction.getRequestAttributes().get("page"));
+		// correct pageMin in request
+		assertEquals(0, reaction.getRequestAttributes().get("pageMin"));
+		// correct pageMax in request
+		assertEquals(0, reaction.getRequestAttributes().get("pageMax"));
+		// correct expenses in session
+		assertSame(expenses, reaction.getRequestAttributes().get("expenses"));
+		// correct navigation
+		assertEquals(LISTEXPENSES_JSP, reaction.getForward());
+	}
+
+	@Test
+	public void prepareListExpenses_Expenses_WithPage_Future() {
+		final ArrayList<Expense> expenses = new ArrayList<Expense>();
+		expenses.add(new Expense());
+		expenses.add(new Expense());
+		expenses.add(new Expense());
+		when(servlet.expenseDAO.readAmountOfExpensesInFuture(ACCOUNT_ID)).thenReturn(3L);
+		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(3L);
+		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 1, 10, true)).thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, "1", null, null, null, null);
 
@@ -177,6 +208,8 @@ public class ListExpensesServletTest {
 		assertEquals(ListExpensesServlet.MODE_EXPENSES, reaction.getRequestAttributes().get("mode"));
 		// correct page in request
 		assertEquals(1, reaction.getRequestAttributes().get("page"));
+		// correct pageMin in request
+		assertEquals(0, reaction.getRequestAttributes().get("pageMin"));
 		// correct pageMax in request
 		assertEquals(1, reaction.getRequestAttributes().get("pageMax"));
 		// correct expenses in session
@@ -190,8 +223,35 @@ public class ListExpensesServletTest {
 		final int AMOUNT = 12;
 		final ArrayList<Expense> expenses = new ArrayList<Expense>();
 		addExpenses(expenses, AMOUNT);
-		when(servlet.expenseDAO.readAmountOfExpenses(ACCOUNT_ID)).thenReturn(12L);
-		when(servlet.expenseDAO.readByAccountId(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(expenses);
+		when(servlet.expenseDAO.readAmountOfExpensesInFuture(ACCOUNT_ID)).thenReturn(0L);
+		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(12L);
+		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 11, 20, false)).thenReturn(expenses);
+
+		final ServletReaction reaction = servlet.prepareListExpenses(account, "-1", null, null, null, null);
+
+		assertNotNull(reaction);
+		// correct mode in request
+		assertEquals(ListExpensesServlet.MODE_EXPENSES, reaction.getRequestAttributes().get("mode"));
+		// correct page in request
+		assertEquals(-1, reaction.getRequestAttributes().get("page"));
+		// correct pageMin in request
+		assertEquals(-1, reaction.getRequestAttributes().get("pageMin"));
+		// correct pageMax in request
+		assertEquals(0, reaction.getRequestAttributes().get("pageMax"));
+		// correct expenses in session
+		assertSame(expenses, reaction.getRequestAttributes().get("expenses"));
+		// correct navigation
+		assertEquals(LISTEXPENSES_JSP, reaction.getForward());
+	}
+
+	@Test
+	public void prepareListExpenses_Expenses_WithPage_TwoPages_Future() {
+		final int AMOUNT = 12;
+		final ArrayList<Expense> expenses = new ArrayList<Expense>();
+		addExpenses(expenses, AMOUNT);
+		when(servlet.expenseDAO.readAmountOfExpensesInFuture(ACCOUNT_ID)).thenReturn(12L);
+		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(5L);
+		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 11, 20, true)).thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, "2", null, null, null, null);
 
@@ -200,6 +260,8 @@ public class ListExpensesServletTest {
 		assertEquals(ListExpensesServlet.MODE_EXPENSES, reaction.getRequestAttributes().get("mode"));
 		// correct page in request
 		assertEquals(2, reaction.getRequestAttributes().get("page"));
+		// correct pageMin in request
+		assertEquals(0, reaction.getRequestAttributes().get("pageMin"));
 		// correct pageMax in request
 		assertEquals(2, reaction.getRequestAttributes().get("pageMax"));
 		// correct expenses in session
@@ -213,16 +275,45 @@ public class ListExpensesServletTest {
 		final int AMOUNT = 12;
 		final ArrayList<Expense> expenses = new ArrayList<Expense>();
 		addExpenses(expenses, AMOUNT);
-		when(servlet.expenseDAO.readAmountOfExpenses(ACCOUNT_ID)).thenReturn(12L);
-		when(servlet.expenseDAO.readByAccountId(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(expenses);
+		when(servlet.expenseDAO.readAmountOfExpensesInFuture(ACCOUNT_ID)).thenReturn(0L);
+		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(12L);
+		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 11, 20, false)).thenReturn(expenses);
 
-		final ServletReaction reaction = servlet.prepareListExpenses(account, "4", null, null, null, null);
+		final ServletReaction reaction = servlet.prepareListExpenses(account, "-4", null, null, null, null);
+
+		assertNotNull(reaction);
+		// correct mode in request
+		assertEquals(ListExpensesServlet.MODE_EXPENSES, reaction.getRequestAttributes().get("mode"));
+		// correct page in request
+		assertEquals(-1, reaction.getRequestAttributes().get("page"));
+		// correct pageMin in request
+		assertEquals(-1, reaction.getRequestAttributes().get("pageMin"));
+		// correct pageMax in request
+		assertEquals(0, reaction.getRequestAttributes().get("pageMax"));
+		// correct expenses in session
+		assertSame(expenses, reaction.getRequestAttributes().get("expenses"));
+		// correct navigation
+		assertEquals(LISTEXPENSES_JSP, reaction.getForward());
+	}
+
+	@Test
+	public void prepareListExpenses_Expenses_WithWrongPage_TwoPages_Future() {
+		final int AMOUNT = 12;
+		final ArrayList<Expense> expenses = new ArrayList<Expense>();
+		addExpenses(expenses, AMOUNT);
+		when(servlet.expenseDAO.readAmountOfExpensesInFuture(ACCOUNT_ID)).thenReturn(12L);
+		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(5L);
+		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 11, 20, true)).thenReturn(expenses);
+
+		final ServletReaction reaction = servlet.prepareListExpenses(account, "5", null, null, null, null);
 
 		assertNotNull(reaction);
 		// correct mode in request
 		assertEquals(ListExpensesServlet.MODE_EXPENSES, reaction.getRequestAttributes().get("mode"));
 		// correct page in request
 		assertEquals(2, reaction.getRequestAttributes().get("page"));
+		// correct pageMin in request
+		assertEquals(0, reaction.getRequestAttributes().get("pageMin"));
 		// correct pageMax in request
 		assertEquals(2, reaction.getRequestAttributes().get("pageMax"));
 		// correct expenses in session
@@ -399,32 +490,32 @@ public class ListExpensesServletTest {
 
 	@Test
 	public void parseRequestedPage_NormalWithPage() {
-		assertEquals(2, servlet.parseRequestedPage("2", 3));
+		assertEquals(2, servlet.parseRequestedPage("2", 0, 3));
 	}
 
 	@Test
 	public void parseRequestedPage_NormalWithoutPage() {
-		assertEquals(1, servlet.parseRequestedPage(null, 3));
+		assertEquals(0, servlet.parseRequestedPage(null, 0, 3));
 	}
 
 	@Test
 	public void parseRequestedPage_UnparseablePage() {
-		assertEquals(1, servlet.parseRequestedPage("abc", 3));
+		assertEquals(0, servlet.parseRequestedPage("abc", -1, 3));
 	}
 
 	@Test
 	public void parseRequestedPage_TooSmallPage() {
-		assertEquals(1, servlet.parseRequestedPage("0", 3));
+		assertEquals(-1, servlet.parseRequestedPage("-2", -1, 3));
 	}
 
 	@Test
 	public void parseRequestedPage_TooBigPage() {
-		assertEquals(3, servlet.parseRequestedPage("4", 3));
+		assertEquals(3, servlet.parseRequestedPage("4", -1, 3));
 	}
 
 	@Test
 	public void calcAmountOfPages_NoEntries() {
-		assertEquals(1, servlet.calcAmountOfPages(0, 10));
+		assertEquals(0, servlet.calcAmountOfPages(0, 10));
 	}
 
 	@Test
