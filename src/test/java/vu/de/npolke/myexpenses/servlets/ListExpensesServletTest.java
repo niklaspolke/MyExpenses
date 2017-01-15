@@ -5,8 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -26,8 +24,6 @@ import vu.de.npolke.myexpenses.services.ExpenseDAO;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 import vu.de.npolke.myexpenses.util.Month;
-import vu.de.npolke.myexpenses.util.Timer;
-import vu.de.npolke.myexpenses.util.TimerMock;
 
 public class ListExpensesServletTest {
 
@@ -39,7 +35,6 @@ public class ListExpensesServletTest {
 
 	private Account account;
 	private ListExpensesServlet servlet;
-	private Timer timerMock = new TimerMock(123l);
 
 	@Before
 	public void init() {
@@ -48,7 +43,6 @@ public class ListExpensesServletTest {
 		servlet = new ListExpensesServlet();
 		servlet.expenseDAO = mock(ExpenseDAO.class);
 		servlet.statisticsDAO = mock(StatisticsDAO.class);
-		servlet.timer = timerMock;
 	}
 
 	@Test
@@ -131,9 +125,9 @@ public class ListExpensesServletTest {
 	@Test
 	public void prepareListExpenses_NoExpenses_NoPage_NoMessage() {
 		final ArrayList<Expense> expenses = new ArrayList<Expense>();
-		when(servlet.expenseDAO.readAmountOfExpensesInFuture(eq(ACCOUNT_ID), anyString())).thenReturn(0L);
-		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(eq(ACCOUNT_ID), anyString())).thenReturn(0L);
-		when(servlet.expenseDAO.readByAccountId(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(expenses);
+		when(servlet.expenseDAO.readAmountOfExpensesInFuture(ACCOUNT_ID)).thenReturn(0L);
+		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(0L);
+		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 1, 10, false)).thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, null, null, null);
 
@@ -157,9 +151,9 @@ public class ListExpensesServletTest {
 	@Test
 	public void prepareListExpenses_WithMessage() {
 		final ArrayList<Expense> expenses = new ArrayList<Expense>();
-		when(servlet.expenseDAO.readAmountOfExpensesInFuture(eq(ACCOUNT_ID), anyString())).thenReturn(0L);
-		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(eq(ACCOUNT_ID), anyString())).thenReturn(0L);
-		when(servlet.expenseDAO.readByAccountId(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(expenses);
+		when(servlet.expenseDAO.readAmountOfExpensesInFuture(ACCOUNT_ID)).thenReturn(0L);
+		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(0L);
+		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 1, 10, false)).thenReturn(expenses);
 		final String MESSAGE = "My Message";
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, null, null, MESSAGE);
@@ -176,9 +170,9 @@ public class ListExpensesServletTest {
 		expenses.add(new Expense());
 		expenses.add(new Expense());
 		expenses.add(new Expense());
-		when(servlet.expenseDAO.readAmountOfExpensesInFuture(eq(ACCOUNT_ID), anyString())).thenReturn(0L);
-		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(eq(ACCOUNT_ID), anyString())).thenReturn(3L);
-		when(servlet.expenseDAO.readByAccountId(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(expenses);
+		when(servlet.expenseDAO.readAmountOfExpensesInFuture(ACCOUNT_ID)).thenReturn(0L);
+		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(3L);
+		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 1, 10, false)).thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, "0", null, null, null, null);
 
@@ -203,9 +197,9 @@ public class ListExpensesServletTest {
 		expenses.add(new Expense());
 		expenses.add(new Expense());
 		expenses.add(new Expense());
-		when(servlet.expenseDAO.readAmountOfExpensesInFuture(eq(ACCOUNT_ID), anyString())).thenReturn(3L);
-		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(eq(ACCOUNT_ID), anyString())).thenReturn(3L);
-		when(servlet.expenseDAO.readByAccountId(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(expenses);
+		when(servlet.expenseDAO.readAmountOfExpensesInFuture(ACCOUNT_ID)).thenReturn(3L);
+		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(3L);
+		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 1, 10, true)).thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, "1", null, null, null, null);
 
@@ -229,9 +223,9 @@ public class ListExpensesServletTest {
 		final int AMOUNT = 12;
 		final ArrayList<Expense> expenses = new ArrayList<Expense>();
 		addExpenses(expenses, AMOUNT);
-		when(servlet.expenseDAO.readAmountOfExpensesInFuture(eq(ACCOUNT_ID), anyString())).thenReturn(0L);
-		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(eq(ACCOUNT_ID), anyString())).thenReturn(12L);
-		when(servlet.expenseDAO.readByAccountId(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(expenses);
+		when(servlet.expenseDAO.readAmountOfExpensesInFuture(ACCOUNT_ID)).thenReturn(0L);
+		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(12L);
+		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 11, 20, false)).thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, "-1", null, null, null, null);
 
@@ -255,9 +249,9 @@ public class ListExpensesServletTest {
 		final int AMOUNT = 12;
 		final ArrayList<Expense> expenses = new ArrayList<Expense>();
 		addExpenses(expenses, AMOUNT);
-		when(servlet.expenseDAO.readAmountOfExpensesInFuture(eq(ACCOUNT_ID), anyString())).thenReturn(12L);
-		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(eq(ACCOUNT_ID), anyString())).thenReturn(5L);
-		when(servlet.expenseDAO.readByAccountId(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(expenses);
+		when(servlet.expenseDAO.readAmountOfExpensesInFuture(ACCOUNT_ID)).thenReturn(12L);
+		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(5L);
+		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 11, 20, true)).thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, "2", null, null, null, null);
 
@@ -281,9 +275,9 @@ public class ListExpensesServletTest {
 		final int AMOUNT = 12;
 		final ArrayList<Expense> expenses = new ArrayList<Expense>();
 		addExpenses(expenses, AMOUNT);
-		when(servlet.expenseDAO.readAmountOfExpensesInFuture(eq(ACCOUNT_ID), anyString())).thenReturn(0L);
-		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(eq(ACCOUNT_ID), anyString())).thenReturn(12L);
-		when(servlet.expenseDAO.readByAccountId(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(expenses);
+		when(servlet.expenseDAO.readAmountOfExpensesInFuture(ACCOUNT_ID)).thenReturn(0L);
+		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(12L);
+		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 11, 20, false)).thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, "-4", null, null, null, null);
 
@@ -307,9 +301,9 @@ public class ListExpensesServletTest {
 		final int AMOUNT = 12;
 		final ArrayList<Expense> expenses = new ArrayList<Expense>();
 		addExpenses(expenses, AMOUNT);
-		when(servlet.expenseDAO.readAmountOfExpensesInFuture(eq(ACCOUNT_ID), anyString())).thenReturn(12L);
-		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(eq(ACCOUNT_ID), anyString())).thenReturn(5L);
-		when(servlet.expenseDAO.readByAccountId(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(expenses);
+		when(servlet.expenseDAO.readAmountOfExpensesInFuture(ACCOUNT_ID)).thenReturn(12L);
+		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(5L);
+		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 11, 20, true)).thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, "5", null, null, null, null);
 

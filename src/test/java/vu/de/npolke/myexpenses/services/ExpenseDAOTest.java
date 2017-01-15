@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.TimerMock;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -131,11 +132,12 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 	}
 
 	@Test
-	public void readByAccountId() {
-		List<Expense> expenses = expenseDAO.readByAccountId(1, 1, 10);
+	public void readByAccountId_InFuture() {
+		expenseDAO.timer = new TimerMock("10.05.15");
+		List<Expense> expenses = expenseDAO.readByAccountId(1, 1, 10, true);
 
 		assertNotNull(expenses);
-		assertEquals(4, expenses.size());
+		assertEquals(2, expenses.size());
 		for (Expense expense : expenses) {
 			assertTrue(expense.getId() > 0);
 			assertTrue(expense.getReadableDayAsString().length() == 8);
@@ -143,6 +145,45 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 			assertTrue(expense.getReason().trim().length() > 0);
 			assertFalse(expense.isMonthly());
 			assertFalse(expense.isIncome());
+			assertTrue(expense.getCategoryId() == 11 || expense.getCategoryId() == 12);
+			assertTrue("food".equals(expense.getCategoryName()) || "luxury".equals(expense.getCategoryName()));
+			assertEquals(1, expense.getAccountId());
+		}
+	}
+
+	@Test
+	public void readByAccountId_UpToNow() {
+		expenseDAO.timer = new TimerMock("10.05.15");
+		List<Expense> expenses = expenseDAO.readByAccountId(1, 1, 10, false);
+
+		assertNotNull(expenses);
+		assertEquals(2, expenses.size());
+		for (Expense expense : expenses) {
+			assertTrue(expense.getId() > 0);
+			assertTrue(expense.getReadableDayAsString().length() == 8);
+			assertTrue(expense.getAmount() > 0);
+			assertTrue(expense.getReason().trim().length() > 0);
+			assertFalse(expense.isMonthly());
+			assertFalse(expense.isIncome());
+			assertTrue(expense.getCategoryId() == 11 || expense.getCategoryId() == 12);
+			assertTrue("food".equals(expense.getCategoryName()) || "luxury".equals(expense.getCategoryName()));
+			assertEquals(1, expense.getAccountId());
+		}
+	}
+
+	@Test
+	public void readByAccountId_NotAllEntries() {
+		expenseDAO.timer = new TimerMock("1.7.15");
+		List<Expense> expenses = expenseDAO.readByAccountId(1, 2, 3, false);
+
+		assertNotNull(expenses);
+		assertEquals(2, expenses.size());
+		for (Expense expense : expenses) {
+			assertTrue(expense.getId() == 102 || expense.getId() == 103);
+			assertTrue(expense.getReadableDayAsString().length() == 8);
+			assertTrue(expense.getAmount() > 0);
+			assertTrue(expense.getReason().equals("jewels") || expense.getReason().equals("french fries"));
+			assertFalse(expense.isMonthly());
 			assertTrue(expense.getCategoryId() == 11 || expense.getCategoryId() == 12);
 			assertTrue("food".equals(expense.getCategoryName()) || "luxury".equals(expense.getCategoryName()));
 			assertEquals(1, expense.getAccountId());
@@ -169,54 +210,23 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 	}
 
 	@Test
-	public void readByAccountId_NotAllEntries() {
-		List<Expense> expenses = expenseDAO.readByAccountId(1, 2, 3);
-
-		assertNotNull(expenses);
-		assertEquals(2, expenses.size());
-		for (Expense expense : expenses) {
-			assertTrue(expense.getId() == 102 || expense.getId() == 103);
-			assertTrue(expense.getReadableDayAsString().length() == 8);
-			assertTrue(expense.getAmount() > 0);
-			assertTrue(expense.getReason().equals("jewels") || expense.getReason().equals("french fries"));
-			assertFalse(expense.isMonthly());
-			assertTrue(expense.getCategoryId() == 11 || expense.getCategoryId() == 12);
-			assertTrue("food".equals(expense.getCategoryName()) || "luxury".equals(expense.getCategoryName()));
-			assertEquals(1, expense.getAccountId());
-		}
-	}
-
-	@Test
-	public void readAmountOfExpenses() {
-		assertEquals(4, expenseDAO.readAmountOfExpenses(1));
-
-		expenseDAO.create("25.05.15", 13.3, "junk food", false, false, 11, 1);
-		expenseDAO.create("25.05.15", 13.3, "junk food", false, false, 11, 1);
-		Expense expense = expenseDAO.create("25.05.15", 13.3, "junk food", false, false, 11, 1);
-
-		assertEquals(7, expenseDAO.readAmountOfExpenses(1));
-
-		expenseDAO.deleteById(expense.getId());
-
-		assertEquals(6, expenseDAO.readAmountOfExpenses(1));
-	}
-
-	@Test
 	public void readAmountOfExpensesInFuture() {
-		assertEquals(2, expenseDAO.readAmountOfExpensesInFuture(1, "2015-05-10"));
+		expenseDAO.timer = new TimerMock("10.5.15");
+		assertEquals(2, expenseDAO.readAmountOfExpensesInFuture(1));
 
 		expenseDAO.create("25.06.15", 13.3, "junk food", false, false, 11, 1);
 
-		assertEquals(3, expenseDAO.readAmountOfExpensesInFuture(1, "2015-05-10"));
+		assertEquals(3, expenseDAO.readAmountOfExpensesInFuture(1));
 	}
 
 	@Test
 	public void readAmountOfExpensesUpToNow() {
-		assertEquals(2, expenseDAO.readAmountOfExpensesUpToNow(1, "2015-05-10"));
+		expenseDAO.timer = new TimerMock("10.5.15");
+		assertEquals(2, expenseDAO.readAmountOfExpensesUpToNow(1));
 
 		expenseDAO.create("25.04.15", 13.3, "junk food", false, false, 11, 1);
 
-		assertEquals(3, expenseDAO.readAmountOfExpensesUpToNow(1, "2015-05-10"));
+		assertEquals(3, expenseDAO.readAmountOfExpensesUpToNow(1));
 	}
 
 	@Test

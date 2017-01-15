@@ -9,6 +9,7 @@ import java.util.List;
 
 import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.Timer;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -35,13 +36,14 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 
 	private static final String SQL_READ_BY_ID = SQL_READ_TEMPLATE + "AND e.id = ?";
 
-	private static final String SQL_READ_BY_ACCOUNT_ID = "SELECT * FROM (" + SQL_READ_TEMPLATE
-			+ "AND monthly = false ORDER BY day DESC, id DESC) WHERE rownum() <= ?";
+	private static final String SQL_READ_BY_ACCOUNT_ID_INFUTURE = "SELECT * FROM (" + SQL_READ_TEMPLATE
+			+ "AND e.monthly = false AND e.day > ? ORDER BY e.day DESC, e.id DESC) WHERE rownum() <= ?";
+
+	private static final String SQL_READ_BY_ACCOUNT_ID_UPTONOW = "SELECT * FROM (" + SQL_READ_TEMPLATE
+			+ "AND monthly = false AND day <= ? ORDER BY day DESC, id DESC) WHERE rownum() <= ?";
 
 	private static final String SQL_READ_MONTHLY_BY_ACCOUNT_AND_MONTH = SQL_READ_TEMPLATE
 			+ "AND year(e.day)+'.'+lpad(month(e.day),2,'0') = ? AND monthly = true ORDER BY amount DESC, id DESC";
-
-	private static final String SQL_READ_AMOUNT_BY_ACCOUNT_ID = "SELECT COUNT(id) as amountofexpenses FROM Expense WHERE account_id = ? AND monthly = false";
 
 	private static final String SQL_READ_AMOUNT_IN_FUTURE_BY_ACCOUNT_ID = "SELECT COUNT(id) as amountofexpenses FROM Expense WHERE account_id = ? AND monthly = false AND day > ?";
 
@@ -56,6 +58,8 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 	private SequenceDAO sequenceDAO;
 
 	private CategoryDAO categoryDAO;
+
+	Timer timer = new Timer();
 
 	public ExpenseDAO(final SequenceDAO sequenceDAO) {
 		this.sequenceDAO = sequenceDAO;
@@ -160,14 +164,15 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 		return updated;
 	}
 
-	public List<Expense> readByAccountId(final long accountId, final long startIndex, final long endIndex) {
+	public List<Expense> readByAccountId(final long accountId, final long startIndex, final long endIndex, final boolean inFuture) {
 		List<Expense> expenses = new ArrayList<Expense>();
 
 		try (Connection connection = getConnection()) {
 			PreparedStatement readStatement;
-			readStatement = connection.prepareStatement(SQL_READ_BY_ACCOUNT_ID);
+			readStatement = connection.prepareStatement(inFuture ? SQL_READ_BY_ACCOUNT_ID_INFUTURE : SQL_READ_BY_ACCOUNT_ID_UPTONOW);
 			readStatement.setLong(1, accountId);
-			readStatement.setLong(2, endIndex);
+			readStatement.setDate(2, new java.sql.Date(timer.getCurrentTimeMillis()));
+			readStatement.setLong(3, endIndex);
 			ResultSet result = readStatement.executeQuery();
 			while (result.next()) {
 				if (result.getRow() >= startIndex) {
@@ -204,33 +209,14 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 		return monthlyCosts;
 	}
 
-	public long readAmountOfExpenses(final long accountId) {
-		long amountOfExpenses = -1;
-
-		try (Connection connection = getConnection()) {
-			PreparedStatement readStatement;
-			readStatement = connection.prepareStatement(SQL_READ_AMOUNT_BY_ACCOUNT_ID);
-			readStatement.setLong(1, accountId);
-			ResultSet result = readStatement.executeQuery();
-			if (result.next()) {
-				amountOfExpenses = result.getLong("amountofexpenses");
-			}
-			connection.rollback();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return amountOfExpenses;
-	}
-
-	public long readAmountOfExpensesInFuture(final long accountId, final String today) {
+	public long readAmountOfExpensesInFuture(final long accountId) {
 		long amountOfExpenses = -1;
 
 		try (Connection connection = getConnection()) {
 			PreparedStatement readStatement;
 			readStatement = connection.prepareStatement(SQL_READ_AMOUNT_IN_FUTURE_BY_ACCOUNT_ID);
 			readStatement.setLong(1, accountId);
-			readStatement.setString(2, today);
+			readStatement.setDate(2, new java.sql.Date(timer.getCurrentTimeMillis()));
 			ResultSet result = readStatement.executeQuery();
 			if (result.next()) {
 				amountOfExpenses = result.getLong("amountofexpenses");
@@ -243,14 +229,14 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 		return amountOfExpenses;
 	}
 
-	public long readAmountOfExpensesUpToNow(final long accountId, final String today) {
+	public long readAmountOfExpensesUpToNow(final long accountId) {
 		long amountOfExpenses = -1;
 
 		try (Connection connection = getConnection()) {
 			PreparedStatement readStatement;
 			readStatement = connection.prepareStatement(SQL_READ_AMOUNT_UP_TO_NOW_BY_ACCOUNT_ID);
 			readStatement.setLong(1, accountId);
-			readStatement.setString(2, today);
+			readStatement.setDate(2, new java.sql.Date(timer.getCurrentTimeMillis()));
 			ResultSet result = readStatement.executeQuery();
 			if (result.next()) {
 				amountOfExpenses = result.getLong("amountofexpenses");

@@ -31,4 +31,11 @@ public class TimerMockTest {
 
 		assertEquals(FAKE_TIME, fakeTime.getCurrentTimeMillis());
 	}
+
+	@Test
+	public void getCurrentTimeMillis_FromDate() {
+		Timer fakeTime = new TimerMock("08.05.1981");
+
+		assertEquals(358120800000l, fakeTime.getCurrentTimeMillis());
+	}
 }
