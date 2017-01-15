@@ -81,19 +81,19 @@ the License.
             </th></c:if>
             <c:if test="${requestScope.mode eq 'monthly'}"><th class="w3-light-grey" colspan="5">
                 <c:choose>
-                <c:when test="${requestScope.monthMax eq requestScope.monthCurrent}">
+                <c:when test="${requestScope.monthMin eq requestScope.monthCurrent}">
                     <img src="img/sign-left_24_inactive.png" alt="<fmt:message key="listexpenses.monthlynavigation.left.inactive.tooltip"/>" title="<fmt:message key="listexpenses.monthlynavigation.left.inactive.tooltip"/>" width="24" height="24"/>
                 </c:when>
                 <c:otherwise>
-                    <a href="listexpenses.jsp?monthly=true&month=${requestScope.monthCurrent.next()}"><img src="img/sign-left_24.png" alt="<fmt:message key="listexpenses.monthlynavigation.left.active.tooltip"/>" title="<fmt:message key="listexpenses.monthlynavigation.left.active.tooltip"/>" width="24" height="24"/></a>
+                    <a href="listexpenses.jsp?monthly=true&month=${requestScope.monthCurrent.previous()}"><img src="img/sign-left_24.png" alt="<fmt:message key="listexpenses.monthlynavigation.left.active.tooltip"/>" title="<fmt:message key="listexpenses.monthlynavigation.left.active.tooltip"/>" width="24" height="24"/></a>
                 </c:otherwise>
                 </c:choose>
                 <c:choose>
-                <c:when test="${requestScope.monthMin eq requestScope.monthCurrent}">
+                <c:when test="${requestScope.monthMax eq requestScope.monthCurrent}">
                     <img src="img/sign-right_24_inactive.png" alt="<fmt:message key="listexpenses.monthlynavigation.right.inactive.tooltip"/>" title="<fmt:message key="listexpenses.monthlynavigation.right.inactive.tooltip"/>" width="24" height="24"/>
                 </c:when>
                 <c:otherwise>
-                    <a href="listexpenses.jsp?monthly=true&month=${requestScope.monthCurrent.previous()}">
+                    <a href="listexpenses.jsp?monthly=true&month=${requestScope.monthCurrent.next()}">
                         <img src="img/sign-right_24.png" alt="<fmt:message key="listexpenses.monthlynavigation.right.active.tooltip"/>" title="<fmt:message key="listexpenses.monthlynavigation.right.active.tooltip"/>" width="24" height="24"/>
                     </a>
                 </c:otherwise>
