@@ -2,6 +2,7 @@ package vu.de.npolke.myexpenses.util;
 
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -35,7 +36,7 @@ public class TimerMock extends Timer {
 	}
 
 	public TimerMock(final String readableDate) {
-		calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Berlin"), Locale.GERMANY);
+		calendar = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of("Europe/Berlin")), Locale.GERMANY);
 		try {
 			calendar.setTime(DATA_FORMATTER.parse(readableDate));
 		} catch (ParseException pe) {
