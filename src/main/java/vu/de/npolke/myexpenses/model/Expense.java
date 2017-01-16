@@ -7,7 +7,6 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -49,10 +48,6 @@ public class Expense implements Serializable {
 	private boolean monthly = false;
 
 	private boolean income = false;
-
-	public Expense() {
-		DATA_FORMATTER.setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
-	}
 
 	public long getId() {
 		return id;
