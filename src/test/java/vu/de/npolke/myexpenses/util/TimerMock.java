@@ -35,10 +35,10 @@ public class TimerMock extends Timer {
 	}
 
 	public TimerMock(final String readableDate) {
+		DATA_FORMATTER.setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
 		calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Berlin"), Locale.GERMANY);
 		try {
 			calendar.setTime(DATA_FORMATTER.parse(readableDate));
-			calendar.setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
 		} catch (ParseException pe) {
 		}
 	}
