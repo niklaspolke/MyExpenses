@@ -2,6 +2,7 @@ package vu.de.npolke.myexpenses.util;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -32,6 +33,9 @@ public class TimerMockTest {
 		assertEquals(FAKE_TIME, fakeTime.getCurrentTimeMillis());
 	}
 
+	// should be corrected, when no work with currentTimeMillis is needed any more
+	// either use of Java8 Time classes or String for date
+	@Ignore
 	@Test
 	public void getCurrentTimeMillis_FromDate() {
 		Timer fakeTime = new TimerMock("08.05.1981");
