@@ -13,6 +13,7 @@ import java.util.Locale;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
@@ -35,6 +36,7 @@ import vu.de.npolke.myexpenses.util.Month;
  *
  * @author Niklas Polke
  */
+@Category(vu.de.npolke.myexpenses.InMemory.class)
 public class StatisticsDAOTest extends AbstractDAOTest {
 
 	private static final String TESTDATA_INSERT_SCRIPT = "src/test/resources/insert_testdata_statistics.sql";

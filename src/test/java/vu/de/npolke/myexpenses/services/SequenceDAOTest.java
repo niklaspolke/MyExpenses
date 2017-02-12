@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -22,6 +23,7 @@ import org.junit.Test;
  *
  * @author Niklas Polke
  */
+@Category(vu.de.npolke.myexpenses.InMemory.class)
 public class SequenceDAOTest extends AbstractDAOTest {
 
 	private static SequenceDAO sequenceDAO;

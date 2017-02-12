@@ -30,6 +30,7 @@ import vu.de.npolke.myexpenses.model.Category;
  *
  * @author Niklas Polke
  */
+@org.junit.experimental.categories.Category(vu.de.npolke.myexpenses.InMemory.class)
 public class CategoryDAOTest extends AbstractDAOTest {
 
 	private static final long ACCOUNT_ID = 1;

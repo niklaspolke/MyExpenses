@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.util.HashUtil;
@@ -28,6 +29,7 @@ import vu.de.npolke.myexpenses.util.HashUtil;
  *
  * @author Niklas Polke
  */
+@Category(vu.de.npolke.myexpenses.InMemory.class)
 public class AccountDAOTest extends AbstractDAOTest {
 
 	private static AccountDAO accountDAO;

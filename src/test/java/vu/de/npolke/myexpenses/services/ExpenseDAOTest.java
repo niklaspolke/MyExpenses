@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.util.Month;
@@ -32,6 +33,7 @@ import vu.de.npolke.myexpenses.util.TimerMock;
  *
  * @author Niklas Polke
  */
+@Category(vu.de.npolke.myexpenses.InMemory.class)
 public class ExpenseDAOTest extends AbstractDAOTest {
 
 	private static ExpenseDAO expenseDAO;
