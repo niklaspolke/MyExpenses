@@ -37,3 +37,6 @@ ul.w3-ul li { border-bottom: 0 }
 .total-cost {
 	color: red;
 }
+.nowrap {
+	white-space: nowrap;
+}

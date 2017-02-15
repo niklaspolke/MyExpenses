@@ -61,7 +61,7 @@ the License.
                         <c:when test="${category.name ne 'Total' and category.value gt 0}"><a href="listexpenses.jsp?month=${requestScope.month}&category=${category.id}"><c:out value="${category.name}"/></a></c:when>
                         <c:otherwise><fmt:message key="statistics.total"/></c:otherwise>
                         </c:choose>
-                    </td><td class="number" style="text-align:right">
+                    </td><td class="number nowrap" style="text-align:right">
                         <fmt:formatNumber value="${category.value}" type="currency" pattern="0.00 €"/>
                     </td>
                 </tr>
@@ -87,7 +87,7 @@ the License.
                         <c:when test="${category.name eq 'Total'}"><fmt:message key="statistics.total"/></c:when>
                         <c:otherwise><c:out value="${category.name}"/></c:otherwise>
                         </c:choose>
-                    </td><td class="number" style="text-align:right">
+                    </td><td class="number nowrap" style="text-align:right">
                         <fmt:formatNumber value="${category.value}" type="currency" pattern="0.00 €"/>
                     </td>
                 </tr>
@@ -111,7 +111,7 @@ the License.
                         <c:when test="${category.name eq 'Total'}"><fmt:message key="statistics.total"/></c:when>
                         <c:otherwise><c:out value="${category.name}"/></c:otherwise>
                         </c:choose>
-                    </td><td class="number" style="text-align:right">
+                    </td><td class="number nowrap" style="text-align:right">
                         <fmt:formatNumber value="${category.value}" type="currency" pattern="0.00 €"/>
                     </td>
                 </tr>
@@ -125,7 +125,7 @@ the License.
     <div class="w3-col m6">
         <h4><fmt:message key="statistics.result.title"/></h4>
         <div id="myBarChart" style="height: 100px"></div>
-        <div class="${requestScope.sum > 0 ? 'total-income' : 'total-cost'}"><fmt:message key="statistics.result.sum"/> <fmt:formatNumber value="${requestScope.sum}" type="currency" pattern="0.00 €"/></div>
+        <div class="${requestScope.sum > 0 ? 'total-income' : 'total-cost'} nowrap"><fmt:message key="statistics.result.sum"/> <fmt:formatNumber value="${requestScope.sum}" type="currency" pattern="0.00 €"/></div>
     </div>
 </div>
 
