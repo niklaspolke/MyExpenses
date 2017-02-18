@@ -21,16 +21,23 @@ import java.util.List;
  *
  * @author Niklas Polke
  */
-public class StatisticsPairContainer {
+public class StatisticsPairContainerOfMonth {
+
+	private final String nameOfMonth;
 
 	private final List<StatisticsPair> income;
 	private final List<StatisticsPair> monthlyExpenses;
 	private final List<StatisticsPair> expenses;
 
-	public StatisticsPairContainer() {
+	public StatisticsPairContainerOfMonth(final String nameOfMonth) {
+		this.nameOfMonth = nameOfMonth;
 		income = new ArrayList<StatisticsPair>();
 		monthlyExpenses = new ArrayList<StatisticsPair>();
 		expenses = new ArrayList<StatisticsPair>();
+	}
+
+	public String getNameOfMonth() {
+		return nameOfMonth;
 	}
 
 	public void add(final StatisticsPair pair) {

@@ -21,12 +21,12 @@ import org.junit.Test;
  *
  * @author Niklas Polke
  */
-public class StatisticsPairContainerTest {
+public class StatisticsPairContainerOfMonthTest {
 
 	private static final StatisticsPair PAIR_MONTHLY_INCOME_1 = createIncome("1income", true);
 	private static final StatisticsPair PAIR_MONTHLY_INCOME_2 = createIncome("2income", true);
-	private static final StatisticsPair PAIR_INCOME_1 = createIncome("1income", false);
-	private static final StatisticsPair PAIR_INCOME_2 = createIncome("2income", false);
+	private static final StatisticsPair PAIR_INCOME_1 = createIncome("3income", false);
+	private static final StatisticsPair PAIR_INCOME_2 = createIncome("4income", false);
 	private static final StatisticsPair PAIR_MONTHLY_EXPENSE_1 = createExpense("1monthlyexpense", true);
 	private static final StatisticsPair PAIR_MONTHLY_EXPENSE_2 = createExpense("2monthlyexpense", true);
 	private static final StatisticsPair PAIR_EXPENSE_1 = createExpense("1expense", false);
@@ -40,7 +40,14 @@ public class StatisticsPairContainerTest {
 		return new StatisticsPair(1L, category, 2.3, isMonthly, false);
 	}
 
-	private StatisticsPairContainer container = new StatisticsPairContainer();
+	private static final String NAME_OF_MONTH = "2017-02";
+
+	private StatisticsPairContainerOfMonth container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH);
+
+	@Test
+	public void nameOfMonth() {
+		assertEquals(NAME_OF_MONTH, container.getNameOfMonth());
+	}
 
 	@Test
 	public void addMonthlyIncome() {
