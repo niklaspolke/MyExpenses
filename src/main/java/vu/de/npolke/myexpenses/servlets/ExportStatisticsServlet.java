@@ -85,7 +85,7 @@ public class ExportStatisticsServlet extends AbstractBasicServlet {
 
 		File tempCsvFile = new StatisticsToCsvConverter(container).convertToCsv();
 		streamFileToResponse(tempCsvFile, response, container.getNameOfMonth());
-//		tempCsvFile.delete();
+		tempCsvFile.delete();
 
 		return null;
 	}
