@@ -6,8 +6,10 @@ import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +54,8 @@ public class StatisticsToCsvConverterTest {
 
 	@Before
 	public void setup() {
-		StatisticsPairContainerOfMonth container = new StatisticsPairContainerOfMonth("test");
+		StatisticsPairContainerOfMonth container = new StatisticsPairContainerOfMonth("test",
+				new ArrayList<StatisticsPair>());
 		container.add(PAIR_MONTHLY_INCOME_2);
 		container.add(PAIR_EXPENSE_1);
 		container.add(PAIR_MONTHLY_EXPENSE_2);
@@ -70,18 +73,19 @@ public class StatisticsToCsvConverterTest {
 		File tempFile = converter.convertToCsv();
 
 		assertNotNull(tempFile);
-		try (BufferedReader reader = new BufferedReader(new FileReader(tempFile))) {
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(new FileInputStream(tempFile), "UTF-8"));) {
 			assertEquals("Income", reader.readLine());
-			assertEquals("1income;2,30 €", reader.readLine());
-			assertEquals("2income;2,30 €", reader.readLine());
-			assertEquals("3income;2,30 €", reader.readLine());
-			assertEquals("4income;2,30 €", reader.readLine());
+			assertEquals("1income;2,30", reader.readLine());
+			assertEquals("2income;2,30", reader.readLine());
+			assertEquals("3income;2,30", reader.readLine());
+			assertEquals("4income;2,30", reader.readLine());
 			assertEquals("Monthly Expenses", reader.readLine());
-			assertEquals("1monthlyexpense;2,30 €", reader.readLine());
-			assertEquals("2monthlyexpense;2,30 €", reader.readLine());
+			assertEquals("1monthlyexpense;2,30", reader.readLine());
+			assertEquals("2monthlyexpense;2,30", reader.readLine());
 			assertEquals("Expenses", reader.readLine());
-			assertEquals("1expense;2,30 €", reader.readLine());
-			assertEquals("2expense;2,30 €", reader.readLine());
+			assertEquals("1expense;2,30", reader.readLine());
+			assertEquals("2expense;2,30", reader.readLine());
 		} catch (IOException e) {
 			fail();
 		} finally {

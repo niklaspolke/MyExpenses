@@ -2,8 +2,9 @@ package vu.de.npolke.myexpenses.servlets.util;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,9 +47,7 @@ public class StatisticsToCsvConverter {
 		for (StatisticsPair pair : pairs) {
 			writer.write(pair.getName());
 			writer.write(COLUMN_SEPARATOR);
-			writer.write(String.format(Locale.GERMANY, "%.2f", pair.getValue().doubleValue()));
-			writer.write(" " + CURRENCY);
-			writer.newLine();
+			writeLine(String.format(Locale.GERMANY, "%.2f", pair.getValue().doubleValue()));
 		}
 	}
 
@@ -56,7 +55,7 @@ public class StatisticsToCsvConverter {
 		File tempFile = null;
 		try {
 			tempFile = File.createTempFile("csvexport", ".csv");
-			writer = new BufferedWriter(new FileWriter(tempFile));
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), "UTF-8"));
 			writeLine("Income");
 			writeStatisticsPairsToFile(container.getIncome());
 			writeLine("Monthly Expenses");

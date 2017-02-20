@@ -29,11 +29,15 @@ public class StatisticsPairContainerOfMonth {
 	private final List<StatisticsPair> monthlyExpenses;
 	private final List<StatisticsPair> expenses;
 
-	public StatisticsPairContainerOfMonth(final String nameOfMonth) {
+	public StatisticsPairContainerOfMonth(final String nameOfMonth, final List<StatisticsPair> statistics) {
 		this.nameOfMonth = nameOfMonth;
 		income = new ArrayList<StatisticsPair>();
 		monthlyExpenses = new ArrayList<StatisticsPair>();
 		expenses = new ArrayList<StatisticsPair>();
+
+		for (StatisticsPair pair : statistics) {
+			add(pair);
+		}
 	}
 
 	public String getNameOfMonth() {

@@ -1,6 +1,11 @@
 package vu.de.npolke.myexpenses.servlets.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -42,15 +47,19 @@ public class StatisticsPairContainerOfMonthTest {
 
 	private static final String NAME_OF_MONTH = "2017-02";
 
-	private StatisticsPairContainerOfMonth container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH);
+	private List<StatisticsPair> statistics = new ArrayList<StatisticsPair>();
+	private StatisticsPairContainerOfMonth container;
 
 	@Test
 	public void nameOfMonth() {
+		container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH, statistics);
+
 		assertEquals(NAME_OF_MONTH, container.getNameOfMonth());
 	}
 
 	@Test
 	public void addMonthlyIncome() {
+		container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH, statistics);
 		container.add(PAIR_MONTHLY_INCOME_2);
 		container.add(PAIR_MONTHLY_INCOME_1);
 
@@ -62,6 +71,7 @@ public class StatisticsPairContainerOfMonthTest {
 
 	@Test
 	public void addIncome() {
+		container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH, statistics);
 		container.add(PAIR_INCOME_2);
 		container.add(PAIR_INCOME_1);
 
@@ -73,6 +83,7 @@ public class StatisticsPairContainerOfMonthTest {
 
 	@Test
 	public void addMonthlyExpenses() {
+		container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH, statistics);
 		container.add(PAIR_MONTHLY_EXPENSE_2);
 		container.add(PAIR_MONTHLY_EXPENSE_1);
 
@@ -84,6 +95,7 @@ public class StatisticsPairContainerOfMonthTest {
 
 	@Test
 	public void addExpenses() {
+		container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH, statistics);
 		container.add(PAIR_EXPENSE_2);
 		container.add(PAIR_EXPENSE_1);
 
@@ -95,6 +107,7 @@ public class StatisticsPairContainerOfMonthTest {
 
 	@Test
 	public void addAll() {
+		container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH, statistics);
 		container.add(PAIR_MONTHLY_INCOME_2);
 		container.add(PAIR_EXPENSE_1);
 		container.add(PAIR_MONTHLY_EXPENSE_2);
@@ -121,7 +134,37 @@ public class StatisticsPairContainerOfMonthTest {
 	}
 
 	@Test
+	public void constructorAll() {
+		statistics.add(PAIR_MONTHLY_INCOME_2);
+		statistics.add(PAIR_EXPENSE_1);
+		statistics.add(PAIR_MONTHLY_EXPENSE_2);
+		statistics.add(PAIR_INCOME_1);
+		statistics.add(PAIR_MONTHLY_INCOME_1);
+		statistics.add(PAIR_MONTHLY_EXPENSE_1);
+		statistics.add(PAIR_EXPENSE_2);
+		statistics.add(PAIR_INCOME_2);
+		container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH, statistics);
+
+		assertNotNull(container.getIncome());
+		assertEquals(4, container.getIncome().size());
+		assertNotNull(container.getMonthlyExpenses());
+		assertEquals(2, container.getMonthlyExpenses().size());
+		assertNotNull(container.getExpenses());
+		assertEquals(2, container.getExpenses().size());
+		assertSame(PAIR_MONTHLY_INCOME_1, container.getIncome().get(0));
+		assertSame(PAIR_MONTHLY_INCOME_2, container.getIncome().get(1));
+		assertSame(PAIR_INCOME_1, container.getIncome().get(2));
+		assertSame(PAIR_INCOME_2, container.getIncome().get(3));
+		assertSame(PAIR_MONTHLY_EXPENSE_1, container.getMonthlyExpenses().get(0));
+		assertSame(PAIR_MONTHLY_EXPENSE_2, container.getMonthlyExpenses().get(1));
+		assertSame(PAIR_EXPENSE_1, container.getExpenses().get(0));
+		assertSame(PAIR_EXPENSE_2, container.getExpenses().get(1));
+	}
+
+	@Test
 	public void empty() {
+		container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH, statistics);
+
 		assertNotNull(container.getIncome());
 		assertNotNull(container.getMonthlyExpenses());
 		assertNotNull(container.getExpenses());
