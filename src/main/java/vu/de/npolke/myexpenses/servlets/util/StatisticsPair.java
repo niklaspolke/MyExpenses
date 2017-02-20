@@ -17,7 +17,7 @@ package vu.de.npolke.myexpenses.servlets.util;
  *
  * @author Niklas Polke
  */
-public class StatisticsPair {
+public class StatisticsPair implements Comparable<StatisticsPair> {
 
 	private Long id;
 	private String name;
@@ -52,5 +52,19 @@ public class StatisticsPair {
 
 	public Boolean isIncome() {
 		return income;
+	}
+
+	@Override
+	/**
+	 * Note: this class has a natural ordering that is inconsistent with equals.
+	 */
+	public int compareTo(final StatisticsPair other) {
+		if (isMonthly() && other.isMonthly() == false) {
+			return -100;
+		} else if (isMonthly() == false && other.isMonthly()) {
+			return 100;
+		} else {
+			return getName().compareTo(other.getName());
+		}
 	}
 }

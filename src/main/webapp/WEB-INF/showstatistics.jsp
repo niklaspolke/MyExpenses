@@ -28,19 +28,25 @@ the License.
     <h3><fmt:message key="statistics.title"/></h3>
 </div>
 
-<div class="w3-panel">
-    <form action="showstatistics.jsp" method="post">
-        <select class="w3-input w3-border w3-round-large"
-            name="month"
-            title="<fmt:message key="statistics.month.tooltip"/>"
-            required="required" onchange="this.form.submit()"
-            autofocus>
-            <c:forEach var="month" items="${requestScope.months}">
-                <option value="${month}" ${requestScope.month eq month ? 'selected' : ''}><c:out value="${month}"/></option>
-            </c:forEach>
-        </select>
-        <label class="w3-label" for="month"><fmt:message key="statistics.month.label"/></label>
-    </form>
+<div class="w3-panel w3-row-padding">
+    <div class="w3-col m8">
+        <form action="showstatistics.jsp" method="post">
+            <select class="w3-input w3-border w3-round-large"
+                name="month"
+                title="<fmt:message key="statistics.month.tooltip"/>"
+                required="required" onchange="this.form.submit()"
+                autofocus>
+                <c:forEach var="month" items="${requestScope.months}">
+                    <option value="${month}" ${requestScope.month eq month ? 'selected' : ''}><c:out value="${month}"/></option>
+                </c:forEach>
+            </select>
+            <label class="w3-label" for="month"><fmt:message key="statistics.month.label"/></label>
+        </form>
+    </div><div class="w3-col m4">
+        <a href="exportstatistics.jsp?month=${requestScope.month}" title="<fmt:message key="statistics.export.tooltip"/>">
+            <fmt:message key="statistics.export.label"/><img src="img/cloud-down_24.png" alt="<fmt:message key="statistics.export.tooltip"/>" title="<fmt:message key="statistics.export.tooltip"/>" width="24" height="24"/>
+        </a>
+    </div>
 </div>
 
 <div class="w3-panel w3-row-padding">

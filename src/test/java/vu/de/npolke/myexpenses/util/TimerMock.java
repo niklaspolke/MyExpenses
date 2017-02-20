@@ -33,6 +33,9 @@ public class TimerMock extends Timer {
 		calendar.setTimeInMillis(timeMillis);
 	}
 
+	/**
+	 * @param readableDate e.g. 20.5.15
+	 */
 	public TimerMock(final String readableDate) {
 		calendar = Calendar.getInstance(Locale.GERMANY);
 		try {

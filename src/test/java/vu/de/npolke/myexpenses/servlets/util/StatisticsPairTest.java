@@ -23,38 +23,65 @@ import org.junit.Test;
  */
 public class StatisticsPairTest {
 
+	private static final String CATEGORY_NAME = "category";
+	private static final String CATEGORY_NAME_BIGGER = "highercategory";
+
 	@Test
 	public void constructorToGetterId() {
-		StatisticsPair pair = new StatisticsPair(4l, "category", 3.3, true, false);
+		StatisticsPair pair = new StatisticsPair(4l, CATEGORY_NAME, 3.3, true, false);
 
 		assertEquals(4, pair.getId());
 	}
 
 	@Test
 	public void constructorToGetterName() {
-		StatisticsPair pair = new StatisticsPair(4l, "category", 3.3, true, false);
+		StatisticsPair pair = new StatisticsPair(4l, CATEGORY_NAME, 3.3, true, false);
 
-		assertEquals("category", pair.getName());
+		assertEquals(CATEGORY_NAME, pair.getName());
 	}
 
 	@Test
 	public void constructorToGetterValue() {
-		StatisticsPair pair = new StatisticsPair(4l, "category", 3.3, true, false);
+		StatisticsPair pair = new StatisticsPair(4l, CATEGORY_NAME, 3.3, true, false);
 
 		assertEquals(3.3, pair.getValue(), 0.01);
 	}
 
 	@Test
 	public void constructorToGetterMonthly() {
-		StatisticsPair pair = new StatisticsPair(4l, "category", 3.3, true, false);
+		StatisticsPair pair = new StatisticsPair(4l, CATEGORY_NAME, 3.3, true, false);
 
 		assertEquals(true, pair.isMonthly());
 	}
 
 	@Test
 	public void constructorToGetterIncome() {
-		StatisticsPair pair = new StatisticsPair(4l, "category", 3.3, true, false);
+		StatisticsPair pair = new StatisticsPair(4l, CATEGORY_NAME, 3.3, true, false);
 
 		assertEquals(false, pair.isIncome());
+	}
+
+	private static StatisticsPair createPair(final String name, final boolean isMonthly) {
+		return new StatisticsPair(4l, name, 3.3, isMonthly, false);
+	}
+
+	@Test
+	public void compareToMonthly() {
+		assertTrue(createPair(CATEGORY_NAME, false).compareTo(createPair(CATEGORY_NAME, true)) > 0);
+	}
+
+	@Test
+	public void compareMonthlyTo() {
+		assertTrue(createPair(CATEGORY_NAME, true).compareTo(createPair(CATEGORY_NAME, false)) < 0);
+	}
+
+	@Test
+	public void compareEqual() {
+		assertTrue(createPair(CATEGORY_NAME, false).compareTo(createPair(CATEGORY_NAME, false)) == 0);
+	}
+
+	@Test
+	public void compareTo() {
+		assertTrue(createPair(CATEGORY_NAME, true).compareTo(createPair(CATEGORY_NAME_BIGGER, true)) < 0);
 	}
 }
