@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -27,6 +28,10 @@ import java.util.Locale;
  */
 public class StatisticsToCsvConverter {
 
+	public static final String PROPERTIES = "messages";
+	public static final String PROPERTY_INCOME = "statistics.income.title";
+	public static final String PROPERTY_MONTHLYEXPENSES = "statistics.monthlycosts.title";
+	public static final String PROPERTY_EXPENSES = "statistics.expenses.title";
 	public static final String COLUMN_SEPARATOR = ";";
 	public static final String CURRENCY = "€";
 
@@ -51,19 +56,24 @@ public class StatisticsToCsvConverter {
 		}
 	}
 
-	public synchronized File convertToCsv() {
+	public synchronized File convertToCsv(Locale locale) {
+		if ("en".equalsIgnoreCase(locale.getLanguage())) {
+			locale = new Locale("");
+		}
 		File tempFile = null;
 		try {
 			tempFile = File.createTempFile("csvexport", ".csv");
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), "UTF-8"));
-			writeLine("Income");
+			ResourceBundle properties = ResourceBundle.getBundle(PROPERTIES, locale);
+			writeLine(properties.getString(PROPERTY_INCOME));
 			writeStatisticsPairsToFile(container.getIncome());
-			writeLine("Monthly Expenses");
+			writeLine(properties.getString(PROPERTY_MONTHLYEXPENSES));
 			writeStatisticsPairsToFile(container.getMonthlyExpenses());
-			writeLine("Expenses");
+			writeLine(properties.getString(PROPERTY_EXPENSES));
 			writeStatisticsPairsToFile(container.getExpenses());
 			writer.close();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return tempFile;
 	}

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -77,13 +78,13 @@ public class ExportStatisticsServlet extends AbstractBasicServlet {
 	}
 
 	protected ServletReaction readStatisticsForMonth(final HttpServletResponse response, final Account account,
-			final String monthAsString) {
+			final String monthAsString, final String locale) {
 		Month month = extractMonth(monthAsString);
 
 		List<StatisticsPair> statisticsAll = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId());
 		StatisticsPairContainerOfMonth container = new StatisticsPairContainerOfMonth(month.toString(), statisticsAll);
 
-		File tempCsvFile = new StatisticsToCsvConverter(container).convertToCsv();
+		File tempCsvFile = new StatisticsToCsvConverter(container).convertToCsv(new Locale(locale));
 		streamFileToResponse(tempCsvFile, response, container.getNameOfMonth());
 		tempCsvFile.delete();
 
@@ -95,7 +96,8 @@ public class ExportStatisticsServlet extends AbstractBasicServlet {
 			final HttpSession session, Account account) throws ServletException, IOException {
 
 		final String month = request.getParameter("month");
+		final String locale = (String) session.getAttribute(LoginServlet.COOKIE_LOCALE);
 
-		return readStatisticsForMonth(response, account, month);
+		return readStatisticsForMonth(response, account, month, locale);
 	}
 }

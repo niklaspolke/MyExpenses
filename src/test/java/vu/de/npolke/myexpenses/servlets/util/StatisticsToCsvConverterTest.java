@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -69,8 +70,33 @@ public class StatisticsToCsvConverterTest {
 	}
 
 	@Test
-	public void exportToCsv() {
-		File tempFile = converter.convertToCsv();
+	public void exportToCsv_DE() {
+		File tempFile = converter.convertToCsv(Locale.GERMAN);
+
+		assertNotNull(tempFile);
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(new FileInputStream(tempFile), "UTF-8"));) {
+			assertEquals("Einnahmen", reader.readLine());
+			assertEquals("1income;2,30", reader.readLine());
+			assertEquals("2income;2,30", reader.readLine());
+			assertEquals("3income;2,30", reader.readLine());
+			assertEquals("4income;2,30", reader.readLine());
+			assertEquals("Fixkosten", reader.readLine());
+			assertEquals("1monthlyexpense;2,30", reader.readLine());
+			assertEquals("2monthlyexpense;2,30", reader.readLine());
+			assertEquals("Ausgaben", reader.readLine());
+			assertEquals("1expense;2,30", reader.readLine());
+			assertEquals("2expense;2,30", reader.readLine());
+		} catch (IOException e) {
+			fail();
+		} finally {
+			tempFile.delete();
+		}
+	}
+
+	@Test
+	public void exportToCsv_EN() {
+		File tempFile = converter.convertToCsv(Locale.ENGLISH);
 
 		assertNotNull(tempFile);
 		try (BufferedReader reader = new BufferedReader(
@@ -80,7 +106,7 @@ public class StatisticsToCsvConverterTest {
 			assertEquals("2income;2,30", reader.readLine());
 			assertEquals("3income;2,30", reader.readLine());
 			assertEquals("4income;2,30", reader.readLine());
-			assertEquals("Monthly Expenses", reader.readLine());
+			assertEquals("Monthly Costs", reader.readLine());
 			assertEquals("1monthlyexpense;2,30", reader.readLine());
 			assertEquals("2monthlyexpense;2,30", reader.readLine());
 			assertEquals("Expenses", reader.readLine());
