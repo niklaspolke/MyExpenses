@@ -111,7 +111,7 @@ public class ExportStatisticsServletTest {
 
 		servlet.streamFileToResponse(tempFile, response, MONTH);
 
-		verify(response).setContentType("text/html; charset=UTF-8");
+		verify(response).setContentType("application/octet-stream; charset=UTF-8");
 		verify(response).setCharacterEncoding("UTF-8");
 		verify(response).setContentLength((int) tempFile.length());
 		verify(response).setHeader("Content-Disposition", "attachment; filename=\"" + MONTH + ".csv\"");

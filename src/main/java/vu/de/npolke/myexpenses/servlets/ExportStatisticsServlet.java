@@ -52,7 +52,7 @@ public class ExportStatisticsServlet extends AbstractBasicServlet {
 
 	protected void streamFileToResponse(final File fileToStream, final HttpServletResponse response,
 			final String nameOfMonth) {
-		response.setContentType("text/html; charset=UTF-8");
+		response.setContentType("application/octet-stream; charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		response.setContentLength((int) fileToStream.length());
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + nameOfMonth + ".csv\"");
