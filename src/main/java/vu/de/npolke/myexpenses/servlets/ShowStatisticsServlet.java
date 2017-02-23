@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -42,6 +44,11 @@ import vu.de.npolke.myexpenses.util.Timer;
 @WebServlet("/showstatistics.jsp")
 public class ShowStatisticsServlet extends AbstractBasicServlet {
 
+	public static final String PROPERTIES = "messages";
+	public static final String PROPERTY_INCOME = "statistics.income.title";
+	public static final String PROPERTY_MONTHLYEXPENSES = "statistics.monthlycosts.title";
+	public static final String PROPERTY_EXPENSES = "statistics.expenses.title";
+
 	public static final String TEXT_TOTAL = "Total";
 
 	private static final long serialVersionUID = 1L;
@@ -65,7 +72,8 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 		reaction.setRequestAttribute("barchartoptions", barchartOptions.toString());
 	}
 
-	protected void readStatisticsForMonth(final ServletReaction reaction, final Month month, final Account account) {
+	protected void readStatisticsForMonth(final ServletReaction reaction, final Month month, final Account account,
+			final Locale locale) {
 		List<StatisticsPair> statisticsAll = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId());
 		List<StatisticsPair> statistics = new ArrayList<StatisticsPair>();
 		List<StatisticsPair> statisticsMonthlyCosts = new ArrayList<StatisticsPair>();
@@ -99,7 +107,9 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 		json.addParameter("series", values);
 
 		JsonObject barchart = new JsonObject();
-		barchart.addParameter("labels", new String[] { "Income", "Fixed Costs", "Expenses" });
+		ResourceBundle properties = ResourceBundle.getBundle(PROPERTIES, locale);
+		barchart.addParameter("labels", new String[] { properties.getString(PROPERTY_INCOME),
+				properties.getString(PROPERTY_MONTHLYEXPENSES), properties.getString(PROPERTY_EXPENSES) });
 		barchart.addParameter("series", new Double[] { sumIncome, sumMonthlyCosts, sum });
 
 		reaction.setRequestAttribute("chart", json.toString());
@@ -117,8 +127,9 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 			final HttpSession session, Account account) throws ServletException, IOException {
 
 		final String month = request.getParameter("month");
+		final String locale = (String) session.getAttribute(LoginServlet.COOKIE_LOCALE);
 
-		return prepareStatistics(account, month);
+		return prepareStatistics(account, month, locale);
 	}
 
 	Month getSelectedMonth(final Month wantedMonth, final List<Month> existingMonths) {
@@ -135,7 +146,8 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 		return selectedMonth;
 	}
 
-	public ServletReaction prepareStatistics(final Account account, final String monthAsString) {
+	public ServletReaction prepareStatistics(final Account account, final String monthAsString,
+			final String localeAsString) {
 		ServletReaction reaction = new ServletReaction();
 		Month month = Month.createMonth(monthAsString);
 		if (month == null) {
@@ -145,7 +157,13 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 		List<Month> months = statisticsDAO.readDistinctMonthsByAccountId(account.getId());
 		month = getSelectedMonth(month, months);
 		if (month != null) {
-			readStatisticsForMonth(reaction, month, account);
+			Locale locale;
+			if (localeAsString != null && !localeAsString.equalsIgnoreCase("en")) {
+				locale = new Locale(localeAsString);
+			} else {
+				locale = new Locale("");
+			}
+			readStatisticsForMonth(reaction, month, account, locale);
 		}
 
 		reaction.setRequestAttribute("months", months);

@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +51,7 @@ public class ShowStatisticsServletTest {
 
 	public static final String JSON_BARCHART_OPTIONS = "{\"chartPadding\":{\"top\":5,\"right\":5,\"buttom\":5,\"left\":25},\"distributeSeries\":true,\"horizontalBars\":true,\"reverseData\":true}";
 	public static final String JSON_CHART_TEMPLATE = "{\"labels\":[{1}],\"series\":[{2}]}";
-	public static final String JSON_BARCHART_TEMPLATE = "{\"labels\":[\"Income\",\"Fixed Costs\",\"Expenses\"],\"series\":[{1}]}";
+	public static final String JSON_BARCHART_TEMPLATE = "{\"labels\":[\"Income\",\"Monthly Costs\",\"Expenses\"],\"series\":[{1}]}";
 
 	private ShowStatisticsServlet servlet;
 
@@ -157,10 +158,10 @@ public class ShowStatisticsServletTest {
 		months.add(Month.createMonth("2015.05"));
 		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
 
-		final ServletReaction reaction = servlet.prepareStatistics(account, MONTH.toString());
+		final ServletReaction reaction = servlet.prepareStatistics(account, MONTH.toString(), "en");
 
 		verify(servlet).getSelectedMonth(MONTH, months);
-		verify(servlet).readStatisticsForMonth(any(ServletReaction.class), eq(MONTH), eq(account));
+		verify(servlet).readStatisticsForMonth(any(ServletReaction.class), eq(MONTH), eq(account), eq(new Locale("")));
 		assertNotNull(reaction);
 		assertEquals(months, reaction.getRequestAttributes().get("months"));
 		assertEquals("WEB-INF/showstatistics.jsp", reaction.getForward());
@@ -172,9 +173,10 @@ public class ShowStatisticsServletTest {
 		months.clear();
 		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
 
-		final ServletReaction reaction = servlet.prepareStatistics(account, null);
+		final ServletReaction reaction = servlet.prepareStatistics(account, null, "en");
 
-		verify(servlet, never()).readStatisticsForMonth(any(ServletReaction.class), any(Month.class), eq(account));
+		verify(servlet, never()).readStatisticsForMonth(any(ServletReaction.class), any(Month.class), eq(account),
+				eq(new Locale("")));
 		assertNotNull(reaction);
 		assertEquals(months, reaction.getRequestAttributes().get("months"));
 		assertEquals("WEB-INF/showstatistics.jsp", reaction.getForward());
@@ -208,7 +210,7 @@ public class ShowStatisticsServletTest {
 		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(null, ACCOUNT_ID))
 				.thenReturn(new ArrayList<StatisticsPair>());
 
-		servlet.readStatisticsForMonth(reaction, null, account);
+		servlet.readStatisticsForMonth(reaction, null, account, new Locale(""));
 
 		assertEquals(null, reaction.getRequestAttributes().get("month"));
 		assertStatisticsSizeAndSum(reaction, "statistics", 0, 0.0);
@@ -228,7 +230,7 @@ public class ShowStatisticsServletTest {
 		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(MONTH, ACCOUNT_ID))
 				.thenReturn(new ArrayList<StatisticsPair>());
 
-		servlet.readStatisticsForMonth(reaction, MONTH, account);
+		servlet.readStatisticsForMonth(reaction, MONTH, account, new Locale(""));
 
 		assertEquals(MONTH, reaction.getRequestAttributes().get("month"));
 		assertStatisticsSizeAndSum(reaction, "statistics", 0, 0.0);
@@ -255,7 +257,7 @@ public class ShowStatisticsServletTest {
 		statistic.add(new StatisticsPair(7l, "Flat", 5d, true, false));
 		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(MONTH, ACCOUNT_ID)).thenReturn(statistic);
 
-		servlet.readStatisticsForMonth(reaction, MONTH, account);
+		servlet.readStatisticsForMonth(reaction, MONTH, account, new Locale(""));
 
 		assertEquals(MONTH, reaction.getRequestAttributes().get("month"));
 		assertStatisticsSizeAndSum(reaction, "statistics", 3, 12.0);
