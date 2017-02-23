@@ -20,7 +20,9 @@ import org.junit.Test;
 
 import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
+import vu.de.npolke.myexpenses.servlets.util.JsonObject;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
+import vu.de.npolke.myexpenses.servlets.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.util.Month;
 import vu.de.npolke.myexpenses.util.TimerMock;
@@ -156,6 +158,8 @@ public class ShowStatisticsServletTest {
 		months.add(MONTH);
 		months.add(Month.createMonth("2015.06"));
 		months.add(Month.createMonth("2015.05"));
+		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(eq(MONTH), eq(ACCOUNT_ID)))
+				.thenReturn(new StatisticsOfMonth(""));
 		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
 
 		final ServletReaction reaction = servlet.prepareStatistics(account, MONTH.toString(), "en");
@@ -205,10 +209,29 @@ public class ShowStatisticsServletTest {
 	}
 
 	@Test
+	public void exportToPieChart_empty() {
+		JsonObject json = servlet.exportToPieChart(new ArrayList<StatisticsPair>());
+
+		assertEquals(fillTemplate(JSON_CHART_TEMPLATE, "", ""), json.toString());
+	}
+
+	@Test
+	public void exportToPieChart() {
+		final List<StatisticsPair> statistic = new ArrayList<StatisticsPair>();
+		statistic.add(new StatisticsPair(1l, "Sports", 4d, false, false));
+		statistic.add(new StatisticsPair(3l, "Food", 4d, false, false));
+		statistic.add(new StatisticsPair(5l, "Home", 4d, false, false));
+
+		JsonObject json = servlet.exportToPieChart(statistic);
+
+		assertEquals(fillTemplate(JSON_CHART_TEMPLATE, "\"Sports\",\"Food\",\"Home\"", "4.0,4.0,4.0"), json.toString());
+	}
+
+	@Test
 	public void readStatisticsForMonth_NoStatistics_NullMonth() {
 		final ServletReaction reaction = new ServletReaction();
 		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(null, ACCOUNT_ID))
-				.thenReturn(new ArrayList<StatisticsPair>());
+				.thenReturn(new StatisticsOfMonth(""));
 
 		servlet.readStatisticsForMonth(reaction, null, account, new Locale(""));
 
@@ -228,7 +251,7 @@ public class ShowStatisticsServletTest {
 		final ServletReaction reaction = new ServletReaction();
 		final Month MONTH = Month.createMonth("2015.05");
 		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(MONTH, ACCOUNT_ID))
-				.thenReturn(new ArrayList<StatisticsPair>());
+				.thenReturn(new StatisticsOfMonth(""));
 
 		servlet.readStatisticsForMonth(reaction, MONTH, account, new Locale(""));
 
@@ -247,12 +270,12 @@ public class ShowStatisticsServletTest {
 	public void readStatisticsForMonth_WithStatistics() {
 		final ServletReaction reaction = new ServletReaction();
 		final Month MONTH = Month.createMonth("2015.05");
-		final List<StatisticsPair> statistic = new ArrayList<StatisticsPair>();
-		statistic.add(new StatisticsPair(1l, "Sports", 4d, false, false));
+		final StatisticsOfMonth statistic = new StatisticsOfMonth(MONTH.toString());
+		statistic.add(new StatisticsPair(1l, "Sports", 6d, false, false));
 		statistic.add(new StatisticsPair(2l, "Income", 4d, true, true));
 		statistic.add(new StatisticsPair(3l, "Food", 4d, false, false));
 		statistic.add(new StatisticsPair(4l, "Income", 1d, false, true));
-		statistic.add(new StatisticsPair(5l, "Home", 4d, false, false));
+		statistic.add(new StatisticsPair(5l, "Home", 5d, false, false));
 		statistic.add(new StatisticsPair(6l, "Insurances", 5d, true, false));
 		statistic.add(new StatisticsPair(7l, "Flat", 5d, true, false));
 		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(MONTH, ACCOUNT_ID)).thenReturn(statistic);
@@ -260,14 +283,14 @@ public class ShowStatisticsServletTest {
 		servlet.readStatisticsForMonth(reaction, MONTH, account, new Locale(""));
 
 		assertEquals(MONTH, reaction.getRequestAttributes().get("month"));
-		assertStatisticsSizeAndSum(reaction, "statistics", 3, 12.0);
+		assertStatisticsSizeAndSum(reaction, "statistics", 3, 15.0);
 		assertStatisticsSizeAndSum(reaction, "statisticsMonthlyCosts", 2, 10.0);
 		assertStatisticsSizeAndSum(reaction, "statisticsIncome", 2, 5.0);
-		assertEquals(fillTemplate(JSON_CHART_TEMPLATE, "\"Sports\",\"Food\",\"Home\"", "4.0,4.0,4.0"),
+		assertEquals(fillTemplate(JSON_CHART_TEMPLATE, "\"Food\",\"Home\",\"Sports\"", "4.0,5.0,6.0"),
 				reaction.getRequestAttributes().get("chart"));
-		assertEquals(fillTemplate(JSON_BARCHART_TEMPLATE, "5.0,10.0,12.0"),
+		assertEquals(fillTemplate(JSON_BARCHART_TEMPLATE, "5.0,10.0,15.0"),
 				reaction.getRequestAttributes().get("barchart"));
 		assertEquals(JSON_BARCHART_OPTIONS, reaction.getRequestAttributes().get("barchartoptions"));
-		assertEquals(-17.0, (Double) reaction.getRequestAttributes().get("sum"), DELTA);
+		assertEquals(-20.0, (Double) reaction.getRequestAttributes().get("sum"), DELTA);
 	}
 }

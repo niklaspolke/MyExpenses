@@ -14,8 +14,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,6 +24,7 @@ import org.mockito.InOrder;
 import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
+import vu.de.npolke.myexpenses.servlets.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.util.Month;
 import vu.de.npolke.myexpenses.util.TimerMock;
@@ -70,12 +69,13 @@ public class ExportStatisticsServletTest {
 
 	private static Account account = new Account();
 
-	private static List<StatisticsPair> statistics;
+	private static final String MONTH = "2015-05";
+	private static StatisticsOfMonth statistics;
 
 	@BeforeClass
 	public static void setupClass() {
 		account.setId(ACCOUNT_ID);
-		statistics = new ArrayList<StatisticsPair>();
+		statistics = new StatisticsOfMonth(MONTH);
 		statistics.add(PAIR_MONTHLY_EXPENSE);
 		statistics.add(PAIR_INCOME);
 		statistics.add(PAIR_EXPENSE);
@@ -140,7 +140,6 @@ public class ExportStatisticsServletTest {
 
 	@Test
 	public void readStatistics() throws IOException {
-		final String MONTH = "2015-05";
 		PrintWriter writer = mock(PrintWriter.class);
 		HttpServletResponse response = mock(HttpServletResponse.class);
 		when(response.getWriter()).thenReturn(writer);

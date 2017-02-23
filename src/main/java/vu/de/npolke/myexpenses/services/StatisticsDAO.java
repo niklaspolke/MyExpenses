@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 
 import vu.de.npolke.myexpenses.model.Expense;
+import vu.de.npolke.myexpenses.servlets.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.util.Month;
 
@@ -96,8 +97,8 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 		return months;
 	}
 
-	public List<StatisticsPair> readStatisticsByMonthAndAccountId(final Month month, final long accountId) {
-		List<StatisticsPair> statisticsPairs = new ArrayList<StatisticsPair>();
+	public StatisticsOfMonth readStatisticsByMonthAndAccountId(final Month month, final long accountId) {
+		StatisticsOfMonth statistics = new StatisticsOfMonth(month.toString());
 
 		try (Connection connection = getConnection()) {
 			PreparedStatement readStatement;
@@ -112,14 +113,14 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 				Double value = result.getDouble("sumofamount");
 				Boolean monthly = result.getBoolean("monthly");
 				Boolean income = result.getBoolean("income");
-				statisticsPairs.add(new StatisticsPair(id, category, value, monthly, income));
+				statistics.add(new StatisticsPair(id, category, value, monthly, income));
 			}
 			connection.rollback();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-		return statisticsPairs;
+		return statistics;
 	}
 
 	protected Calendar getToday() {

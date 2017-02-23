@@ -20,6 +20,7 @@ import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.JsonObject;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
+import vu.de.npolke.myexpenses.servlets.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.util.Month;
 import vu.de.npolke.myexpenses.util.Timer;
@@ -72,53 +73,47 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 		reaction.setRequestAttribute("barchartoptions", barchartOptions.toString());
 	}
 
-	protected void readStatisticsForMonth(final ServletReaction reaction, final Month month, final Account account,
-			final Locale locale) {
-		List<StatisticsPair> statisticsAll = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId());
-		List<StatisticsPair> statistics = new ArrayList<StatisticsPair>();
-		List<StatisticsPair> statisticsMonthlyCosts = new ArrayList<StatisticsPair>();
-		List<StatisticsPair> statisticsIncome = new ArrayList<StatisticsPair>();
-
+	protected JsonObject exportToPieChart(final List<StatisticsPair> statistics) {
 		List<String> labels = new ArrayList<String>();
 		List<Double> values = new ArrayList<Double>();
-		Double sum = new Double(0);
-		Double sumMonthlyCosts = new Double(0);
-		Double sumIncome = new Double(0);
-		for (StatisticsPair pair : statisticsAll) {
-			if (pair.isIncome()) {
-				statisticsIncome.add(pair);
-				sumIncome += pair.getValue();
-			} else if (pair.isMonthly() && !pair.isIncome()) {
-				statisticsMonthlyCosts.add(pair);
-				sumMonthlyCosts += pair.getValue();
-			} else {
-				statistics.add(pair);
-				labels.add(pair.getName());
-				values.add(pair.getValue());
-				sum += pair.getValue();
-			}
+
+		for (StatisticsPair pair : statistics) {
+			labels.add(pair.getName());
+			values.add(pair.getValue());
 		}
-		statistics.add(new StatisticsPair(0l, TEXT_TOTAL, sum, false, false));
-		statisticsMonthlyCosts.add(new StatisticsPair(0l, TEXT_TOTAL, sumMonthlyCosts, true, false));
-		statisticsIncome.add(new StatisticsPair(0l, TEXT_TOTAL, sumIncome, true, true));
 
 		JsonObject json = new JsonObject();
 		json.addParameter("labels", labels);
 		json.addParameter("series", values);
+		return json;
+	}
+
+	protected void readStatisticsForMonth(final ServletReaction reaction, final Month month, final Account account,
+			final Locale locale) {
+		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId());
+
+		List<StatisticsPair> statsExpenses = new ArrayList<StatisticsPair>(statistics.getExpenses());
+		statsExpenses.add(new StatisticsPair(0l, TEXT_TOTAL, statistics.getSumExpenses(), false, false));
+		List<StatisticsPair> statsMonthlyExpenses = new ArrayList<StatisticsPair>(statistics.getMonthlyExpenses());
+		statsMonthlyExpenses.add(new StatisticsPair(0l, TEXT_TOTAL, statistics.getSumMonthlyExpenses(), true, false));
+		List<StatisticsPair> statsIncome = new ArrayList<StatisticsPair>(statistics.getIncome());
+		statsIncome.add(new StatisticsPair(0l, TEXT_TOTAL, statistics.getSumIncome(), true, true));
 
 		JsonObject barchart = new JsonObject();
 		ResourceBundle properties = ResourceBundle.getBundle(PROPERTIES, locale);
 		barchart.addParameter("labels", new String[] { properties.getString(PROPERTY_INCOME),
 				properties.getString(PROPERTY_MONTHLYEXPENSES), properties.getString(PROPERTY_EXPENSES) });
-		barchart.addParameter("series", new Double[] { sumIncome, sumMonthlyCosts, sum });
+		barchart.addParameter("series", new Double[] { statistics.getSumIncome(), statistics.getSumMonthlyExpenses(),
+				statistics.getSumExpenses() });
 
-		reaction.setRequestAttribute("chart", json.toString());
+		reaction.setRequestAttribute("chart", exportToPieChart(statistics.getExpenses()).toString());
 		reaction.setRequestAttribute("barchart", barchart.toString());
 		setBarChartOptions(reaction);
-		reaction.setRequestAttribute("statistics", statistics);
-		reaction.setRequestAttribute("statisticsMonthlyCosts", statisticsMonthlyCosts);
-		reaction.setRequestAttribute("statisticsIncome", statisticsIncome);
-		reaction.setRequestAttribute("sum", sumIncome - sumMonthlyCosts - sum);
+		reaction.setRequestAttribute("statistics", statsExpenses);
+		reaction.setRequestAttribute("statisticsMonthlyCosts", statsMonthlyExpenses);
+		reaction.setRequestAttribute("statisticsIncome", statsIncome);
+		reaction.setRequestAttribute("sum",
+				statistics.getSumIncome() - statistics.getSumMonthlyExpenses() - statistics.getSumExpenses());
 		reaction.setRequestAttribute("month", month);
 	}
 

@@ -21,23 +21,20 @@ import java.util.List;
  *
  * @author Niklas Polke
  */
-public class StatisticsPairContainerOfMonth {
+public class StatisticsOfMonth {
 
 	private final String nameOfMonth;
 
-	private final List<StatisticsPair> income;
-	private final List<StatisticsPair> monthlyExpenses;
-	private final List<StatisticsPair> expenses;
+	private final List<StatisticsPair> income = new ArrayList<StatisticsPair>();
+	private double sumIncome = 0.0;
+	private final List<StatisticsPair> monthlyExpenses = new ArrayList<StatisticsPair>();
+	private double sumMonthlyExpenses = 0.0;
+	private final List<StatisticsPair> expenses = new ArrayList<StatisticsPair>();
+	private double sumExpenses = 0.0;
+	private boolean sorted = true;
 
-	public StatisticsPairContainerOfMonth(final String nameOfMonth, final List<StatisticsPair> statistics) {
+	public StatisticsOfMonth(final String nameOfMonth) {
 		this.nameOfMonth = nameOfMonth;
-		income = new ArrayList<StatisticsPair>();
-		monthlyExpenses = new ArrayList<StatisticsPair>();
-		expenses = new ArrayList<StatisticsPair>();
-
-		for (StatisticsPair pair : statistics) {
-			add(pair);
-		}
 	}
 
 	public String getNameOfMonth() {
@@ -48,26 +45,51 @@ public class StatisticsPairContainerOfMonth {
 		if (pair != null) {
 			if (pair.isIncome()) {
 				income.add(pair);
+				sumIncome += pair.getValue();
 			} else if (pair.isMonthly()) {
 				monthlyExpenses.add(pair);
+				sumMonthlyExpenses += pair.getValue();
 			} else {
 				expenses.add(pair);
+				sumExpenses += pair.getValue();
 			}
+			sorted = false;
+		}
+	}
+
+	private void sort() {
+		if (sorted == false) {
+			Collections.sort(income);
+			Collections.sort(monthlyExpenses);
+			Collections.sort(expenses);
+			sorted = true;
 		}
 	}
 
 	public List<StatisticsPair> getIncome() {
-		Collections.sort(income);
+		sort();
 		return income;
 	}
 
 	public List<StatisticsPair> getMonthlyExpenses() {
-		Collections.sort(monthlyExpenses);
+		sort();
 		return monthlyExpenses;
 	}
 
 	public List<StatisticsPair> getExpenses() {
-		Collections.sort(expenses);
+		sort();
 		return expenses;
+	}
+
+	public double getSumIncome() {
+		return sumIncome;
+	}
+
+	public double getSumMonthlyExpenses() {
+		return sumMonthlyExpenses;
+	}
+
+	public double getSumExpenses() {
+		return sumExpenses;
 	}
 }

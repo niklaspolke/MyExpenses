@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Locale;
 
 import org.junit.Before;
@@ -55,8 +54,7 @@ public class StatisticsToCsvConverterTest {
 
 	@Before
 	public void setup() {
-		StatisticsPairContainerOfMonth container = new StatisticsPairContainerOfMonth("test",
-				new ArrayList<StatisticsPair>());
+		StatisticsOfMonth container = new StatisticsOfMonth("test");
 		container.add(PAIR_MONTHLY_INCOME_2);
 		container.add(PAIR_EXPENSE_1);
 		container.add(PAIR_MONTHLY_EXPENSE_2);

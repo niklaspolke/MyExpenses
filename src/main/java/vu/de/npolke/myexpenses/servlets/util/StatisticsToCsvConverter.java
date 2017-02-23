@@ -35,11 +35,11 @@ public class StatisticsToCsvConverter {
 	public static final String COLUMN_SEPARATOR = ";";
 	public static final String CURRENCY = "€";
 
-	private final StatisticsPairContainerOfMonth container;
+	private final StatisticsOfMonth container;
 
 	private BufferedWriter writer;
 
-	public StatisticsToCsvConverter(final StatisticsPairContainerOfMonth container) {
+	public StatisticsToCsvConverter(final StatisticsOfMonth container) {
 		this.container = container;
 	}
 

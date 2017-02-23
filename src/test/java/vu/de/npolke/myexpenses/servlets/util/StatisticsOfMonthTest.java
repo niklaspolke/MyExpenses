@@ -4,9 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 
 /**
@@ -26,7 +23,9 @@ import org.junit.Test;
  *
  * @author Niklas Polke
  */
-public class StatisticsPairContainerOfMonthTest {
+public class StatisticsOfMonthTest {
+
+	private static final double DELTA_ACCEPTED = 0.001;
 
 	private static final StatisticsPair PAIR_MONTHLY_INCOME_1 = createIncome("1income", true);
 	private static final StatisticsPair PAIR_MONTHLY_INCOME_2 = createIncome("2income", true);
@@ -47,19 +46,10 @@ public class StatisticsPairContainerOfMonthTest {
 
 	private static final String NAME_OF_MONTH = "2017-02";
 
-	private List<StatisticsPair> statistics = new ArrayList<StatisticsPair>();
-	private StatisticsPairContainerOfMonth container;
-
-	@Test
-	public void nameOfMonth() {
-		container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH, statistics);
-
-		assertEquals(NAME_OF_MONTH, container.getNameOfMonth());
-	}
+	private StatisticsOfMonth container = new StatisticsOfMonth(NAME_OF_MONTH);
 
 	@Test
 	public void addMonthlyIncome() {
-		container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH, statistics);
 		container.add(PAIR_MONTHLY_INCOME_2);
 		container.add(PAIR_MONTHLY_INCOME_1);
 
@@ -67,11 +57,11 @@ public class StatisticsPairContainerOfMonthTest {
 		assertEquals(2, container.getIncome().size());
 		assertSame(PAIR_MONTHLY_INCOME_1, container.getIncome().get(0));
 		assertSame(PAIR_MONTHLY_INCOME_2, container.getIncome().get(1));
+		assertEquals(4.6, container.getSumIncome(), DELTA_ACCEPTED);
 	}
 
 	@Test
 	public void addIncome() {
-		container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH, statistics);
 		container.add(PAIR_INCOME_2);
 		container.add(PAIR_INCOME_1);
 
@@ -79,11 +69,11 @@ public class StatisticsPairContainerOfMonthTest {
 		assertEquals(2, container.getIncome().size());
 		assertSame(PAIR_INCOME_1, container.getIncome().get(0));
 		assertSame(PAIR_INCOME_2, container.getIncome().get(1));
+		assertEquals(4.6, container.getSumIncome(), DELTA_ACCEPTED);
 	}
 
 	@Test
 	public void addMonthlyExpenses() {
-		container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH, statistics);
 		container.add(PAIR_MONTHLY_EXPENSE_2);
 		container.add(PAIR_MONTHLY_EXPENSE_1);
 
@@ -91,11 +81,11 @@ public class StatisticsPairContainerOfMonthTest {
 		assertEquals(2, container.getMonthlyExpenses().size());
 		assertSame(PAIR_MONTHLY_EXPENSE_1, container.getMonthlyExpenses().get(0));
 		assertSame(PAIR_MONTHLY_EXPENSE_2, container.getMonthlyExpenses().get(1));
+		assertEquals(4.6, container.getSumMonthlyExpenses(), DELTA_ACCEPTED);
 	}
 
 	@Test
 	public void addExpenses() {
-		container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH, statistics);
 		container.add(PAIR_EXPENSE_2);
 		container.add(PAIR_EXPENSE_1);
 
@@ -103,11 +93,11 @@ public class StatisticsPairContainerOfMonthTest {
 		assertEquals(2, container.getExpenses().size());
 		assertSame(PAIR_EXPENSE_1, container.getExpenses().get(0));
 		assertSame(PAIR_EXPENSE_2, container.getExpenses().get(1));
+		assertEquals(4.6, container.getSumExpenses(), DELTA_ACCEPTED);
 	}
 
 	@Test
 	public void addAll() {
-		container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH, statistics);
 		container.add(PAIR_MONTHLY_INCOME_2);
 		container.add(PAIR_EXPENSE_1);
 		container.add(PAIR_MONTHLY_EXPENSE_2);
@@ -127,46 +117,23 @@ public class StatisticsPairContainerOfMonthTest {
 		assertSame(PAIR_MONTHLY_INCOME_2, container.getIncome().get(1));
 		assertSame(PAIR_INCOME_1, container.getIncome().get(2));
 		assertSame(PAIR_INCOME_2, container.getIncome().get(3));
+		assertEquals(9.2, container.getSumIncome(), DELTA_ACCEPTED);
 		assertSame(PAIR_MONTHLY_EXPENSE_1, container.getMonthlyExpenses().get(0));
 		assertSame(PAIR_MONTHLY_EXPENSE_2, container.getMonthlyExpenses().get(1));
+		assertEquals(4.6, container.getSumMonthlyExpenses(), DELTA_ACCEPTED);
 		assertSame(PAIR_EXPENSE_1, container.getExpenses().get(0));
 		assertSame(PAIR_EXPENSE_2, container.getExpenses().get(1));
-	}
-
-	@Test
-	public void constructorAll() {
-		statistics.add(PAIR_MONTHLY_INCOME_2);
-		statistics.add(PAIR_EXPENSE_1);
-		statistics.add(PAIR_MONTHLY_EXPENSE_2);
-		statistics.add(PAIR_INCOME_1);
-		statistics.add(PAIR_MONTHLY_INCOME_1);
-		statistics.add(PAIR_MONTHLY_EXPENSE_1);
-		statistics.add(PAIR_EXPENSE_2);
-		statistics.add(PAIR_INCOME_2);
-		container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH, statistics);
-
-		assertNotNull(container.getIncome());
-		assertEquals(4, container.getIncome().size());
-		assertNotNull(container.getMonthlyExpenses());
-		assertEquals(2, container.getMonthlyExpenses().size());
-		assertNotNull(container.getExpenses());
-		assertEquals(2, container.getExpenses().size());
-		assertSame(PAIR_MONTHLY_INCOME_1, container.getIncome().get(0));
-		assertSame(PAIR_MONTHLY_INCOME_2, container.getIncome().get(1));
-		assertSame(PAIR_INCOME_1, container.getIncome().get(2));
-		assertSame(PAIR_INCOME_2, container.getIncome().get(3));
-		assertSame(PAIR_MONTHLY_EXPENSE_1, container.getMonthlyExpenses().get(0));
-		assertSame(PAIR_MONTHLY_EXPENSE_2, container.getMonthlyExpenses().get(1));
-		assertSame(PAIR_EXPENSE_1, container.getExpenses().get(0));
-		assertSame(PAIR_EXPENSE_2, container.getExpenses().get(1));
+		assertEquals(4.6, container.getSumExpenses(), DELTA_ACCEPTED);
 	}
 
 	@Test
 	public void empty() {
-		container = new StatisticsPairContainerOfMonth(NAME_OF_MONTH, statistics);
-
+		assertEquals(NAME_OF_MONTH, container.getNameOfMonth());
 		assertNotNull(container.getIncome());
 		assertNotNull(container.getMonthlyExpenses());
 		assertNotNull(container.getExpenses());
+		assertEquals(0, container.getSumIncome(), DELTA_ACCEPTED);
+		assertEquals(0, container.getSumMonthlyExpenses(), DELTA_ACCEPTED);
+		assertEquals(0, container.getSumExpenses(), DELTA_ACCEPTED);
 	}
 }

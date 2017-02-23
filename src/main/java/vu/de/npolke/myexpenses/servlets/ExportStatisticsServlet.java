@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.ServletException;
@@ -19,8 +18,8 @@ import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
+import vu.de.npolke.myexpenses.servlets.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
-import vu.de.npolke.myexpenses.servlets.util.StatisticsPairContainerOfMonth;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsToCsvConverter;
 import vu.de.npolke.myexpenses.util.Month;
 import vu.de.npolke.myexpenses.util.Timer;
@@ -81,8 +80,7 @@ public class ExportStatisticsServlet extends AbstractBasicServlet {
 			final String monthAsString, final String locale) {
 		Month month = extractMonth(monthAsString);
 
-		List<StatisticsPair> statisticsAll = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId());
-		StatisticsPairContainerOfMonth container = new StatisticsPairContainerOfMonth(month.toString(), statisticsAll);
+		StatisticsOfMonth container = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId());
 
 		File tempCsvFile = new StatisticsToCsvConverter(container).convertToCsv(new Locale(locale));
 		streamFileToResponse(tempCsvFile, response, container.getNameOfMonth());
