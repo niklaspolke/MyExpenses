@@ -1,8 +1,10 @@
-package vu.de.npolke.myexpenses.servlets.util;
+package vu.de.npolke.myexpenses.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -25,12 +27,14 @@ public class StatisticsOfMonth {
 
 	private final String nameOfMonth;
 
-	private final List<StatisticsPair> income = new ArrayList<StatisticsPair>();
+	private final ArrayList<StatisticsPair> income = new ArrayList<StatisticsPair>();
+	private final ArrayList<StatisticsPair> monthlyExpenses = new ArrayList<StatisticsPair>();
+	private final ArrayList<StatisticsPair> expenses = new ArrayList<StatisticsPair>();
+
 	private double sumIncome = 0.0;
-	private final List<StatisticsPair> monthlyExpenses = new ArrayList<StatisticsPair>();
 	private double sumMonthlyExpenses = 0.0;
-	private final List<StatisticsPair> expenses = new ArrayList<StatisticsPair>();
 	private double sumExpenses = 0.0;
+
 	private boolean sorted = true;
 
 	public StatisticsOfMonth(final String nameOfMonth) {
@@ -57,28 +61,29 @@ public class StatisticsOfMonth {
 		}
 	}
 
-	private void sort() {
-		if (sorted == false) {
-			Collections.sort(income);
-			Collections.sort(monthlyExpenses);
-			Collections.sort(expenses);
-			sorted = true;
-		}
+	protected void sort() {
+		Collections.sort(income);
+		Collections.sort(monthlyExpenses);
+		Collections.sort(expenses);
+		sorted = true;
+	}
+
+	private ArrayList<StatisticsPair> cloneSorted(final ArrayList<StatisticsPair> original) {
+		if (sorted == false)
+			sort();
+		return new ArrayList<StatisticsPair>(original);
 	}
 
 	public List<StatisticsPair> getIncome() {
-		sort();
-		return income;
+		return cloneSorted(income);
 	}
 
 	public List<StatisticsPair> getMonthlyExpenses() {
-		sort();
-		return monthlyExpenses;
+		return cloneSorted(monthlyExpenses);
 	}
 
 	public List<StatisticsPair> getExpenses() {
-		sort();
-		return expenses;
+		return cloneSorted(expenses);
 	}
 
 	public double getSumIncome() {

@@ -16,9 +16,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import vu.de.npolke.myexpenses.model.Expense;
-import vu.de.npolke.myexpenses.servlets.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 
 /**
  * Copyright 2015 Niklas Polke

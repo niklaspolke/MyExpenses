@@ -18,10 +18,10 @@ import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
-import vu.de.npolke.myexpenses.servlets.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsToCsvConverter;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.util.Timer;
 
 /**

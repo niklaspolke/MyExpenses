@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
+
 /**
  * Copyright 2015 Niklas Polke
  *

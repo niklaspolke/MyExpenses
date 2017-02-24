@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Locale;
 
 import vu.de.npolke.myexpenses.model.Expense;
-import vu.de.npolke.myexpenses.servlets.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 
 /**
  * Copyright 2015 Niklas Polke

@@ -14,6 +14,8 @@ import java.util.Locale;
 import org.junit.Before;
 import org.junit.Test;
 
+import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
+
 /**
  * Copyright 2015 Niklas Polke
  *

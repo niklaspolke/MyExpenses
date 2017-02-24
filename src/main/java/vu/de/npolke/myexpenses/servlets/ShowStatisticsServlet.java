@@ -20,9 +20,9 @@ import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.JsonObject;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
-import vu.de.npolke.myexpenses.servlets.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.util.Timer;
 
 /**
@@ -92,11 +92,11 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 			final Locale locale) {
 		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId());
 
-		List<StatisticsPair> statsExpenses = new ArrayList<StatisticsPair>(statistics.getExpenses());
+		List<StatisticsPair> statsExpenses = statistics.getExpenses();
 		statsExpenses.add(new StatisticsPair(0l, TEXT_TOTAL, statistics.getSumExpenses(), false, false));
-		List<StatisticsPair> statsMonthlyExpenses = new ArrayList<StatisticsPair>(statistics.getMonthlyExpenses());
+		List<StatisticsPair> statsMonthlyExpenses = statistics.getMonthlyExpenses();
 		statsMonthlyExpenses.add(new StatisticsPair(0l, TEXT_TOTAL, statistics.getSumMonthlyExpenses(), true, false));
-		List<StatisticsPair> statsIncome = new ArrayList<StatisticsPair>(statistics.getIncome());
+		List<StatisticsPair> statsIncome = statistics.getIncome();
 		statsIncome.add(new StatisticsPair(0l, TEXT_TOTAL, statistics.getSumIncome(), true, true));
 
 		JsonObject barchart = new JsonObject();

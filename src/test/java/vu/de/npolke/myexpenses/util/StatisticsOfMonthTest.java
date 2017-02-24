@@ -1,10 +1,16 @@
-package vu.de.npolke.myexpenses.servlets.util;
+package vu.de.npolke.myexpenses.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
+
+import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -38,10 +44,12 @@ public class StatisticsOfMonthTest {
 
 	private static StatisticsPair createIncome(final String category, final boolean isMonthly) {
 		return new StatisticsPair(1L, category, 2.3, isMonthly, true);
+
 	}
 
 	private static StatisticsPair createExpense(final String category, final boolean isMonthly) {
 		return new StatisticsPair(1L, category, 2.3, isMonthly, false);
+
 	}
 
 	private static final String NAME_OF_MONTH = "2017-02";
@@ -135,5 +143,55 @@ public class StatisticsOfMonthTest {
 		assertEquals(0, container.getSumIncome(), DELTA_ACCEPTED);
 		assertEquals(0, container.getSumMonthlyExpenses(), DELTA_ACCEPTED);
 		assertEquals(0, container.getSumExpenses(), DELTA_ACCEPTED);
+	}
+
+	@Test
+	public void sortEmpty() {
+		StatisticsOfMonth container = spy(new StatisticsOfMonth(NAME_OF_MONTH));
+		container.getExpenses();
+		container.getMonthlyExpenses();
+		container.getIncome();
+
+		verify(container, never()).sort();
+	}
+
+	@Test
+	public void sortNonEmpty() {
+		StatisticsOfMonth container = spy(new StatisticsOfMonth(NAME_OF_MONTH));
+		container.add(PAIR_EXPENSE_1);
+		container.add(PAIR_INCOME_1);
+		container.add(PAIR_MONTHLY_EXPENSE_1);
+
+		// first sort needed
+		container.getExpenses();
+		container.getMonthlyExpenses();
+		container.getIncome();
+		container.getExpenses();
+		container.getMonthlyExpenses();
+		container.getIncome();
+
+		verify(container, times(1)).sort();
+	}
+
+	@Test
+	public void reSort() {
+		StatisticsOfMonth container = spy(new StatisticsOfMonth(NAME_OF_MONTH));
+		container.add(PAIR_EXPENSE_1);
+		container.add(PAIR_INCOME_1);
+		container.add(PAIR_MONTHLY_EXPENSE_1);
+
+		// first sort needed
+		container.getExpenses();
+		container.getMonthlyExpenses();
+		container.getIncome();
+
+		container.add(PAIR_EXPENSE_2);
+
+		// second sort needed
+		container.getExpenses();
+		container.getMonthlyExpenses();
+		container.getIncome();
+
+		verify(container, times(2)).sort();
 	}
 }
