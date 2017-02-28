@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 
 /**
@@ -38,11 +39,18 @@ public class StatisticsToCsvConverter {
 	public static final String CURRENCY = "€";
 
 	private final StatisticsOfMonth container;
+	private final List<Expense> topExpenses;
 
 	private BufferedWriter writer;
 
 	public StatisticsToCsvConverter(final StatisticsOfMonth container) {
 		this.container = container;
+		this.topExpenses = null;
+	}
+
+	public StatisticsToCsvConverter(final StatisticsOfMonth container, final List<Expense> topExpenses) {
+		this.container = container;
+		this.topExpenses = topExpenses;
 	}
 
 	private void writeLine(final String line) throws IOException {
@@ -65,17 +73,31 @@ public class StatisticsToCsvConverter {
 		File tempFile = null;
 		try {
 			tempFile = File.createTempFile("csvexport", ".csv");
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), "UTF-8"));
-			ResourceBundle properties = ResourceBundle.getBundle(PROPERTIES, locale);
-			writeLine(properties.getString(PROPERTY_INCOME));
-			writeStatisticsPairsToFile(container.getIncome());
-			writeLine(properties.getString(PROPERTY_MONTHLYEXPENSES));
-			writeStatisticsPairsToFile(container.getMonthlyExpenses());
-			writeLine(properties.getString(PROPERTY_EXPENSES));
-			writeStatisticsPairsToFile(container.getExpenses());
-			writer.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		if (tempFile != null) {
+			try (BufferedWriter writer = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(tempFile), "UTF-8"))) {
+				this.writer = writer;
+				ResourceBundle properties = ResourceBundle.getBundle(PROPERTIES, locale);
+				writeLine(properties.getString(PROPERTY_INCOME));
+				writeStatisticsPairsToFile(container.getIncome());
+				writeLine(properties.getString(PROPERTY_MONTHLYEXPENSES));
+				writeStatisticsPairsToFile(container.getMonthlyExpenses());
+				writeLine(properties.getString(PROPERTY_EXPENSES));
+				writeStatisticsPairsToFile(container.getExpenses());
+				if (topExpenses != null) {
+					writeLine("");
+					writeLine("Top10 " + properties.getString(PROPERTY_EXPENSES));
+					for (Expense expense : topExpenses) {
+						writeLine(expense.getCategoryName() + " - " + expense.getReason() + COLUMN_SEPARATOR
+								+ String.format(Locale.GERMANY, "%.2f", expense.getAmount()));
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return tempFile;
 	}

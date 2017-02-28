@@ -143,6 +143,14 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 		assertEquals(0, statistics.getExpenses().size());
 	}
 
+	public static void assertExpense(final Expense expense, final String reason, final long categoryId,
+			final String categoryName) {
+		assertNotNull(expense);
+		assertEquals(reason, expense.getReason());
+		assertEquals(categoryName, expense.getCategoryName());
+		assertEquals(categoryId, expense.getCategoryId());
+	}
+
 	@Test
 	public void readTopTenByAccountId() {
 		Calendar fakeActualDay = Calendar.getInstance(Locale.GERMANY);
@@ -156,15 +164,48 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 
 		assertNotNull(expenses);
 		assertEquals(3, expenses.size());
-		assertEquals("climbing", expenses.get(0).getReason());
-		assertEquals("sports", expenses.get(0).getCategoryName());
-		assertEquals(21, expenses.get(0).getCategoryId());
-		assertEquals("supermarket", expenses.get(1).getReason());
-		assertEquals("food", expenses.get(1).getCategoryName());
-		assertEquals(22, expenses.get(1).getCategoryId());
-		assertEquals("jewels", expenses.get(2).getReason());
-		assertEquals("luxury", expenses.get(2).getCategoryName());
-		assertEquals(23, expenses.get(2).getCategoryId());
+		assertExpense(expenses.get(0), "climbing", 21, "sports");
+		assertExpense(expenses.get(1), "supermarket", 22, "food");
+		assertExpense(expenses.get(2), "jewels", 23, "luxury");
+	}
+
+	public static void assertExpense(final Expense expense, final String reason, final long categoryId,
+			final String categoryName, final double amount) {
+		assertNotNull(expense);
+		assertEquals(reason, expense.getReason());
+		assertEquals(categoryName, expense.getCategoryName());
+		assertEquals(categoryId, expense.getCategoryId());
+		assertEquals(amount, expense.getAmount(), DELTA);
+	}
+
+	@Test
+	public void readTopXofExpensesByMonth_Top3Of4_NoIncome_NoMonthly() {
+		List<Expense> expenses = statisticsDAO.readTopXofExpensesByMonth(ACCOUNT_ID, "2015.05", 3);
+
+		assertNotNull(expenses);
+		assertEquals(3, expenses.size());
+
+		assertExpense(expenses.get(0), "climbing", 23, "luxury", 14);
+		assertExpense(expenses.get(1), "jewels", 23, "luxury", 13);
+		assertExpense(expenses.get(2), "supermarket", 22, "food", 12);
+	}
+
+	@Test
+	public void readTopXofExpensesByMonth_Top3OfOne() {
+		List<Expense> expenses = statisticsDAO.readTopXofExpensesByMonth(ACCOUNT_ID, "2015.07", 3);
+
+		assertNotNull(expenses);
+		assertEquals(1, expenses.size());
+
+		assertExpense(expenses.get(0), "climbing", 21, "sports", 20);
+	}
+
+	@Test
+	public void readTopXofExpensesByMonth_NoResult() {
+		List<Expense> expenses = statisticsDAO.readTopXofExpensesByMonth(ACCOUNT_ID, "2020.05", 3);
+
+		assertNotNull(expenses);
+		assertEquals(0, expenses.size());
 	}
 
 	@Test

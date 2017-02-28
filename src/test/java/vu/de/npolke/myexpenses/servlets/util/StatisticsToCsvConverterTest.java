@@ -9,11 +9,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 
 /**
@@ -52,11 +54,13 @@ public class StatisticsToCsvConverterTest {
 		return new StatisticsPair(1L, category, 2.3, isMonthly, false);
 	}
 
+	private StatisticsOfMonth container;
+
 	private StatisticsToCsvConverter converter;
 
 	@Before
 	public void setup() {
-		StatisticsOfMonth container = new StatisticsOfMonth("test");
+		container = new StatisticsOfMonth("test");
 		container.add(PAIR_MONTHLY_INCOME_2);
 		container.add(PAIR_EXPENSE_1);
 		container.add(PAIR_MONTHLY_EXPENSE_2);
@@ -112,6 +116,48 @@ public class StatisticsToCsvConverterTest {
 			assertEquals("Expenses", reader.readLine());
 			assertEquals("1expense;2,30", reader.readLine());
 			assertEquals("2expense;2,30", reader.readLine());
+		} catch (IOException e) {
+			fail();
+		} finally {
+			tempFile.delete();
+		}
+	}
+
+	private static Expense createExpense(final String categoryName, final String reason, final double amount) {
+		Expense exp = new Expense();
+		exp.setCategoryName(categoryName);
+		exp.setReason(reason);
+		exp.setAmount(amount);
+		return exp;
+	}
+
+	@Test
+	public void exportToCsv_DE_WithTopExpenses() {
+		ArrayList<Expense> topExpenses = new ArrayList<Expense>();
+		topExpenses.add(createExpense("sports", "squash", 40));
+		topExpenses.add(createExpense("food", "supermarket", 20.5));
+		converter = new StatisticsToCsvConverter(container, topExpenses);
+
+		File tempFile = converter.convertToCsv(Locale.GERMAN);
+
+		assertNotNull(tempFile);
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(new FileInputStream(tempFile), "UTF-8"));) {
+			assertEquals("Einnahmen", reader.readLine());
+			assertEquals("1income;2,30", reader.readLine());
+			assertEquals("2income;2,30", reader.readLine());
+			assertEquals("3income;2,30", reader.readLine());
+			assertEquals("4income;2,30", reader.readLine());
+			assertEquals("Fixkosten", reader.readLine());
+			assertEquals("1monthlyexpense;2,30", reader.readLine());
+			assertEquals("2monthlyexpense;2,30", reader.readLine());
+			assertEquals("Ausgaben", reader.readLine());
+			assertEquals("1expense;2,30", reader.readLine());
+			assertEquals("2expense;2,30", reader.readLine());
+			assertEquals("", reader.readLine());
+			assertEquals("Top10 Ausgaben", reader.readLine());
+			assertEquals("sports - squash;40,00", reader.readLine());
+			assertEquals("food - supermarket;20,50", reader.readLine());
 		} catch (IOException e) {
 			fail();
 		} finally {

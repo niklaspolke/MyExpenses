@@ -41,10 +41,8 @@ public class SqlScriptExecutor {
 	}
 
 	public static void executeSqlCommand(final Connection connection, final StringBuilder sqlScriptLine) {
-		try {
-			Statement updateQuery = connection.createStatement();
+		try (Statement updateQuery = connection.createStatement()) {
 			updateQuery.executeUpdate(sqlScriptLine.toString());
-			updateQuery.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.ServletException;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import vu.de.npolke.myexpenses.model.Account;
+import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
@@ -81,8 +83,9 @@ public class ExportStatisticsServlet extends AbstractBasicServlet {
 		Month month = extractMonth(monthAsString);
 
 		StatisticsOfMonth container = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId());
+		List<Expense> top15expenses = statisticsDAO.readTopXofExpensesByMonth(account.getId(), month.toString(), 15);
 
-		File tempCsvFile = new StatisticsToCsvConverter(container).convertToCsv(new Locale(locale));
+		File tempCsvFile = new StatisticsToCsvConverter(container, top15expenses).convertToCsv(new Locale(locale));
 		streamFileToResponse(tempCsvFile, response, container.getNameOfMonth());
 		tempCsvFile.delete();
 

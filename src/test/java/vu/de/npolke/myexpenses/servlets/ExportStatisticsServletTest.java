@@ -14,6 +14,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,6 +24,7 @@ import org.junit.Test;
 import org.mockito.InOrder;
 
 import vu.de.npolke.myexpenses.model.Account;
+import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
@@ -69,8 +72,9 @@ public class ExportStatisticsServletTest {
 
 	private static Account account = new Account();
 
-	private static final String MONTH = "2015-05";
+	private static final String MONTH = "2015.05";
 	private static StatisticsOfMonth statistics;
+	private static List<Expense> topExpenses;
 
 	@BeforeClass
 	public static void setupClass() {
@@ -80,6 +84,17 @@ public class ExportStatisticsServletTest {
 		statistics.add(PAIR_INCOME);
 		statistics.add(PAIR_EXPENSE);
 		statistics.add(PAIR_MONTHLY_INCOME);
+		topExpenses = new ArrayList<Expense>();
+		topExpenses.add(createExpense("sports", "squash", 40));
+		topExpenses.add(createExpense("food", "supermarket", 20.5));
+	}
+
+	private static Expense createExpense(final String categoryName, final String reason, final double amount) {
+		Expense exp = new Expense();
+		exp.setCategoryName(categoryName);
+		exp.setReason(reason);
+		exp.setAmount(amount);
+		return exp;
 	}
 
 	private ExportStatisticsServlet servlet = new ExportStatisticsServlet();
@@ -147,6 +162,8 @@ public class ExportStatisticsServletTest {
 		servlet.statisticsDAO = mock(StatisticsDAO.class);
 		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(eq(Month.createMonth(MONTH)), eq(ACCOUNT_ID)))
 				.thenReturn(statistics);
+		when(servlet.statisticsDAO.readTopXofExpensesByMonth(eq(ACCOUNT_ID), eq(MONTH), eq(15)))
+				.thenReturn(topExpenses);
 
 		ServletReaction reaction = servlet.readStatisticsForMonth(response, account, MONTH, "de");
 
@@ -159,5 +176,9 @@ public class ExportStatisticsServletTest {
 		inOrder.verify(writer).println(MONTHLY_EXPENSE + ";" + "2,30");
 		inOrder.verify(writer).println("Ausgaben");
 		inOrder.verify(writer).println(EXPENSE + ";" + "2,30");
+		inOrder.verify(writer).println("");
+		inOrder.verify(writer).println("Top10 Ausgaben");
+		inOrder.verify(writer).println("sports - squash;40,00");
+		inOrder.verify(writer).println("food - supermarket;20,50");
 	}
 }
