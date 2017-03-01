@@ -15,17 +15,14 @@ import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 /**
  * Copyright 2015 Niklas Polke
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  * @author Niklas Polke
  */
@@ -41,6 +38,8 @@ public class StatisticsToCsvConverter {
 
 	private final StatisticsOfMonth container;
 	private final List<Expense> topExpenses;
+	private ResourceBundle properties;
+	private boolean firstColumn = true;
 
 	private BufferedWriter writer;
 
@@ -54,6 +53,22 @@ public class StatisticsToCsvConverter {
 		this.topExpenses = topExpenses;
 	}
 
+	private String getProperty(final String property) {
+		return properties.getString(property);
+	}
+
+	private void setProperties(Locale locale) {
+		/*
+		 * if messages_en.properties won't be found, an other properties based on the system specific default language
+		 * would be taken - to avoid having to care for two equal property files (messages.properties and
+		 * messages_en.properties), this workaround is used
+		 */
+		if ("en".equalsIgnoreCase(locale.getLanguage())) {
+			locale = new Locale("");
+		}
+		this.properties = ResourceBundle.getBundle(PROPERTIES, locale);
+	}
+
 	private static String escapeColumn(String column) {
 		if (column != null && (column.indexOf(COLUMN_SEPARATOR) != -1 || column.indexOf(QUOTATION_MARKS) != -1)) {
 			column = column.replaceAll(QUOTATION_MARKS, QUOTATION_MARKS + QUOTATION_MARKS);
@@ -62,23 +77,30 @@ public class StatisticsToCsvConverter {
 		return column;
 	}
 
-	private void writeLine(final String line) throws IOException {
-		writer.write(line);
+	private StatisticsToCsvConverter writeColumn(final String textInColumn) throws IOException {
+		if (firstColumn == false) {
+			writer.write(COLUMN_SEPARATOR);
+		}
+		firstColumn = false;
+		writer.write(escapeColumn(textInColumn));
+		return this;
+	}
+
+	private void endLine() throws IOException {
 		writer.newLine();
+		firstColumn = true;
 	}
 
 	private void writeStatisticsPairsToFile(final List<StatisticsPair> pairs) throws IOException {
 		for (StatisticsPair pair : pairs) {
-			writer.write(escapeColumn(pair.getName()));
-			writer.write(COLUMN_SEPARATOR);
-			writeLine(escapeColumn(String.format(Locale.GERMANY, "%.2f", pair.getValue().doubleValue())));
+			writeColumn(pair.getName());
+			writeColumn(String.format(Locale.GERMANY, "%.2f", pair.getValue().doubleValue()));
+			endLine();
 		}
 	}
 
 	public synchronized File convertToCsv(Locale locale) {
-		if ("en".equalsIgnoreCase(locale.getLanguage())) {
-			locale = new Locale("");
-		}
+		setProperties(locale);
 		File tempFile = null;
 		try {
 			tempFile = File.createTempFile("csvexport", ".csv");
@@ -89,20 +111,18 @@ public class StatisticsToCsvConverter {
 			try (BufferedWriter writer = new BufferedWriter(
 					new OutputStreamWriter(new FileOutputStream(tempFile), "UTF-8"))) {
 				this.writer = writer;
-				ResourceBundle properties = ResourceBundle.getBundle(PROPERTIES, locale);
-				writeLine(escapeColumn(properties.getString(PROPERTY_INCOME)));
+				writeColumn(getProperty(PROPERTY_INCOME)).endLine();
 				writeStatisticsPairsToFile(container.getIncome());
-				writeLine(escapeColumn(properties.getString(PROPERTY_MONTHLYEXPENSES)));
+				writeColumn(getProperty(PROPERTY_MONTHLYEXPENSES)).endLine();
 				writeStatisticsPairsToFile(container.getMonthlyExpenses());
-				writeLine(escapeColumn(properties.getString(PROPERTY_EXPENSES)));
+				writeColumn(getProperty(PROPERTY_EXPENSES)).endLine();
 				writeStatisticsPairsToFile(container.getExpenses());
 				if (topExpenses != null) {
-					writeLine("");
-					writeLine(escapeColumn("Top10 " + properties.getString(PROPERTY_EXPENSES)));
+					endLine();
+					writeColumn("Top15 " + getProperty(PROPERTY_EXPENSES)).endLine();
 					for (Expense expense : topExpenses) {
-						writeLine(
-								escapeColumn(expense.getCategoryName() + " - " + expense.getReason()) + COLUMN_SEPARATOR
-										+ escapeColumn(String.format(Locale.GERMANY, "%.2f", expense.getAmount())));
+						writeColumn(expense.getCategoryName() + " - " + expense.getReason());
+						writeColumn(String.format(Locale.GERMANY, "%.2f", expense.getAmount())).endLine();
 					}
 				}
 			} catch (IOException e) {

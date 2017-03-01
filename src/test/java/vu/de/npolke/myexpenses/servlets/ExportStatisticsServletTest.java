@@ -177,7 +177,7 @@ public class ExportStatisticsServletTest {
 		inOrder.verify(writer).println("Ausgaben");
 		inOrder.verify(writer).println(EXPENSE + "," + "\"2,30\"");
 		inOrder.verify(writer).println("");
-		inOrder.verify(writer).println("Top10 Ausgaben");
+		inOrder.verify(writer).println("Top15 Ausgaben");
 		inOrder.verify(writer).println("sports - squash,\"40,00\"");
 		inOrder.verify(writer).println("food - supermarket,\"20,50\"");
 	}

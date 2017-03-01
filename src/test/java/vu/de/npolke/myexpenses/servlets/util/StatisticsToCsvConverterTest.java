@@ -158,7 +158,7 @@ public class StatisticsToCsvConverterTest {
 			assertEquals("1expense,\"2,30\"", reader.readLine());
 			assertEquals("2expense,\"2,30\"", reader.readLine());
 			assertEquals("", reader.readLine());
-			assertEquals("Top10 Ausgaben", reader.readLine());
+			assertEquals("Top15 Ausgaben", reader.readLine());
 			assertEquals("sports - squash,\"40,00\"", reader.readLine());
 			assertEquals("food - supermarket,\"20,50\"", reader.readLine());
 		} catch (IOException e) {
