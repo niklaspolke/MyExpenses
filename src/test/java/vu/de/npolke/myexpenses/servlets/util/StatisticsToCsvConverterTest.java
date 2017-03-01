@@ -45,6 +45,9 @@ public class StatisticsToCsvConverterTest {
 	private static final StatisticsPair PAIR_MONTHLY_EXPENSE_2 = createExpense("2monthlyexpense", true);
 	private static final StatisticsPair PAIR_EXPENSE_1 = createExpense("1expense", false);
 	private static final StatisticsPair PAIR_EXPENSE_2 = createExpense("2expense", false);
+	private static final StatisticsPair PAIR_EXPENSE_COLON = createExpense("4expe,nse", false);
+	private static final StatisticsPair PAIR_EXPENSE_QUOTATION_MARK = createExpense("6expe\"nse", false);
+	private static final StatisticsPair PAIR_EXPENSE_QUOTATION_MARK_AND_COLON = createExpense("5e\"xp\"e,nse", false);
 
 	private static StatisticsPair createIncome(final String category, final boolean isMonthly) {
 		return new StatisticsPair(1L, category, 2.3, isMonthly, true);
@@ -81,16 +84,16 @@ public class StatisticsToCsvConverterTest {
 		try (BufferedReader reader = new BufferedReader(
 				new InputStreamReader(new FileInputStream(tempFile), "UTF-8"));) {
 			assertEquals("Einnahmen", reader.readLine());
-			assertEquals("1income;2,30", reader.readLine());
-			assertEquals("2income;2,30", reader.readLine());
-			assertEquals("3income;2,30", reader.readLine());
-			assertEquals("4income;2,30", reader.readLine());
+			assertEquals("1income,\"2,30\"", reader.readLine());
+			assertEquals("2income,\"2,30\"", reader.readLine());
+			assertEquals("3income,\"2,30\"", reader.readLine());
+			assertEquals("4income,\"2,30\"", reader.readLine());
 			assertEquals("Fixkosten", reader.readLine());
-			assertEquals("1monthlyexpense;2,30", reader.readLine());
-			assertEquals("2monthlyexpense;2,30", reader.readLine());
+			assertEquals("1monthlyexpense,\"2,30\"", reader.readLine());
+			assertEquals("2monthlyexpense,\"2,30\"", reader.readLine());
 			assertEquals("Ausgaben", reader.readLine());
-			assertEquals("1expense;2,30", reader.readLine());
-			assertEquals("2expense;2,30", reader.readLine());
+			assertEquals("1expense,\"2,30\"", reader.readLine());
+			assertEquals("2expense,\"2,30\"", reader.readLine());
 		} catch (IOException e) {
 			fail();
 		} finally {
@@ -106,16 +109,16 @@ public class StatisticsToCsvConverterTest {
 		try (BufferedReader reader = new BufferedReader(
 				new InputStreamReader(new FileInputStream(tempFile), "UTF-8"));) {
 			assertEquals("Income", reader.readLine());
-			assertEquals("1income;2,30", reader.readLine());
-			assertEquals("2income;2,30", reader.readLine());
-			assertEquals("3income;2,30", reader.readLine());
-			assertEquals("4income;2,30", reader.readLine());
+			assertEquals("1income,\"2,30\"", reader.readLine());
+			assertEquals("2income,\"2,30\"", reader.readLine());
+			assertEquals("3income,\"2,30\"", reader.readLine());
+			assertEquals("4income,\"2,30\"", reader.readLine());
 			assertEquals("Monthly Costs", reader.readLine());
-			assertEquals("1monthlyexpense;2,30", reader.readLine());
-			assertEquals("2monthlyexpense;2,30", reader.readLine());
+			assertEquals("1monthlyexpense,\"2,30\"", reader.readLine());
+			assertEquals("2monthlyexpense,\"2,30\"", reader.readLine());
 			assertEquals("Expenses", reader.readLine());
-			assertEquals("1expense;2,30", reader.readLine());
-			assertEquals("2expense;2,30", reader.readLine());
+			assertEquals("1expense,\"2,30\"", reader.readLine());
+			assertEquals("2expense,\"2,30\"", reader.readLine());
 		} catch (IOException e) {
 			fail();
 		} finally {
@@ -144,20 +147,53 @@ public class StatisticsToCsvConverterTest {
 		try (BufferedReader reader = new BufferedReader(
 				new InputStreamReader(new FileInputStream(tempFile), "UTF-8"));) {
 			assertEquals("Einnahmen", reader.readLine());
-			assertEquals("1income;2,30", reader.readLine());
-			assertEquals("2income;2,30", reader.readLine());
-			assertEquals("3income;2,30", reader.readLine());
-			assertEquals("4income;2,30", reader.readLine());
+			assertEquals("1income,\"2,30\"", reader.readLine());
+			assertEquals("2income,\"2,30\"", reader.readLine());
+			assertEquals("3income,\"2,30\"", reader.readLine());
+			assertEquals("4income,\"2,30\"", reader.readLine());
 			assertEquals("Fixkosten", reader.readLine());
-			assertEquals("1monthlyexpense;2,30", reader.readLine());
-			assertEquals("2monthlyexpense;2,30", reader.readLine());
+			assertEquals("1monthlyexpense,\"2,30\"", reader.readLine());
+			assertEquals("2monthlyexpense,\"2,30\"", reader.readLine());
 			assertEquals("Ausgaben", reader.readLine());
-			assertEquals("1expense;2,30", reader.readLine());
-			assertEquals("2expense;2,30", reader.readLine());
+			assertEquals("1expense,\"2,30\"", reader.readLine());
+			assertEquals("2expense,\"2,30\"", reader.readLine());
 			assertEquals("", reader.readLine());
 			assertEquals("Top10 Ausgaben", reader.readLine());
-			assertEquals("sports - squash;40,00", reader.readLine());
-			assertEquals("food - supermarket;20,50", reader.readLine());
+			assertEquals("sports - squash,\"40,00\"", reader.readLine());
+			assertEquals("food - supermarket,\"20,50\"", reader.readLine());
+		} catch (IOException e) {
+			fail();
+		} finally {
+			tempFile.delete();
+		}
+	}
+
+	@Test
+	public void exportToCsv_DE_WithTopExpenses_SpecialCharacter() {
+		container.add(PAIR_EXPENSE_COLON);
+		container.add(PAIR_EXPENSE_QUOTATION_MARK);
+		container.add(PAIR_EXPENSE_QUOTATION_MARK_AND_COLON);
+		converter = new StatisticsToCsvConverter(container);
+
+		File tempFile = converter.convertToCsv(Locale.GERMAN);
+
+		assertNotNull(tempFile);
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(new FileInputStream(tempFile), "UTF-8"));) {
+			assertEquals("Einnahmen", reader.readLine());
+			assertEquals("1income,\"2,30\"", reader.readLine());
+			assertEquals("2income,\"2,30\"", reader.readLine());
+			assertEquals("3income,\"2,30\"", reader.readLine());
+			assertEquals("4income,\"2,30\"", reader.readLine());
+			assertEquals("Fixkosten", reader.readLine());
+			assertEquals("1monthlyexpense,\"2,30\"", reader.readLine());
+			assertEquals("2monthlyexpense,\"2,30\"", reader.readLine());
+			assertEquals("Ausgaben", reader.readLine());
+			assertEquals("1expense,\"2,30\"", reader.readLine());
+			assertEquals("2expense,\"2,30\"", reader.readLine());
+			assertEquals("\"4expe,nse\",\"2,30\"", reader.readLine());
+			assertEquals("\"5e\"\"xp\"\"e,nse\",\"2,30\"", reader.readLine());
+			assertEquals("\"6expe\"\"nse\",\"2,30\"", reader.readLine());
 		} catch (IOException e) {
 			fail();
 		} finally {

@@ -170,15 +170,15 @@ public class ExportStatisticsServletTest {
 		assertNull(reaction);
 		InOrder inOrder = inOrder(writer);
 		inOrder.verify(writer).println("Einnahmen");
-		inOrder.verify(writer).println(MONTHLY_INCOME + ";" + "2,30");
-		inOrder.verify(writer).println(INCOME + ";" + "2,30");
+		inOrder.verify(writer).println(MONTHLY_INCOME + "," + "\"2,30\"");
+		inOrder.verify(writer).println(INCOME + "," + "\"2,30\"");
 		inOrder.verify(writer).println("Fixkosten");
-		inOrder.verify(writer).println(MONTHLY_EXPENSE + ";" + "2,30");
+		inOrder.verify(writer).println(MONTHLY_EXPENSE + "," + "\"2,30\"");
 		inOrder.verify(writer).println("Ausgaben");
-		inOrder.verify(writer).println(EXPENSE + ";" + "2,30");
+		inOrder.verify(writer).println(EXPENSE + "," + "\"2,30\"");
 		inOrder.verify(writer).println("");
 		inOrder.verify(writer).println("Top10 Ausgaben");
-		inOrder.verify(writer).println("sports - squash;40,00");
-		inOrder.verify(writer).println("food - supermarket;20,50");
+		inOrder.verify(writer).println("sports - squash,\"40,00\"");
+		inOrder.verify(writer).println("food - supermarket,\"20,50\"");
 	}
 }
