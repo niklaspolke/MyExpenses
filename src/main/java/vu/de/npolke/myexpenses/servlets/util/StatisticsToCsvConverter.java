@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import vu.de.npolke.myexpenses.model.Expense;
+import vu.de.npolke.myexpenses.util.StatisticsElement;
 import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 
 /**
@@ -91,10 +92,10 @@ public class StatisticsToCsvConverter {
 		firstColumn = true;
 	}
 
-	private void writeStatisticsPairsToFile(final List<StatisticsPair> pairs) throws IOException {
-		for (StatisticsPair pair : pairs) {
-			writeColumn(pair.getName());
-			writeColumn(String.format(Locale.GERMANY, "%.2f", pair.getValue().doubleValue()));
+	private void writeStatisticsPairsToFile(final List<StatisticsElement> pairs) throws IOException {
+		for (StatisticsElement pair : pairs) {
+			writeColumn(pair.getCategory());
+			writeColumn(String.format(Locale.GERMANY, "%.2f", pair.getAmount()));
 			endLine();
 		}
 	}

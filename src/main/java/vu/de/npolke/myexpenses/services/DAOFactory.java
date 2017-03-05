@@ -7,7 +7,7 @@ import vu.de.npolke.myexpenses.model.Category;
 import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.connections.ConnectionStrategy;
 import vu.de.npolke.myexpenses.services.connections.JdbcConnectionStrategy;
-import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
+import vu.de.npolke.myexpenses.util.StatisticsElement;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -46,7 +46,7 @@ public class DAOFactory {
 		daoRegistry.put(       Account.class, accountDAO);
 		daoRegistry.put(      Category.class, categoryDAO);
 		daoRegistry.put(       Expense.class, expenseDAO);
-		daoRegistry.put(StatisticsPair.class, statisticsDAO);
+		daoRegistry.put(StatisticsElement.class, statisticsDAO);
 		daoRegistry.put(                null, systemDAO);
 		//@formatter:off
 

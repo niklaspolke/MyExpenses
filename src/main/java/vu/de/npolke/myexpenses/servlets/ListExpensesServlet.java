@@ -17,8 +17,8 @@ import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.ExpenseDAO;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
-import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.StatisticsElement;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -49,7 +49,7 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 	private static final int AMOUNT_OF_ENTRIES_PER_PAGE = 10;
 
 	ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
-	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsPair.class);
+	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsElement.class);
 
 	@Override
 	public ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
@@ -70,7 +70,7 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 		now.setTimeInMillis(System.currentTimeMillis());
 		final int year = now.get(Calendar.YEAR);
 		final int month = now.get(Calendar.MONTH) + 1;
-		return Month.createMonth(year, month);
+		return Month.create(year, month);
 	}
 
 	protected Month calcMaxMonth(final Month current, final List<Month> all) {

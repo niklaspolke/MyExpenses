@@ -20,26 +20,23 @@ import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
-import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsToCsvConverter;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.StatisticsElement;
 import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.util.Timer;
 
 /**
  * Copyright 2015 Niklas Polke
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  * @author Niklas Polke
  */
@@ -48,7 +45,7 @@ public class ExportStatisticsServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsPair.class);
+	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsElement.class);
 
 	Timer timer = new Timer();
 
@@ -86,7 +83,7 @@ public class ExportStatisticsServlet extends AbstractBasicServlet {
 		List<Expense> top15expenses = statisticsDAO.readTopXofExpensesByMonth(account.getId(), month.toString(), 15);
 
 		File tempCsvFile = new StatisticsToCsvConverter(container, top15expenses).convertToCsv(new Locale(locale));
-		streamFileToResponse(tempCsvFile, response, container.getNameOfMonth());
+		streamFileToResponse(tempCsvFile, response, container.getMonth().toString());
 		tempCsvFile.delete();
 
 		return null;

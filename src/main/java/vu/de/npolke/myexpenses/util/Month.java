@@ -42,7 +42,7 @@ public class Month implements Comparable<Month> {
 		return new Month(now.get(Calendar.YEAR), now.get(Calendar.MONTH) + 1);
 	}
 
-	public static Month createMonth(final int year, final int month) {
+	public static Month create(final int year, final int month) {
 		if (month >= 1 && month <= 12) {
 			return new Month(year, month);
 		} else {

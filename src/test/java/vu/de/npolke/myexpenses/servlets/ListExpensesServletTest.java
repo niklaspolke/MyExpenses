@@ -58,7 +58,7 @@ public class ListExpensesServletTest {
 
 	@Test
 	public void calcMaxMonth_NoMonths() {
-		Month month = Month.createMonth(2015, 5);
+		Month month = Month.create(2015, 5);
 
 		Month maxMonth = servlet.calcMaxMonth(month, new ArrayList<Month>());
 
@@ -67,10 +67,10 @@ public class ListExpensesServletTest {
 
 	@Test
 	public void calcMaxMonth_CurrentIsBigger() {
-		Month month = Month.createMonth(2015, 5);
+		Month month = Month.create(2015, 5);
 		List<Month> months = new ArrayList<Month>();
-		months.add(Month.createMonth(2015, 4));
-		months.add(Month.createMonth(2015, 3));
+		months.add(Month.create(2015, 4));
+		months.add(Month.create(2015, 3));
 
 		Month maxMonth = servlet.calcMaxMonth(month, months);
 
@@ -79,10 +79,10 @@ public class ListExpensesServletTest {
 
 	@Test
 	public void calcMaxMonth_MaxFromList() {
-		Month month = Month.createMonth(2015, 5);
+		Month month = Month.create(2015, 5);
 		List<Month> months = new ArrayList<Month>();
-		months.add(Month.createMonth(2015, 6));
-		months.add(Month.createMonth(2015, 3));
+		months.add(Month.create(2015, 6));
+		months.add(Month.create(2015, 3));
 
 		Month maxMonth = servlet.calcMaxMonth(month, months);
 
@@ -91,7 +91,7 @@ public class ListExpensesServletTest {
 
 	@Test
 	public void calcMinMonth_NoMonths() {
-		Month month = Month.createMonth(2015, 5);
+		Month month = Month.create(2015, 5);
 
 		Month minMonth = servlet.calcMinMonth(month, new ArrayList<Month>());
 
@@ -100,10 +100,10 @@ public class ListExpensesServletTest {
 
 	@Test
 	public void calcMinMonth_CurrentIsSmaller() {
-		Month month = Month.createMonth(2015, 5);
+		Month month = Month.create(2015, 5);
 		List<Month> months = new ArrayList<Month>();
-		months.add(Month.createMonth(2015, 7));
-		months.add(Month.createMonth(2015, 6));
+		months.add(Month.create(2015, 7));
+		months.add(Month.create(2015, 6));
 
 		Month minMonth = servlet.calcMinMonth(month, months);
 
@@ -112,10 +112,10 @@ public class ListExpensesServletTest {
 
 	@Test
 	public void calcMinMonth_MinFromList() {
-		Month month = Month.createMonth(2015, 5);
+		Month month = Month.create(2015, 5);
 		List<Month> months = new ArrayList<Month>();
-		months.add(Month.createMonth(2015, 6));
-		months.add(Month.createMonth(2015, 3));
+		months.add(Month.create(2015, 6));
+		months.add(Month.create(2015, 3));
 
 		Month minMonth = servlet.calcMinMonth(month, months);
 

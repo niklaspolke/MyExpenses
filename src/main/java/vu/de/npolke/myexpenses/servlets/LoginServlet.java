@@ -16,7 +16,7 @@ import vu.de.npolke.myexpenses.services.AccountDAO;
 import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
-import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
+import vu.de.npolke.myexpenses.util.StatisticsElement;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -44,7 +44,7 @@ public class LoginServlet extends AbstractBasicServlet {
 	private static final long serialVersionUID = 1L;
 
 	AccountDAO accountDAO = (AccountDAO) DAOFactory.getDAO(Account.class);
-	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsPair.class);
+	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsElement.class);
 
 	@Override
 	public ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
