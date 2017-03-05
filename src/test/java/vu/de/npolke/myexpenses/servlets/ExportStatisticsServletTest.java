@@ -27,25 +27,22 @@ import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
-import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.StatisticsElement;
 import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.util.TimerMock;
 
 /**
  * Copyright 2015 Niklas Polke
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  * @author Niklas Polke
  */
@@ -57,33 +54,36 @@ public class ExportStatisticsServletTest {
 	private static final String INCOME = "income";
 	private static final String MONTHLY_EXPENSE = "monthlyexpense";
 	private static final String EXPENSE = "expense";
-	private static final StatisticsPair PAIR_MONTHLY_INCOME = createIncome(MONTHLY_INCOME, true);
-	private static final StatisticsPair PAIR_INCOME = createIncome(INCOME, false);
-	private static final StatisticsPair PAIR_MONTHLY_EXPENSE = createExpense(MONTHLY_EXPENSE, true);
-	private static final StatisticsPair PAIR_EXPENSE = createExpense(EXPENSE, false);
+	private static final Month MONTH = Month.create(2015, 5);
+	private static final StatisticsElement PAIR_MONTHLY_INCOME = createIncome(MONTHLY_INCOME, true);
+	private static final StatisticsElement PAIR_INCOME = createIncome(INCOME, false);
+	private static final StatisticsElement PAIR_MONTHLY_EXPENSE = createExpense(MONTHLY_EXPENSE, true);
+	private static final StatisticsElement PAIR_EXPENSE = createExpense(EXPENSE, false);
 
-	private static StatisticsPair createIncome(final String category, final boolean isMonthly) {
-		return new StatisticsPair(1L, category, 2.3, isMonthly, true);
+	private static StatisticsElement createIncome(final String category, final boolean isMonthly) {
+		return StatisticsElement.create(MONTH, category, 2.3, isMonthly, true);
 	}
 
-	private static StatisticsPair createExpense(final String category, final boolean isMonthly) {
-		return new StatisticsPair(1L, category, 2.3, isMonthly, false);
+	private static StatisticsElement createExpense(final String category, final boolean isMonthly) {
+		return StatisticsElement.create(MONTH, category, 2.3, isMonthly, false);
 	}
 
 	private static Account account = new Account();
 
-	private static final String MONTH = "2015.05";
 	private static StatisticsOfMonth statistics;
 	private static List<Expense> topExpenses;
 
 	@BeforeClass
 	public static void setupClass() {
 		account.setId(ACCOUNT_ID);
-		statistics = new StatisticsOfMonth(MONTH);
-		statistics.add(PAIR_MONTHLY_EXPENSE);
-		statistics.add(PAIR_INCOME);
-		statistics.add(PAIR_EXPENSE);
-		statistics.add(PAIR_MONTHLY_INCOME);
+		List<StatisticsElement> income = new ArrayList<StatisticsElement>();
+		List<StatisticsElement> monthlyExpenses = new ArrayList<StatisticsElement>();
+		List<StatisticsElement> expenses = new ArrayList<StatisticsElement>();
+		monthlyExpenses.add(PAIR_MONTHLY_EXPENSE);
+		income.add(PAIR_MONTHLY_INCOME);
+		income.add(PAIR_INCOME);
+		expenses.add(PAIR_EXPENSE);
+		statistics = new StatisticsOfMonth(MONTH, income, monthlyExpenses, expenses);
 		topExpenses = new ArrayList<Expense>();
 		topExpenses.add(createExpense("sports", "squash", 40));
 		topExpenses.add(createExpense("food", "supermarket", 20.5));
@@ -160,12 +160,11 @@ public class ExportStatisticsServletTest {
 		when(response.getWriter()).thenReturn(writer);
 
 		servlet.statisticsDAO = mock(StatisticsDAO.class);
-		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(eq(Month.createMonth(MONTH)), eq(ACCOUNT_ID)))
-				.thenReturn(statistics);
-		when(servlet.statisticsDAO.readTopXofExpensesByMonth(eq(ACCOUNT_ID), eq(MONTH), eq(15)))
+		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(eq(MONTH), eq(ACCOUNT_ID))).thenReturn(statistics);
+		when(servlet.statisticsDAO.readTopXofExpensesByMonth(eq(ACCOUNT_ID), eq(MONTH.toString()), eq(15)))
 				.thenReturn(topExpenses);
 
-		ServletReaction reaction = servlet.readStatisticsForMonth(response, account, MONTH, "de");
+		ServletReaction reaction = servlet.readStatisticsForMonth(response, account, MONTH.toString(), "de");
 
 		assertNull(reaction);
 		InOrder inOrder = inOrder(writer);

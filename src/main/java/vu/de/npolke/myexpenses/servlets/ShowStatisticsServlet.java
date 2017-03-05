@@ -20,8 +20,8 @@ import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.JsonObject;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
-import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.StatisticsElement;
 import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.util.Timer;
 
@@ -54,7 +54,7 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsPair.class);
+	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsElement.class);
 
 	Timer timer = new Timer();
 
@@ -73,13 +73,13 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 		reaction.setRequestAttribute("barchartoptions", barchartOptions.toString());
 	}
 
-	protected JsonObject exportToPieChart(final List<StatisticsPair> statistics) {
+	protected JsonObject exportToPieChart(final List<StatisticsElement> statistics) {
 		List<String> labels = new ArrayList<String>();
 		List<Double> values = new ArrayList<Double>();
 
-		for (StatisticsPair pair : statistics) {
-			labels.add(pair.getName());
-			values.add(pair.getValue());
+		for (StatisticsElement pair : statistics) {
+			labels.add(pair.getCategory());
+			values.add(pair.getAmount());
 		}
 
 		JsonObject json = new JsonObject();
@@ -92,12 +92,12 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 			final Locale locale) {
 		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId());
 
-		List<StatisticsPair> statsExpenses = statistics.getExpenses();
-		statsExpenses.add(new StatisticsPair(0l, TEXT_TOTAL, statistics.getSumExpenses(), false, false));
-		List<StatisticsPair> statsMonthlyExpenses = statistics.getMonthlyExpenses();
-		statsMonthlyExpenses.add(new StatisticsPair(0l, TEXT_TOTAL, statistics.getSumMonthlyExpenses(), true, false));
-		List<StatisticsPair> statsIncome = statistics.getIncome();
-		statsIncome.add(new StatisticsPair(0l, TEXT_TOTAL, statistics.getSumIncome(), true, true));
+		List<StatisticsElement> statsExpenses = statistics.getExpenses();
+		statsExpenses.add(StatisticsElement.create(month, TEXT_TOTAL, statistics.getSumExpenses(), false, false));
+		List<StatisticsElement> statsMonthlyExpenses = statistics.getMonthlyExpenses();
+		statsMonthlyExpenses.add(StatisticsElement.create(month, TEXT_TOTAL, statistics.getSumMonthlyExpenses(), true, false));
+		List<StatisticsElement> statsIncome = statistics.getIncome();
+		statsIncome.add(StatisticsElement.create(month, TEXT_TOTAL, statistics.getSumIncome(), true, true));
 
 		JsonObject barchart = new JsonObject();
 		ResourceBundle properties = ResourceBundle.getBundle(PROPERTIES, locale);

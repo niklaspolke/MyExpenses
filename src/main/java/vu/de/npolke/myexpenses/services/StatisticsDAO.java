@@ -11,24 +11,22 @@ import java.util.List;
 import java.util.Locale;
 
 import vu.de.npolke.myexpenses.model.Expense;
-import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.Statistics;
+import vu.de.npolke.myexpenses.util.StatisticsElement;
 import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 
 /**
  * Copyright 2015 Niklas Polke
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  * @author Niklas Polke
  */
@@ -41,7 +39,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 	private static final String SQL_SELECT_DISTINCT_MONTHS = "SELECT DISTINCT year(e.day)+'.'+lpad(month(e.day),2,'0') AS month "
 			+ "FROM expense e " + "WHERE e.account_id = ? " + "ORDER BY month DESC";
 
-	private static final String SQL_SELECT_STATISTICS_FOR_MONTH = "SELECT c.id as id, c.name as category, sum(e.amount) as sumofamount, monthly, income "
+	private static final String SQL_SELECT_STATISTICS_FOR_MONTH = "SELECT c.name as category, sum(e.amount) as sumofamount, monthly, income "
 			+ "FROM category c " + "JOIN ( " + "SELECT category_id, amount, monthly, income " + "FROM expense "
 			+ "WHERE year(day)+'.'+lpad(month(day),2,'0') = ? AND account_id = ? ) e " + "ON e.category_id = c.id "
 			+ "WHERE c.account_id = ? " + "GROUP BY c.id, c.name, e.monthly, e.income "
@@ -85,8 +83,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 	}
 
 	public StatisticsOfMonth readStatisticsByMonthAndAccountId(final Month month, final long accountId) {
-		StatisticsOfMonth statistics = new StatisticsOfMonth(month.toString());
-
+		Statistics stats = new Statistics();
 		try (Connection connection = getConnection()) {
 			PreparedStatement readStatement;
 			readStatement = connection.prepareStatement(SQL_SELECT_STATISTICS_FOR_MONTH);
@@ -95,19 +92,18 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 			readStatement.setLong(3, accountId);
 			ResultSet result = readStatement.executeQuery();
 			while (result.next()) {
-				Long id = result.getLong("id");
 				String category = result.getString("category");
-				Double value = result.getDouble("sumofamount");
+				Double amount = result.getDouble("sumofamount");
 				Boolean monthly = result.getBoolean("monthly");
 				Boolean income = result.getBoolean("income");
-				statistics.add(new StatisticsPair(id, category, value, monthly, income));
+				stats.add(StatisticsElement.create(month, category, amount, monthly, income));
 			}
 			connection.rollback();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-		return statistics;
+		return stats.filter(month);
 	}
 
 	protected Calendar getToday() {
@@ -146,8 +142,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 	}
 
 	/**
-	 * returning no income and no monthly expenses but normal expenses with the
-	 * biggest amount
+	 * returning no income and no monthly expenses but normal expenses with the biggest amount
 	 *
 	 * @param accountId
 	 *            Account of the user
@@ -155,8 +150,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 	 *            month that is searched within
 	 * @param topX
 	 *            amount of expenses with the biggest amount
-	 * @return List of Expenses ordered by the amount (descending) (exclusively
-	 *         monthly expenses and income)
+	 * @return List of Expenses ordered by the amount (descending) (exclusively monthly expenses and income)
 	 */
 	public List<Expense> readTopXofExpensesByMonth(final long accountId, final String month, final int topX) {
 		List<Expense> expenses = new ArrayList<Expense>();

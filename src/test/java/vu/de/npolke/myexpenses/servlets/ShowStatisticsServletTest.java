@@ -22,25 +22,22 @@ import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.JsonObject;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
-import vu.de.npolke.myexpenses.servlets.util.StatisticsPair;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.StatisticsElement;
 import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.util.TimerMock;
 
 /**
  * Copyright 2015 Niklas Polke
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  * @author Niklas Polke
  */
@@ -50,6 +47,8 @@ public class ShowStatisticsServletTest {
 	private static final double DELTA = 0.001;
 
 	public static final long FAKE_TIME = 1483999598469L; // within 2017.01
+
+	private static final Month MONTH = Month.create(2015, 5);
 
 	public static final String JSON_BARCHART_OPTIONS = "{\"chartPadding\":{\"top\":5,\"right\":5,\"buttom\":5,\"left\":25},\"distributeSeries\":true,\"horizontalBars\":true,\"reverseData\":true}";
 	public static final String JSON_CHART_TEMPLATE = "{\"labels\":[{1}],\"series\":[{2}]}";
@@ -83,17 +82,17 @@ public class ShowStatisticsServletTest {
 
 	@Test
 	public void getSelectedMonths_NoMonth() {
-		final Month MONTH = Month.createMonth(2017, 1);
+		final Month MONTH = Month.create(2017, 1);
 
 		assertNull(servlet.getSelectedMonth(MONTH, months));
 	}
 
 	@Test
 	public void getSelectedMonths_SmallerMonths() {
-		final Month MONTH = Month.createMonth(2017, 1);
-		months.add(Month.createMonth(2016, 10));
-		months.add(Month.createMonth(2016, 11));
-		Month nearestMonth = Month.createMonth(2016, 12);
+		final Month MONTH = Month.create(2017, 1);
+		months.add(Month.create(2016, 10));
+		months.add(Month.create(2016, 11));
+		Month nearestMonth = Month.create(2016, 12);
 		months.add(nearestMonth);
 
 		assertEquals(nearestMonth, servlet.getSelectedMonth(MONTH, months));
@@ -101,21 +100,21 @@ public class ShowStatisticsServletTest {
 
 	@Test
 	public void getSelectedMonths_BiggerMonths() {
-		final Month MONTH = Month.createMonth(2017, 1);
-		Month nearestMonth = Month.createMonth(2017, 2);
+		final Month MONTH = Month.create(2017, 1);
+		Month nearestMonth = Month.create(2017, 2);
 		months.add(nearestMonth);
-		months.add(Month.createMonth(2017, 3));
-		months.add(Month.createMonth(2017, 4));
+		months.add(Month.create(2017, 3));
+		months.add(Month.create(2017, 4));
 
 		assertEquals(nearestMonth, servlet.getSelectedMonth(MONTH, months));
 	}
 
 	@Test
 	public void getSelectedMonths_BiggerMonths_ReverseOrder() {
-		final Month MONTH = Month.createMonth(2017, 1);
-		months.add(Month.createMonth(2017, 4));
-		months.add(Month.createMonth(2017, 3));
-		Month nearestMonth = Month.createMonth(2017, 2);
+		final Month MONTH = Month.create(2017, 1);
+		months.add(Month.create(2017, 4));
+		months.add(Month.create(2017, 3));
+		Month nearestMonth = Month.create(2017, 2);
 		months.add(nearestMonth);
 
 		assertEquals(nearestMonth, servlet.getSelectedMonth(MONTH, months));
@@ -123,29 +122,29 @@ public class ShowStatisticsServletTest {
 
 	@Test
 	public void getSelectedMonths_SmallerAndBiggerMonths() {
-		final Month MONTH = Month.createMonth(2017, 1);
-		months.add(Month.createMonth(2016, 10));
-		months.add(Month.createMonth(2016, 11));
-		Month nearestMonth = Month.createMonth(2016, 12);
+		final Month MONTH = Month.create(2017, 1);
+		months.add(Month.create(2016, 10));
+		months.add(Month.create(2016, 11));
+		Month nearestMonth = Month.create(2016, 12);
 		months.add(nearestMonth);
-		months.add(Month.createMonth(2017, 2));
-		months.add(Month.createMonth(2017, 3));
-		months.add(Month.createMonth(2017, 4));
+		months.add(Month.create(2017, 2));
+		months.add(Month.create(2017, 3));
+		months.add(Month.create(2017, 4));
 
 		assertEquals(nearestMonth, servlet.getSelectedMonth(MONTH, months));
 	}
 
 	@Test
 	public void getSelectedMonths_SmallerAndEqualAndBiggerMonths() {
-		final Month MONTH = Month.createMonth(2017, 1);
-		months.add(Month.createMonth(2016, 10));
-		months.add(Month.createMonth(2016, 11));
-		months.add(Month.createMonth(2016, 12));
-		Month equalMonth = Month.createMonth(2017, 1);
+		final Month MONTH = Month.create(2017, 1);
+		months.add(Month.create(2016, 10));
+		months.add(Month.create(2016, 11));
+		months.add(Month.create(2016, 12));
+		Month equalMonth = Month.create(2017, 1);
 		months.add(equalMonth);
-		months.add(Month.createMonth(2017, 2));
-		months.add(Month.createMonth(2017, 3));
-		months.add(Month.createMonth(2017, 4));
+		months.add(Month.create(2017, 2));
+		months.add(Month.create(2017, 3));
+		months.add(Month.create(2017, 4));
 
 		assertEquals(equalMonth, servlet.getSelectedMonth(MONTH, months));
 	}
@@ -159,7 +158,8 @@ public class ShowStatisticsServletTest {
 		months.add(Month.createMonth("2015.06"));
 		months.add(Month.createMonth("2015.05"));
 		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(eq(MONTH), eq(ACCOUNT_ID)))
-				.thenReturn(new StatisticsOfMonth(""));
+				.thenReturn(new StatisticsOfMonth(MONTH, new ArrayList<StatisticsElement>(),
+						new ArrayList<StatisticsElement>(), new ArrayList<StatisticsElement>()));
 		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
 
 		final ServletReaction reaction = servlet.prepareStatistics(account, MONTH.toString(), "en");
@@ -201,26 +201,27 @@ public class ShowStatisticsServletTest {
 		assertNotNull(reaction.getRequestAttributes().get(sessionAttribute));
 
 		@SuppressWarnings("unchecked")
-		List<StatisticsPair> statistics = (List<StatisticsPair>) reaction.getRequestAttributes().get(sessionAttribute);
+		List<StatisticsElement> statistics = (List<StatisticsElement>) reaction.getRequestAttributes()
+				.get(sessionAttribute);
 		assertEquals(expectedSize + 1, statistics.size());
 
-		StatisticsPair sum = statistics.get(expectedSize);
-		assertEquals(exptectedSum, sum.getValue(), DELTA);
+		StatisticsElement sum = statistics.get(expectedSize);
+		assertEquals(exptectedSum, sum.getAmount(), DELTA);
 	}
 
 	@Test
 	public void exportToPieChart_empty() {
-		JsonObject json = servlet.exportToPieChart(new ArrayList<StatisticsPair>());
+		JsonObject json = servlet.exportToPieChart(new ArrayList<StatisticsElement>());
 
 		assertEquals(fillTemplate(JSON_CHART_TEMPLATE, "", ""), json.toString());
 	}
 
 	@Test
 	public void exportToPieChart() {
-		final List<StatisticsPair> statistic = new ArrayList<StatisticsPair>();
-		statistic.add(new StatisticsPair(1l, "Sports", 4d, false, false));
-		statistic.add(new StatisticsPair(3l, "Food", 4d, false, false));
-		statistic.add(new StatisticsPair(5l, "Home", 4d, false, false));
+		final List<StatisticsElement> statistic = new ArrayList<StatisticsElement>();
+		statistic.add(StatisticsElement.create(MONTH, "Sports", 4d, false, false));
+		statistic.add(StatisticsElement.create(MONTH, "Food", 4d, false, false));
+		statistic.add(StatisticsElement.create(MONTH, "Home", 4d, false, false));
 
 		JsonObject json = servlet.exportToPieChart(statistic);
 
@@ -228,30 +229,12 @@ public class ShowStatisticsServletTest {
 	}
 
 	@Test
-	public void readStatisticsForMonth_NoStatistics_NullMonth() {
-		final ServletReaction reaction = new ServletReaction();
-		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(null, ACCOUNT_ID))
-				.thenReturn(new StatisticsOfMonth(""));
-
-		servlet.readStatisticsForMonth(reaction, null, account, new Locale(""));
-
-		assertEquals(null, reaction.getRequestAttributes().get("month"));
-		assertStatisticsSizeAndSum(reaction, "statistics", 0, 0.0);
-		assertStatisticsSizeAndSum(reaction, "statisticsMonthlyCosts", 0, 0.0);
-		assertStatisticsSizeAndSum(reaction, "statisticsIncome", 0, 0.0);
-		assertEquals(fillTemplate(JSON_CHART_TEMPLATE, "", ""), reaction.getRequestAttributes().get("chart"));
-		assertEquals(fillTemplate(JSON_BARCHART_TEMPLATE, "0.0,0.0,0.0"),
-				reaction.getRequestAttributes().get("barchart"));
-		assertEquals(JSON_BARCHART_OPTIONS, reaction.getRequestAttributes().get("barchartoptions"));
-		assertEquals(0.0, (Double) reaction.getRequestAttributes().get("sum"), DELTA);
-	}
-
-	@Test
 	public void readStatisticsForMonth_NoStatistics() {
 		final ServletReaction reaction = new ServletReaction();
 		final Month MONTH = Month.createMonth("2015.05");
 		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(MONTH, ACCOUNT_ID))
-				.thenReturn(new StatisticsOfMonth(""));
+				.thenReturn(new StatisticsOfMonth(MONTH, new ArrayList<StatisticsElement>(),
+						new ArrayList<StatisticsElement>(), new ArrayList<StatisticsElement>()));
 
 		servlet.readStatisticsForMonth(reaction, MONTH, account, new Locale(""));
 
@@ -270,14 +253,17 @@ public class ShowStatisticsServletTest {
 	public void readStatisticsForMonth_WithStatistics() {
 		final ServletReaction reaction = new ServletReaction();
 		final Month MONTH = Month.createMonth("2015.05");
-		final StatisticsOfMonth statistic = new StatisticsOfMonth(MONTH.toString());
-		statistic.add(new StatisticsPair(1l, "Sports", 6d, false, false));
-		statistic.add(new StatisticsPair(2l, "Income", 4d, true, true));
-		statistic.add(new StatisticsPair(3l, "Food", 4d, false, false));
-		statistic.add(new StatisticsPair(4l, "Income", 1d, false, true));
-		statistic.add(new StatisticsPair(5l, "Home", 5d, false, false));
-		statistic.add(new StatisticsPair(6l, "Insurances", 5d, true, false));
-		statistic.add(new StatisticsPair(7l, "Flat", 5d, true, false));
+		List<StatisticsElement> income = new ArrayList<StatisticsElement>();
+		List<StatisticsElement> monthlyExpenses = new ArrayList<StatisticsElement>();
+		List<StatisticsElement> expenses = new ArrayList<StatisticsElement>();
+		income.add(StatisticsElement.create(MONTH, "Income", 4d, true, true));
+		expenses.add(StatisticsElement.create(MONTH, "Food", 4d, false, false));
+		expenses.add(StatisticsElement.create(MONTH, "Home", 5d, false, false));
+		expenses.add(StatisticsElement.create(MONTH, "Sports", 6d, false, false));
+		income.add(StatisticsElement.create(MONTH, "Income", 1d, false, true));
+		monthlyExpenses.add(StatisticsElement.create(MONTH, "Insurances", 5d, true, false));
+		monthlyExpenses.add(StatisticsElement.create(MONTH, "Flat", 5d, true, false));
+		final StatisticsOfMonth statistic = new StatisticsOfMonth(MONTH, income, monthlyExpenses, expenses);
 		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(MONTH, ACCOUNT_ID)).thenReturn(statistic);
 
 		servlet.readStatisticsForMonth(reaction, MONTH, account, new Locale(""));
