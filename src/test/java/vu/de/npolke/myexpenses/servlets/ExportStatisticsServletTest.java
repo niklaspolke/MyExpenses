@@ -55,17 +55,19 @@ public class ExportStatisticsServletTest {
 	private static final String MONTHLY_EXPENSE = "monthlyexpense";
 	private static final String EXPENSE = "expense";
 	private static final Month MONTH = Month.create(2015, 5);
-	private static final StatisticsElement PAIR_MONTHLY_INCOME = createIncome(MONTHLY_INCOME, true);
-	private static final StatisticsElement PAIR_INCOME = createIncome(INCOME, false);
-	private static final StatisticsElement PAIR_MONTHLY_EXPENSE = createExpense(MONTHLY_EXPENSE, true);
-	private static final StatisticsElement PAIR_EXPENSE = createExpense(EXPENSE, false);
+	private static final StatisticsElement PAIR_MONTHLY_INCOME = createIncome(1, MONTHLY_INCOME, true);
+	private static final StatisticsElement PAIR_INCOME = createIncome(2, INCOME, false);
+	private static final StatisticsElement PAIR_MONTHLY_EXPENSE = createExpense(3, MONTHLY_EXPENSE, true);
+	private static final StatisticsElement PAIR_EXPENSE = createExpense(4, EXPENSE, false);
 
-	private static StatisticsElement createIncome(final String category, final boolean isMonthly) {
-		return StatisticsElement.create(MONTH, category, 2.3, isMonthly, true);
+	private static StatisticsElement createIncome(final long categoryid, final String category,
+			final boolean isMonthly) {
+		return StatisticsElement.create(MONTH, categoryid, category, 2.3, isMonthly, true);
 	}
 
-	private static StatisticsElement createExpense(final String category, final boolean isMonthly) {
-		return StatisticsElement.create(MONTH, category, 2.3, isMonthly, false);
+	private static StatisticsElement createExpense(final long categoryid, final String category,
+			final boolean isMonthly) {
+		return StatisticsElement.create(MONTH, categoryid, category, 2.3, isMonthly, false);
 	}
 
 	private static Account account = new Account();

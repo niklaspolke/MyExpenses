@@ -78,7 +78,7 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 		List<Double> values = new ArrayList<Double>();
 
 		for (StatisticsElement pair : statistics) {
-			labels.add(pair.getCategory());
+			labels.add(pair.getCategoryName());
 			values.add(pair.getAmount());
 		}
 
@@ -93,11 +93,11 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId());
 
 		List<StatisticsElement> statsExpenses = statistics.getExpenses();
-		statsExpenses.add(StatisticsElement.create(month, TEXT_TOTAL, statistics.getSumExpenses(), false, false));
+		statsExpenses.add(StatisticsElement.create(month, 0, TEXT_TOTAL, statistics.getSumExpenses(), false, false));
 		List<StatisticsElement> statsMonthlyExpenses = statistics.getMonthlyExpenses();
-		statsMonthlyExpenses.add(StatisticsElement.create(month, TEXT_TOTAL, statistics.getSumMonthlyExpenses(), true, false));
+		statsMonthlyExpenses.add(StatisticsElement.create(month, 0, TEXT_TOTAL, statistics.getSumMonthlyExpenses(), true, false));
 		List<StatisticsElement> statsIncome = statistics.getIncome();
-		statsIncome.add(StatisticsElement.create(month, TEXT_TOTAL, statistics.getSumIncome(), true, true));
+		statsIncome.add(StatisticsElement.create(month, 0, TEXT_TOTAL, statistics.getSumIncome(), true, true));
 
 		JsonObject barchart = new JsonObject();
 		ResourceBundle properties = ResourceBundle.getBundle(PROPERTIES, locale);

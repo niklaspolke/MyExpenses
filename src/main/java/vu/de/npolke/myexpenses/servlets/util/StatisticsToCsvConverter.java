@@ -94,7 +94,7 @@ public class StatisticsToCsvConverter {
 
 	private void writeStatisticsPairsToFile(final List<StatisticsElement> pairs) throws IOException {
 		for (StatisticsElement pair : pairs) {
-			writeColumn(pair.getCategory());
+			writeColumn(pair.getCategoryName());
 			writeColumn(String.format(Locale.GERMANY, "%.2f", pair.getAmount()));
 			endLine();
 		}

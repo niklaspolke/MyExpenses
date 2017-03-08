@@ -219,9 +219,9 @@ public class ShowStatisticsServletTest {
 	@Test
 	public void exportToPieChart() {
 		final List<StatisticsElement> statistic = new ArrayList<StatisticsElement>();
-		statistic.add(StatisticsElement.create(MONTH, "Sports", 4d, false, false));
-		statistic.add(StatisticsElement.create(MONTH, "Food", 4d, false, false));
-		statistic.add(StatisticsElement.create(MONTH, "Home", 4d, false, false));
+		statistic.add(StatisticsElement.create(MONTH, 1, "Sports", 4d, false, false));
+		statistic.add(StatisticsElement.create(MONTH, 2, "Food", 4d, false, false));
+		statistic.add(StatisticsElement.create(MONTH, 3, "Home", 4d, false, false));
 
 		JsonObject json = servlet.exportToPieChart(statistic);
 
@@ -256,13 +256,13 @@ public class ShowStatisticsServletTest {
 		List<StatisticsElement> income = new ArrayList<StatisticsElement>();
 		List<StatisticsElement> monthlyExpenses = new ArrayList<StatisticsElement>();
 		List<StatisticsElement> expenses = new ArrayList<StatisticsElement>();
-		income.add(StatisticsElement.create(MONTH, "Income", 4d, true, true));
-		expenses.add(StatisticsElement.create(MONTH, "Food", 4d, false, false));
-		expenses.add(StatisticsElement.create(MONTH, "Home", 5d, false, false));
-		expenses.add(StatisticsElement.create(MONTH, "Sports", 6d, false, false));
-		income.add(StatisticsElement.create(MONTH, "Income", 1d, false, true));
-		monthlyExpenses.add(StatisticsElement.create(MONTH, "Insurances", 5d, true, false));
-		monthlyExpenses.add(StatisticsElement.create(MONTH, "Flat", 5d, true, false));
+		income.add(StatisticsElement.create(MONTH, 1, "Income", 4d, true, true));
+		expenses.add(StatisticsElement.create(MONTH, 2, "Food", 4d, false, false));
+		expenses.add(StatisticsElement.create(MONTH, 3, "Home", 5d, false, false));
+		expenses.add(StatisticsElement.create(MONTH, 4, "Sports", 6d, false, false));
+		income.add(StatisticsElement.create(MONTH, 1, "Income", 1d, false, true));
+		monthlyExpenses.add(StatisticsElement.create(MONTH, 5, "Insurances", 5d, true, false));
+		monthlyExpenses.add(StatisticsElement.create(MONTH, 6, "Flat", 5d, true, false));
 		final StatisticsOfMonth statistic = new StatisticsOfMonth(MONTH, income, monthlyExpenses, expenses);
 		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(MONTH, ACCOUNT_ID)).thenReturn(statistic);
 

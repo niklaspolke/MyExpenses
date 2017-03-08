@@ -45,12 +45,13 @@ public class StatisticsToCsvConverterTest {
 	private static final String CATEGORY_SPECIALCHARS_QUOTATIONMARK = "5expe\"nse";
 	private static final String CATEGORY_SPECIALCHARS_QUOTATIONMARK_AND_COLON = "6e\"xp\"e,nse";
 
-	private static StatisticsElement createIncome(final String category) {
-		return StatisticsElement.create(MONTH, category, 2.3, true, true);
+	private static StatisticsElement createIncome(final long categoryid, final String category) {
+		return StatisticsElement.create(MONTH, categoryid, category, 2.3, true, true);
 	}
 
-	private static StatisticsElement createExpense(final String category, final boolean isMonthly) {
-		return StatisticsElement.create(MONTH, category, 2.3, isMonthly, false);
+	private static StatisticsElement createExpense(final long categoryid, final String category,
+			final boolean isMonthly) {
+		return StatisticsElement.create(MONTH, categoryid, category, 2.3, isMonthly, false);
 	}
 
 	private Statistics stats = new Statistics();
@@ -59,9 +60,9 @@ public class StatisticsToCsvConverterTest {
 
 	@Before
 	public void setup() {
-		stats.add(createIncome(CATEGORY_MONTHLYINCOME));
-		stats.add(createExpense(CATEGORY_MONTHLYEXPENSE, true));
-		stats.add(createExpense(CATEGORY_EXPENSE, false));
+		stats.add(createIncome(1, CATEGORY_MONTHLYINCOME));
+		stats.add(createExpense(2, CATEGORY_MONTHLYEXPENSE, true));
+		stats.add(createExpense(3, CATEGORY_EXPENSE, false));
 
 		converter = new StatisticsToCsvConverter(stats.filter(MONTH));
 	}
@@ -145,9 +146,9 @@ public class StatisticsToCsvConverterTest {
 
 	@Test
 	public void exportToCsv_DE_WithTopExpenses_SpecialCharacter() {
-		stats.add(createExpense(CATEGORY_SPECIALCHARS_COLON, false));
-		stats.add(createExpense(CATEGORY_SPECIALCHARS_QUOTATIONMARK, false));
-		stats.add(createExpense(CATEGORY_SPECIALCHARS_QUOTATIONMARK_AND_COLON, false));
+		stats.add(createExpense(4, CATEGORY_SPECIALCHARS_COLON, false));
+		stats.add(createExpense(5, CATEGORY_SPECIALCHARS_QUOTATIONMARK, false));
+		stats.add(createExpense(6, CATEGORY_SPECIALCHARS_QUOTATIONMARK_AND_COLON, false));
 		converter = new StatisticsToCsvConverter(stats.filter(MONTH));
 
 		File tempFile = converter.convertToCsv(Locale.GERMAN);

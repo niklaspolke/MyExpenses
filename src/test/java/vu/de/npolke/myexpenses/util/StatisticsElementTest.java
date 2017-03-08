@@ -32,14 +32,16 @@ public class StatisticsElementTest {
 	@Test
 	public void createToGetters() {
 		//@formatter:off
+		final long    CATEGORY_ID   = 14;
 		final String  CATEGORY_NAME = "category";
 		final double  AMOUNT        = 3.3;
 		final boolean ISMONTHLY     = true;
 		final boolean ISINCOME      = false;
-		StatisticsElement pair      = StatisticsElement.create(MONTH, CATEGORY_NAME, AMOUNT, ISMONTHLY, ISINCOME);
+		StatisticsElement pair      = StatisticsElement.create(MONTH, CATEGORY_ID, CATEGORY_NAME, AMOUNT, ISMONTHLY, ISINCOME);
 
 		assertEquals(MONTH,         pair.getMonth());
-		assertEquals(CATEGORY_NAME, pair.getCategory());
+		assertEquals(CATEGORY_ID,   pair.getCategoryId());
+		assertEquals(CATEGORY_NAME, pair.getCategoryName());
 		assertEquals(AMOUNT,        pair.getAmount(), DELTA);
 		assertEquals(ISMONTHLY,     pair.isMonthly());
 		assertEquals(ISINCOME,      pair.isIncome());
@@ -55,29 +57,29 @@ public class StatisticsElementTest {
 
 	@Test
 	public void compareToNull() {
-		StatisticsElement element = create(MONTH, "a", AMOUNT, true, true);
+		StatisticsElement element = create(MONTH, 1, "a", AMOUNT, true, true);
 		assertTrue(element.compareTo(null) < 0);
 		assertFalse(element.equals(null));
 	}
 
 	@Test
 	public void compareDifferentMonths() {
-		assertBiggerThan(create(MONTH.next(), "a", AMOUNT, true, true), create(MONTH, "b", AMOUNT, false, false));
+		assertBiggerThan(create(MONTH.next(), 1, "a", AMOUNT, true, true), create(MONTH, 2, "b", AMOUNT, false, false));
 	}
 
 	@Test
 	public void compareDifferentIsIncome() {
-		assertBiggerThan(create(MONTH, "a", AMOUNT, true, false), create(MONTH, "b", AMOUNT, false, true));
+		assertBiggerThan(create(MONTH, 1, "a", AMOUNT, true, false), create(MONTH, 2, "b", AMOUNT, false, true));
 	}
 
 	@Test
 	public void compareDifferentIsMonthly() {
-		assertBiggerThan(create(MONTH, "a", AMOUNT, false, false), create(MONTH, "b", AMOUNT, true, false));
+		assertBiggerThan(create(MONTH, 1, "a", AMOUNT, false, false), create(MONTH, 2, "b", AMOUNT, true, false));
 	}
 
 	@Test
 	public void compareDifferentCategory() {
-		assertBiggerThan(create(MONTH, "b", AMOUNT, false, false), create(MONTH, "a", AMOUNT, false, false));
+		assertBiggerThan(create(MONTH, 2, "b", AMOUNT, false, false), create(MONTH, 1, "a", AMOUNT, false, false));
 	}
 
 	private static void assertEqual(final StatisticsElement element1, final StatisticsElement element2) {
@@ -89,6 +91,6 @@ public class StatisticsElementTest {
 
 	@Test
 	public void compareEqual() {
-		assertEqual(create(MONTH, "a", AMOUNT, false, false), create(MONTH, "a", AMOUNT, false, false));
+		assertEqual(create(MONTH, 1, "a", AMOUNT, false, false), create(MONTH, 1, "a", AMOUNT, false, false));
 	}
 }

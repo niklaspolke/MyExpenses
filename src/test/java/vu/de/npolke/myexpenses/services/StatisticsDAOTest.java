@@ -23,17 +23,14 @@ import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 /**
  * Copyright 2015 Niklas Polke
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  * @author Niklas Polke
  */
@@ -81,10 +78,11 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 		assertTrue(months.isEmpty());
 	}
 
-	private void assertStatistics(final Month month, final String category, final double amount, final boolean isMonthly,
-			final boolean isIncome, final StatisticsElement statistics) {
+	private void assertStatistics(final Month month, final long categoryId, final String category, final double amount,
+			final boolean isMonthly, final boolean isIncome, final StatisticsElement statistics) {
 		assertEquals(month, statistics.getMonth());
-		assertEquals(category, statistics.getCategory());
+		assertEquals(categoryId, statistics.getCategoryId());
+		assertEquals(category, statistics.getCategoryName());
 		assertEquals(amount, statistics.getAmount(), 0.01);
 		assertEquals(isMonthly, statistics.isMonthly());
 		assertEquals(isIncome, statistics.isIncome());
@@ -93,35 +91,33 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 	@Test
 	public void readStatisticsByMonthsAndAccountId_201506() {
 		Month month = createMonth("2015.06");
-		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(month,
-				ACCOUNT_ID);
+		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(month, ACCOUNT_ID);
 
 		assertNotNull(statistics);
 		assertEquals(3, statistics.getExpenses().size());
 
-		assertStatistics(month, "food", 35, false, false, statistics.getExpenses().get(0));
-		assertStatistics(month, "luxury", 15, false, false, statistics.getExpenses().get(1));
-		assertStatistics(month, "sports", 35, false, false, statistics.getExpenses().get(2));
+		assertStatistics(month, 22, "food", 35, false, false, statistics.getExpenses().get(0));
+		assertStatistics(month, 23, "luxury", 15, false, false, statistics.getExpenses().get(1));
+		assertStatistics(month, 21, "sports", 35, false, false, statistics.getExpenses().get(2));
 	}
 
 	@Test
 	public void readStatisticsByMonthsAndAccountId_201505() {
 		Month month = createMonth("2015.05");
-		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(month,
-				ACCOUNT_ID);
+		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(month, ACCOUNT_ID);
 
 		assertNotNull(statistics);
 
 		assertEquals(1, statistics.getIncome().size());
-		assertStatistics(month, "income", 2000, true, true, statistics.getIncome().get(0));
+		assertStatistics(month, 24, "income", 2000, true, true, statistics.getIncome().get(0));
 
 		assertEquals(1, statistics.getMonthlyExpenses().size());
-		assertStatistics(month, "sports", 21, true, false, statistics.getMonthlyExpenses().get(0));
+		assertStatistics(month, 21, "sports", 21, true, false, statistics.getMonthlyExpenses().get(0));
 
 		assertEquals(3, statistics.getExpenses().size());
-		assertStatistics(month, "food", 12, false, false, statistics.getExpenses().get(0));
-		assertStatistics(month, "luxury", 27, false, false, statistics.getExpenses().get(1));
-		assertStatistics(month, "sports", 11, false, false, statistics.getExpenses().get(2));
+		assertStatistics(month, 22, "food", 12, false, false, statistics.getExpenses().get(0));
+		assertStatistics(month, 23, "luxury", 27, false, false, statistics.getExpenses().get(1));
+		assertStatistics(month, 21, "sports", 11, false, false, statistics.getExpenses().get(2));
 	}
 
 	@Test

@@ -61,14 +61,14 @@ the License.
                 <th style="width:100px"><fmt:message key="statistics.header.amount"/></th>
             </tr>
             <c:forEach var="category" items="${requestScope.statistics}">
-                <tr ${category.name eq 'Total' ? 'class="total-cost"' : ''}>
+                <tr ${category.categoryName eq 'Total' ? 'class="total-cost"' : ''}>
                     <td>
                         <c:choose>
-                        <c:when test="${category.name ne 'Total' and category.value gt 0}"><a href="listexpenses.jsp?month=${requestScope.month}&category=${category.id}"><c:out value="${category.name}"/></a></c:when>
+                        <c:when test="${category.categoryName ne 'Total' and category.amount gt 0}"><a href="listexpenses.jsp?month=${requestScope.month}&category=${category.categoryId}"><c:out value="${category.categoryName}"/></a></c:when>
                         <c:otherwise><fmt:message key="statistics.total"/></c:otherwise>
                         </c:choose>
                     </td><td class="number nowrap" style="text-align:right">
-                        <fmt:formatNumber value="${category.value}" type="currency" pattern="0.00 €"/>
+                        <fmt:formatNumber value="${category.amount}" type="currency" pattern="0.00 €"/>
                     </td>
                 </tr>
             </c:forEach>
@@ -87,14 +87,14 @@ the License.
                 <th style="width:100px"><fmt:message key="statistics.header.amount"/></th>
             </tr>
             <c:forEach var="category" items="${requestScope.statisticsIncome}">
-                <tr ${category.name eq 'Total' ? 'class="total-income"' : ''}>
+                <tr ${category.categoryName eq 'Total' ? 'class="total-income"' : ''}>
                     <td>
                         <c:choose>
-                        <c:when test="${category.name eq 'Total'}"><fmt:message key="statistics.total"/></c:when>
-                        <c:otherwise><c:out value="${category.name}"/></c:otherwise>
+                        <c:when test="${category.categoryName eq 'Total'}"><fmt:message key="statistics.total"/></c:when>
+                        <c:otherwise><c:out value="${category.categoryName}"/></c:otherwise>
                         </c:choose>
                     </td><td class="number nowrap" style="text-align:right">
-                        <fmt:formatNumber value="${category.value}" type="currency" pattern="0.00 €"/>
+                        <fmt:formatNumber value="${category.amount}" type="currency" pattern="0.00 €"/>
                     </td>
                 </tr>
             </c:forEach>
@@ -111,14 +111,14 @@ the License.
                 <th style="width:100px"><fmt:message key="statistics.header.amount"/></th>
             </tr>
             <c:forEach var="category" items="${requestScope.statisticsMonthlyCosts}">
-                <tr ${category.name eq 'Total' ? 'class="total-cost"' : ''}>
+                <tr ${category.categoryName eq 'Total' ? 'class="total-cost"' : ''}>
                     <td>
                         <c:choose>
-                        <c:when test="${category.name eq 'Total'}"><fmt:message key="statistics.total"/></c:when>
-                        <c:otherwise><c:out value="${category.name}"/></c:otherwise>
+                        <c:when test="${category.categoryName eq 'Total'}"><fmt:message key="statistics.total"/></c:when>
+                        <c:otherwise><c:out value="${category.categoryName}"/></c:otherwise>
                         </c:choose>
                     </td><td class="number nowrap" style="text-align:right">
-                        <fmt:formatNumber value="${category.value}" type="currency" pattern="0.00 €"/>
+                        <fmt:formatNumber value="${category.amount}" type="currency" pattern="0.00 €"/>
                     </td>
                 </tr>
             </c:forEach>

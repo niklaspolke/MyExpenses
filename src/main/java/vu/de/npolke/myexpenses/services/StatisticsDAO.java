@@ -39,7 +39,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 	private static final String SQL_SELECT_DISTINCT_MONTHS = "SELECT DISTINCT year(e.day)+'.'+lpad(month(e.day),2,'0') AS month "
 			+ "FROM expense e " + "WHERE e.account_id = ? " + "ORDER BY month DESC";
 
-	private static final String SQL_SELECT_STATISTICS_FOR_MONTH = "SELECT c.name as category, sum(e.amount) as sumofamount, monthly, income "
+	private static final String SQL_SELECT_STATISTICS_FOR_MONTH = "SELECT c.id as id, c.name as category, sum(e.amount) as sumofamount, monthly, income "
 			+ "FROM category c " + "JOIN ( " + "SELECT category_id, amount, monthly, income " + "FROM expense "
 			+ "WHERE year(day)+'.'+lpad(month(day),2,'0') = ? AND account_id = ? ) e " + "ON e.category_id = c.id "
 			+ "WHERE c.account_id = ? " + "GROUP BY c.id, c.name, e.monthly, e.income "
@@ -92,11 +92,12 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 			readStatement.setLong(3, accountId);
 			ResultSet result = readStatement.executeQuery();
 			while (result.next()) {
+				Long id = result.getLong("id");
 				String category = result.getString("category");
 				Double amount = result.getDouble("sumofamount");
 				Boolean monthly = result.getBoolean("monthly");
 				Boolean income = result.getBoolean("income");
-				stats.add(StatisticsElement.create(month, category, amount, monthly, income));
+				stats.add(StatisticsElement.create(month, id, category, amount, monthly, income));
 			}
 			connection.rollback();
 		} catch (SQLException e) {

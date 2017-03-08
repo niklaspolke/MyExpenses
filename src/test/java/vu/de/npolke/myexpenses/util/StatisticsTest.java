@@ -34,15 +34,15 @@ public class StatisticsTest {
 	private static final String C4 = "D category4";
 	private static final String C5 = "E category5";
 
-	private static final StatisticsElement M1_C2_F_F = StatisticsElement.create(M1, C2, AMOUNT, false, false);
-	private static final StatisticsElement M1_C2_T_F = StatisticsElement.create(M1, C2, AMOUNT, true, false);
-	private static final StatisticsElement M1_C2_T_T = StatisticsElement.create(M1, C2, AMOUNT, true, true);
-	private static final StatisticsElement M1_C2_F_T = StatisticsElement.create(M1, C2, AMOUNT, false, true);
+	private static final StatisticsElement M1_C2_F_F = StatisticsElement.create(M1, 2, C2, AMOUNT, false, false);
+	private static final StatisticsElement M1_C2_T_F = StatisticsElement.create(M1, 2, C2, AMOUNT, true, false);
+	private static final StatisticsElement M1_C2_T_T = StatisticsElement.create(M1, 2, C2, AMOUNT, true, true);
+	private static final StatisticsElement M1_C2_F_T = StatisticsElement.create(M1, 2, C2, AMOUNT, false, true);
 
-	private static final StatisticsElement M2_C1_F_F = StatisticsElement.create(M2, C1, AMOUNT, false, false);
-	private static final StatisticsElement M2_C3_T_F = StatisticsElement.create(M2, C3, AMOUNT, true, false);
-	private static final StatisticsElement M2_C4_T_T = StatisticsElement.create(M2, C4, AMOUNT, true, true);
-	private static final StatisticsElement M2_C5_F_T = StatisticsElement.create(M2, C5, AMOUNT, false, true);
+	private static final StatisticsElement M2_C1_F_F = StatisticsElement.create(M2, 1, C1, AMOUNT, false, false);
+	private static final StatisticsElement M2_C3_T_F = StatisticsElement.create(M2, 3, C3, AMOUNT, true, false);
+	private static final StatisticsElement M2_C4_T_T = StatisticsElement.create(M2, 4, C4, AMOUNT, true, true);
+	private static final StatisticsElement M2_C5_F_T = StatisticsElement.create(M2, 5, C5, AMOUNT, false, true);
 
 	private static Statistics statistics = new Statistics();
 
@@ -91,17 +91,17 @@ public class StatisticsTest {
 		assertEquals(0.0, stats.getSumIncome(), DELTA);
 
 		assertEquals(2, stats.getExpenses().size());
-		assertEquals(C1, stats.getExpenses().get(0).getCategory());
-		assertEquals(C2, stats.getExpenses().get(1).getCategory());
+		assertEquals(C1, stats.getExpenses().get(0).getCategoryName());
+		assertEquals(C2, stats.getExpenses().get(1).getCategoryName());
 
 		assertEquals(2, stats.getMonthlyExpenses().size());
-		assertEquals(C2, stats.getMonthlyExpenses().get(0).getCategory());
-		assertEquals(C3, stats.getMonthlyExpenses().get(1).getCategory());
+		assertEquals(C2, stats.getMonthlyExpenses().get(0).getCategoryName());
+		assertEquals(C3, stats.getMonthlyExpenses().get(1).getCategoryName());
 
 		assertEquals(3, stats.getIncome().size());
-		assertEquals(C2, stats.getIncome().get(0).getCategory());
-		assertEquals(C4, stats.getIncome().get(1).getCategory());
-		assertEquals(C5, stats.getIncome().get(2).getCategory());
+		assertEquals(C2, stats.getIncome().get(0).getCategoryName());
+		assertEquals(C4, stats.getIncome().get(1).getCategoryName());
+		assertEquals(C5, stats.getIncome().get(2).getCategoryName());
 
 		assertEquals(M2.next().toString(), stats.getMonth().toString());
 	}
@@ -115,13 +115,13 @@ public class StatisticsTest {
 		assertEquals(2 * AMOUNT, stats.getSumIncome(), DELTA);
 
 		assertEquals(1, stats.getExpenses().size());
-		assertEquals(C2, stats.getExpenses().get(0).getCategory());
+		assertEquals(C2, stats.getExpenses().get(0).getCategoryName());
 
 		assertEquals(1, stats.getMonthlyExpenses().size());
-		assertEquals(C2, stats.getMonthlyExpenses().get(0).getCategory());
+		assertEquals(C2, stats.getMonthlyExpenses().get(0).getCategoryName());
 
 		assertEquals(1, stats.getIncome().size());
-		assertEquals(C2, stats.getIncome().get(0).getCategory());
+		assertEquals(C2, stats.getIncome().get(0).getCategoryName());
 
 		assertEquals(M1.toString(), stats.getMonth().toString());
 	}
@@ -135,23 +135,23 @@ public class StatisticsTest {
 		assertEquals(2 * AMOUNT, stats.getSumIncome(), DELTA);
 
 		assertEquals(2, stats.getExpenses().size());
-		assertEquals(C1, stats.getExpenses().get(0).getCategory());
+		assertEquals(C1, stats.getExpenses().get(0).getCategoryName());
 		assertEquals(0.0, stats.getExpenses().get(0).getAmount(), DELTA);
-		assertEquals(C2, stats.getExpenses().get(1).getCategory());
+		assertEquals(C2, stats.getExpenses().get(1).getCategoryName());
 		assertEquals(AMOUNT, stats.getExpenses().get(1).getAmount(), DELTA);
 
 		assertEquals(2, stats.getMonthlyExpenses().size());
-		assertEquals(C2, stats.getMonthlyExpenses().get(0).getCategory());
+		assertEquals(C2, stats.getMonthlyExpenses().get(0).getCategoryName());
 		assertEquals(AMOUNT, stats.getMonthlyExpenses().get(0).getAmount(), DELTA);
-		assertEquals(C3, stats.getMonthlyExpenses().get(1).getCategory());
+		assertEquals(C3, stats.getMonthlyExpenses().get(1).getCategoryName());
 		assertEquals(0.0, stats.getMonthlyExpenses().get(1).getAmount(), DELTA);
 
 		assertEquals(3, stats.getIncome().size());
-		assertEquals(C2, stats.getIncome().get(0).getCategory());
+		assertEquals(C2, stats.getIncome().get(0).getCategoryName());
 		assertEquals(2 * AMOUNT, stats.getIncome().get(0).getAmount(), DELTA);
-		assertEquals(C4, stats.getIncome().get(1).getCategory());
+		assertEquals(C4, stats.getIncome().get(1).getCategoryName());
 		assertEquals(0.0, stats.getIncome().get(1).getAmount(), DELTA);
-		assertEquals(C5, stats.getIncome().get(2).getCategory());
+		assertEquals(C5, stats.getIncome().get(2).getCategoryName());
 		assertEquals(0.0, stats.getIncome().get(2).getAmount(), DELTA);
 
 		assertEquals(M1.toString(), stats.getMonth().toString());

@@ -18,27 +18,29 @@ public class StatisticsElement implements Comparable<StatisticsElement> {
 
 	//@formatter:off
 	private Month   month;
-	private String  category;
+	private long    categoryId;
+	private String  categoryName;
 	private Double  amount;
 	private boolean isMonthly;
 	private boolean isIncome;
 	//@formatter:one
 
-	private StatisticsElement(final Month month, final String category, final double amount, final boolean isMonthly,
-			final boolean isIncome) {
+	private StatisticsElement(final Month month, final long categoryId, final String categoryName, final double amount,
+			final boolean isMonthly, final boolean isIncome) {
 		//@formatter:off
-		this.month     = month;
-		this.category  = category;
-		this.amount    = amount;
-		this.isMonthly = isMonthly;
-		this.isIncome  = isIncome;
+		this.month        = month;
+		this.categoryId   = categoryId;
+		this.categoryName = categoryName;
+		this.amount       = amount;
+		this.isMonthly    = isMonthly;
+		this.isIncome     = isIncome;
 		//@formatter:on
 	}
 
-	public static StatisticsElement create(final Month month, final String category, final double amount,
-			final boolean isMonthly, final boolean isIncome) {
-		if (month != null && category != null) {
-			return new StatisticsElement(month, category, amount, isMonthly, isIncome);
+	public static StatisticsElement create(final Month month, final long categoryId, final String categoryName,
+			final double amount, final boolean isMonthly, final boolean isIncome) {
+		if (month != null && categoryName != null) {
+			return new StatisticsElement(month, categoryId, categoryName, amount, isMonthly, isIncome);
 		} else {
 			return null;
 		}
@@ -48,8 +50,12 @@ public class StatisticsElement implements Comparable<StatisticsElement> {
 		return month;
 	}
 
-	public String getCategory() {
-		return category;
+	public long getCategoryId() {
+		return categoryId;
+	}
+
+	public String getCategoryName() {
+		return categoryName;
 	}
 
 	public double getAmount() {
@@ -67,10 +73,10 @@ public class StatisticsElement implements Comparable<StatisticsElement> {
 	@Override
 	public boolean equals(final Object otherObject) {
 		boolean isEqual = false;
-		if (otherObject instanceof StatisticsElement && getMonth() != null && getCategory() != null) {
+		if (otherObject instanceof StatisticsElement && getMonth() != null && getCategoryName() != null) {
 			StatisticsElement other = (StatisticsElement) otherObject;
-			isEqual = month.equals(other.month) && category.equals(other.category) && isMonthly == other.isMonthly
-					&& isIncome == other.isIncome;
+			isEqual = month.equals(other.month) && categoryName.equals(other.categoryName)
+					&& isMonthly == other.isMonthly && isIncome == other.isIncome && categoryId == other.categoryId;
 		}
 		return isEqual;
 	}
@@ -83,7 +89,7 @@ public class StatisticsElement implements Comparable<StatisticsElement> {
 		} else {
 			compareValue = month.compareTo(other.month);
 			compareValue = compareValue != 0 ? compareValue : compareMonthlyAndIncome(other.isMonthly, other.isIncome);
-			compareValue = compareValue != 0 ? compareValue : category.compareTo(other.category);
+			compareValue = compareValue != 0 ? compareValue : categoryName.compareTo(other.categoryName);
 		}
 		return compareValue;
 	}

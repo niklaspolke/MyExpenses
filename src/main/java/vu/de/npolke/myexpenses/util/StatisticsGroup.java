@@ -24,10 +24,10 @@ public class StatisticsGroup {
 	private TreeSet<StatisticsElement> groupElements = new TreeSet<StatisticsElement>();
 
 	public void add(final StatisticsElement pair) {
-		allCategories.add(pair.getCategory());
-		StatisticsElement existingPair = removeExisting(pair.getMonth(), pair.getCategory());
+		allCategories.add(pair.getCategoryName());
+		StatisticsElement existingPair = removeExisting(pair.getMonth(), pair.getCategoryName());
 		if (existingPair != null) {
-			groupElements.add(StatisticsElement.create(pair.getMonth(), pair.getCategory(),
+			groupElements.add(StatisticsElement.create(pair.getMonth(), pair.getCategoryId(), pair.getCategoryName(),
 					pair.getAmount() + existingPair.getAmount(), pair.isMonthly(), pair.isIncome()));
 		} else {
 			groupElements.add(pair);
@@ -45,7 +45,7 @@ public class StatisticsGroup {
 	private StatisticsElement findExisting(final Month month, final String category) {
 		StatisticsElement existingElement = null;
 		for (StatisticsElement element : groupElements) {
-			if (element.getMonth().equals(month) && element.getCategory().equals(category)) {
+			if (element.getMonth().equals(month) && element.getCategoryName().equals(category)) {
 				existingElement = element;
 				break;
 			}
@@ -61,7 +61,8 @@ public class StatisticsGroup {
 			if (element != null) {
 				extractedMonth.add(element);
 			} else if (withEmptyCategories) {
-				extractedMonth.add(StatisticsElement.create(month, category, 0.0, NONSENSE_DEFAULT, NONSENSE_DEFAULT));
+				extractedMonth
+						.add(StatisticsElement.create(month, 0, category, 0.0, NONSENSE_DEFAULT, NONSENSE_DEFAULT));
 			}
 		}
 		return extractedMonth;
