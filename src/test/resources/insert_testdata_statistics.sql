@@ -37,6 +37,9 @@ INSERT INTO expense(id, day, amount, reason, category_id, account_id, monthly, i
 INSERT INTO expense(id, day, amount, reason, category_id, account_id, monthly, income) VALUES (330, '2016-01-21', 6, 'kkkk', 31, 3, false, false);
 INSERT INTO expense(id, day, amount, reason, category_id, account_id, monthly, income) VALUES (331, '2016-01-20', 7, 'jjjj', 32, 3, false, false);
 INSERT INTO expense(id, day, amount, reason, category_id, account_id, monthly, income) VALUES (332, '2016-01-19', 8, 'kkkk', 33, 3, false, false);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id, monthly, income) VALUES (333, '2016-01-15', 999, 'monthly expense', 31, 3, true, false);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id, monthly, income) VALUES (334, '2016-01-03', 999, 'monthly income', 31, 3, true, true);
+INSERT INTO expense(id, day, amount, reason, category_id, account_id, monthly, income) VALUES (335, '2016-01-05', 999, 'income', 31, 3, false, true);
 
 
 commit;

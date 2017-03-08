@@ -53,7 +53,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 
 	private static final String SQL_READ_TOPTEN_BY_MONTH_AND_CATEGORY = "SELECT * FROM ( " + "SELECT e.*, c.name "
 			+ "FROM Expense e " + "JOIN Category c " + "ON e.category_id = c.id "
-			+ "WHERE e.account_id = ? AND c.id = ? AND year(e.day)+'.'+lpad(month(e.day),2,'0') = ? "
+			+ "WHERE e.account_id = ? AND c.id = ? AND year(e.day)+'.'+lpad(month(e.day),2,'0') = ? AND e.monthly = false AND e.income = false "
 			+ "ORDER BY e.amount DESC " + ") WHERE rownum() <= 10";
 
 	private static final String SQL_READ_TOPX_BY_MONTH_AND_ACCOUNT = "SELECT * FROM ( "
@@ -181,6 +181,9 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 		return expenses;
 	}
 
+	/**
+	 * only read standard expenses (no (monthly or not) income and no monthly expenses)
+	 */
 	public List<Expense> readTopTenByMonthAndCategory(final long accountId, final String month, final long categoryId) {
 		List<Expense> expenses = new ArrayList<Expense>();
 
