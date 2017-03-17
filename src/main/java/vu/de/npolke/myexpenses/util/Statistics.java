@@ -2,7 +2,9 @@ package vu.de.npolke.myexpenses.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
+import java.util.TreeMap;
+
+import vu.de.npolke.myexpenses.model.Expense;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -21,10 +23,9 @@ import java.util.TreeSet;
 public class Statistics {
 
 	/**
-	 * Set of months of statistics just to know which months are within the complex statistics structure (see below) -
-	 * it is a Set just because to be able to stupidly insert Strings without getting duplicate entries
+	 * Map of months and their top expenses.
 	 */
-	private TreeSet<String> months = new TreeSet<String>();
+	private TreeMap<Month, List<Expense>> topExpenses = new TreeMap<Month, List<Expense>>();
 	//@formatter:off
 	private StatisticsGroup income          = new StatisticsGroup();
 	private StatisticsGroup monthlyExpenses = new StatisticsGroup();
@@ -47,7 +48,9 @@ public class Statistics {
 	}
 
 	public void add(StatisticsElement element) {
-		months.add(element.getMonth().toString());
+		if (!getMonths().contains(element.getMonth())) {
+			topExpenses.put(element.getMonth(), null);
+		}
 		if (element.isIncome()) {
 			income.add(element);
 		} else if (element.isMonthly()) {
@@ -73,14 +76,19 @@ public class Statistics {
 		List<StatisticsElement> monthlyExpensesOfMonth = monthlyExpenses.filter(month, withEmptyCategories);
 		List<StatisticsElement>        expensesOfMonth =        expenses.filter(month, withEmptyCategories);
 		//@formatter:on
-		return new StatisticsOfMonth(month, incomeOfMonth, monthlyExpensesOfMonth, expensesOfMonth);
+		return new StatisticsOfMonth(month, incomeOfMonth, monthlyExpensesOfMonth, expensesOfMonth,
+				topExpenses.get(month));
 	}
 
 	public StatisticsOfMonth filter(final Month month) {
 		return filter(month, false);
 	}
 
-	public List<String> getMonths() {
-		return new ArrayList<String>(months);
+	public void addTopExpenses(final Month month, final List<Expense> topExpenses) {
+		this.topExpenses.put(month, topExpenses);
+	}
+
+	public List<Month> getMonths() {
+		return new ArrayList<Month>(topExpenses.keySet());
 	}
 }

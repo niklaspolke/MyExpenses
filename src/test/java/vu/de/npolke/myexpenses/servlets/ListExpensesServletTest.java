@@ -401,11 +401,11 @@ public class ListExpensesServletTest {
 		expense.setCategoryName(CATEGORY);
 		expenses.add(expense);
 		List<Month> months = new ArrayList<Month>();
-		months.add(Month.createMonth("2016.10"));
-		months.add(Month.createMonth("2016.08"));
-		when(servlet.getCurrentMonth()).thenReturn(Month.createMonth("2016.09"));
+		months.add(Month.create("2016.10"));
+		months.add(Month.create("2016.08"));
+		when(servlet.getCurrentMonth()).thenReturn(Month.create("2016.09"));
 		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
-		when(servlet.expenseDAO.readMonthlyByAccountAndMonth(eq(ACCOUNT_ID), eq(Month.createMonth("2016.09"))))
+		when(servlet.expenseDAO.readMonthlyByAccountAndMonth(eq(ACCOUNT_ID), eq(Month.create("2016.09"))))
 				.thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, null, "true", null);
@@ -431,11 +431,11 @@ public class ListExpensesServletTest {
 		expense.setCategoryName(CATEGORY);
 		expenses.add(expense);
 		List<Month> months = new ArrayList<Month>();
-		months.add(Month.createMonth("2016.10"));
-		months.add(Month.createMonth("2016.08"));
-		when(servlet.getCurrentMonth()).thenReturn(Month.createMonth("2016.12"));
+		months.add(Month.create("2016.10"));
+		months.add(Month.create("2016.08"));
+		when(servlet.getCurrentMonth()).thenReturn(Month.create("2016.12"));
 		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
-		when(servlet.expenseDAO.readMonthlyByAccountAndMonth(eq(ACCOUNT_ID), eq(Month.createMonth("2016.11"))))
+		when(servlet.expenseDAO.readMonthlyByAccountAndMonth(eq(ACCOUNT_ID), eq(Month.create("2016.11"))))
 				.thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, null, "2016.11", null, "true", null);
@@ -461,11 +461,11 @@ public class ListExpensesServletTest {
 		expense.setCategoryName(CATEGORY);
 		expenses.add(expense);
 		List<Month> months = new ArrayList<Month>();
-		months.add(Month.createMonth("2016.10"));
-		months.add(Month.createMonth("2016.08"));
-		when(servlet.getCurrentMonth()).thenReturn(Month.createMonth("2016.09"));
+		months.add(Month.create("2016.10"));
+		months.add(Month.create("2016.08"));
+		when(servlet.getCurrentMonth()).thenReturn(Month.create("2016.09"));
 		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
-		when(servlet.expenseDAO.readMonthlyByAccountAndMonth(eq(ACCOUNT_ID), eq(Month.createMonth("2016.09"))))
+		when(servlet.expenseDAO.readMonthlyByAccountAndMonth(eq(ACCOUNT_ID), eq(Month.create("2016.09"))))
 				.thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, null, "2016.11", null, "true", null);

@@ -50,7 +50,7 @@ public class Month implements Comparable<Month> {
 		}
 	}
 
-	public static Month createMonth(final String yearMonth) {
+	public static Month create(final String yearMonth) {
 		if (yearMonth != null && yearMonth.matches(STRING_PATTERN)) {
 			int year = Integer.parseInt(yearMonth.substring(0, 4));
 			int month = Integer.parseInt(yearMonth.substring(5, 7));

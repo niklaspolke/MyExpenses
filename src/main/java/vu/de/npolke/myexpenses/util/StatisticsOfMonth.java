@@ -3,6 +3,8 @@ package vu.de.npolke.myexpenses.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import vu.de.npolke.myexpenses.model.Expense;
+
 /**
  * Copyright 2015 Niklas Polke
  *
@@ -25,6 +27,8 @@ public class StatisticsOfMonth {
 	private final List<StatisticsElement> monthlyExpenses;
 	private final List<StatisticsElement> expenses;
 
+	private final List<Expense> topExpenses;
+
 	private final double sumIncome;
 	private final double sumMonthlyExpenses;
 	private final double sumExpenses;
@@ -37,7 +41,8 @@ public class StatisticsOfMonth {
 	}
 
 	public StatisticsOfMonth(final Month month, final List<StatisticsElement> income,
-			final List<StatisticsElement> monthlyExpenses, final List<StatisticsElement> expenses) {
+			final List<StatisticsElement> monthlyExpenses, final List<StatisticsElement> expenses,
+			final List<Expense> topExpenses) {
 		this.month = month;
 		this.income = income;
 		this.sumIncome = calcSum(income);
@@ -45,6 +50,8 @@ public class StatisticsOfMonth {
 		this.sumMonthlyExpenses = calcSum(monthlyExpenses);
 		this.expenses = expenses;
 		this.sumExpenses = calcSum(expenses);
+
+		this.topExpenses = topExpenses;
 	}
 
 	public Month getMonth() {
@@ -77,5 +84,13 @@ public class StatisticsOfMonth {
 
 	public double getSumExpenses() {
 		return sumExpenses;
+	}
+
+	public List<Expense> getTopExpenses() {
+		ArrayList<Expense> copyTopExpenses = new ArrayList<Expense>();
+		if (topExpenses != null) {
+			copyTopExpenses.addAll(topExpenses);
+		}
+		return copyTopExpenses;
 	}
 }

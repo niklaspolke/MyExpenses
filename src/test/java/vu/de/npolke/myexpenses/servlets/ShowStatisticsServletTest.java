@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import vu.de.npolke.myexpenses.model.Account;
+import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.JsonObject;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
@@ -153,13 +154,13 @@ public class ShowStatisticsServletTest {
 	public void prepareStatistics_WithMonth() {
 		servlet = spy(servlet);
 		// equal to FAKE TIME, even if it is not used within this test
-		final Month MONTH = Month.createMonth("2017.01");
+		final Month MONTH = Month.create("2017.01");
 		months.add(MONTH);
-		months.add(Month.createMonth("2015.06"));
-		months.add(Month.createMonth("2015.05"));
-		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(eq(MONTH), eq(ACCOUNT_ID)))
-				.thenReturn(new StatisticsOfMonth(MONTH, new ArrayList<StatisticsElement>(),
-						new ArrayList<StatisticsElement>(), new ArrayList<StatisticsElement>()));
+		months.add(Month.create("2015.06"));
+		months.add(Month.create("2015.05"));
+		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(eq(MONTH), eq(ACCOUNT_ID), eq(0))).thenReturn(
+				new StatisticsOfMonth(MONTH, new ArrayList<StatisticsElement>(), new ArrayList<StatisticsElement>(),
+						new ArrayList<StatisticsElement>(), new ArrayList<Expense>()));
 		when(servlet.statisticsDAO.readDistinctMonthsByAccountId(ACCOUNT_ID)).thenReturn(months);
 
 		final ServletReaction reaction = servlet.prepareStatistics(account, MONTH.toString(), "en");
@@ -188,7 +189,7 @@ public class ShowStatisticsServletTest {
 
 	@Test
 	public void showStatistics() {
-		final Month MONTH = Month.createMonth("2015.05");
+		final Month MONTH = Month.create("2015.05");
 
 		final ServletReaction reaction = servlet.showStatistics(account, MONTH.toString());
 
@@ -231,10 +232,10 @@ public class ShowStatisticsServletTest {
 	@Test
 	public void readStatisticsForMonth_NoStatistics() {
 		final ServletReaction reaction = new ServletReaction();
-		final Month MONTH = Month.createMonth("2015.05");
-		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(MONTH, ACCOUNT_ID))
-				.thenReturn(new StatisticsOfMonth(MONTH, new ArrayList<StatisticsElement>(),
-						new ArrayList<StatisticsElement>(), new ArrayList<StatisticsElement>()));
+		final Month MONTH = Month.create("2015.05");
+		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(MONTH, ACCOUNT_ID, 0)).thenReturn(
+				new StatisticsOfMonth(MONTH, new ArrayList<StatisticsElement>(), new ArrayList<StatisticsElement>(),
+						new ArrayList<StatisticsElement>(), new ArrayList<Expense>()));
 
 		servlet.readStatisticsForMonth(reaction, MONTH, account, new Locale(""));
 
@@ -252,7 +253,7 @@ public class ShowStatisticsServletTest {
 	@Test
 	public void readStatisticsForMonth_WithStatistics() {
 		final ServletReaction reaction = new ServletReaction();
-		final Month MONTH = Month.createMonth("2015.05");
+		final Month MONTH = Month.create("2015.05");
 		List<StatisticsElement> income = new ArrayList<StatisticsElement>();
 		List<StatisticsElement> monthlyExpenses = new ArrayList<StatisticsElement>();
 		List<StatisticsElement> expenses = new ArrayList<StatisticsElement>();
@@ -263,8 +264,9 @@ public class ShowStatisticsServletTest {
 		income.add(StatisticsElement.create(MONTH, 1, "Income", 1d, false, true));
 		monthlyExpenses.add(StatisticsElement.create(MONTH, 5, "Insurances", 5d, true, false));
 		monthlyExpenses.add(StatisticsElement.create(MONTH, 6, "Flat", 5d, true, false));
-		final StatisticsOfMonth statistic = new StatisticsOfMonth(MONTH, income, monthlyExpenses, expenses);
-		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(MONTH, ACCOUNT_ID)).thenReturn(statistic);
+		final StatisticsOfMonth statistic = new StatisticsOfMonth(MONTH, income, monthlyExpenses, expenses,
+				new ArrayList<Expense>());
+		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(MONTH, ACCOUNT_ID, 0)).thenReturn(statistic);
 
 		servlet.readStatisticsForMonth(reaction, MONTH, account, new Locale(""));
 

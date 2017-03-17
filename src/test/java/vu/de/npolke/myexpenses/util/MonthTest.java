@@ -96,14 +96,14 @@ public class MonthTest {
 
 	@Test
 	public void createFromString() {
-		Month month2 = createMonth("2015.05");
+		Month month2 = create("2015.05");
 		assertNotNull(month2);
 		assertEquals(month, month2);
 	}
 
 	@Test
 	public void createFromIllegalString() {
-		Month month2 = createMonth("2015.5");
+		Month month2 = create("2015.5");
 
 		assertNull(month2);
 	}

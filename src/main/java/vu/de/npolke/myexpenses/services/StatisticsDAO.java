@@ -45,6 +45,12 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 			+ "WHERE c.account_id = ? " + "GROUP BY c.id, c.name, e.monthly, e.income "
 			+ "ORDER BY c.name ASC, e.monthly ASC, e.income ASC";
 
+	private static final String SQL_SELECT_STATISTICS_FOR_YEAR = "SELECT c.id as id, c.name as category, sum(e.amount) as sumofamount, monthly, income, year(e.day)+'.'+lpad(month(e.day),2,'0') as month "
+			+ "FROM category c " + "JOIN ( " + "SELECT day, category_id, amount, monthly, income, account_id " + "FROM expense "
+			+ "WHERE year(day) = ? AND account_id = ? ) e " + "ON e.category_id = c.id "
+			+ "WHERE c.account_id = e.account_id " + "GROUP BY c.id, c.name, e.monthly, e.income, month "
+			+ "ORDER BY month ASC, c.name ASC, e.monthly ASC, e.income ASC";
+
 	private static final String SQL_READ_TOPTEN_BY_ACCOUNT_ID = "SELECT * FROM ( "
 			+ "SELECT COUNT(e.reason), e.reason, e.category_id, c.name " + "FROM Expense e " + "JOIN Category c "
 			+ "ON e.category_id = c.id "
@@ -72,7 +78,7 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 			readStatement.setLong(1, accountId);
 			ResultSet result = readStatement.executeQuery();
 			while (result.next()) {
-				months.add(Month.createMonth(result.getString("month")));
+				months.add(Month.create(result.getString("month")));
 			}
 			connection.rollback();
 		} catch (SQLException e) {
@@ -82,7 +88,8 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 		return months;
 	}
 
-	public StatisticsOfMonth readStatisticsByMonthAndAccountId(final Month month, final long accountId) {
+	public StatisticsOfMonth readStatisticsByMonthAndAccountId(final Month month, final long accountId,
+			final int topX) {
 		Statistics stats = new Statistics();
 		try (Connection connection = getConnection()) {
 			PreparedStatement readStatement;
@@ -104,7 +111,39 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 			e.printStackTrace();
 		}
 
+		List<Expense> topExpenses = readTopXofExpensesByMonth(accountId, month, topX);
+		stats.addTopExpenses(month, topExpenses);
+
 		return stats.filter(month);
+	}
+
+	public Statistics readStatisticsByYearAndAccountId(final Month year, final long accountId, final int topX) {
+		Statistics stats = new Statistics();
+		try (Connection connection = getConnection()) {
+			PreparedStatement readStatement;
+			readStatement = connection.prepareStatement(SQL_SELECT_STATISTICS_FOR_YEAR);
+			readStatement.setInt(1, year.getYear());
+			readStatement.setLong(2, accountId);
+			ResultSet result = readStatement.executeQuery();
+			while (result.next()) {
+				Long categoryId = result.getLong("id");
+				String category = result.getString("category");
+				Double amount = result.getDouble("sumofamount");
+				Boolean monthly = result.getBoolean("monthly");
+				Boolean income = result.getBoolean("income");
+				Month month = Month.create(result.getString("month"));
+				stats.add(StatisticsElement.create(month, categoryId, category, amount, monthly, income));
+			}
+			connection.rollback();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		for (Month month : stats.getMonths()) {
+			List<Expense> topExpenses = readTopXofExpensesByMonth(accountId, month, topX);
+			stats.addTopExpenses(month, topExpenses);
+		}
+
+		return stats;
 	}
 
 	protected Calendar getToday() {
@@ -153,14 +192,14 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 	 *            amount of expenses with the biggest amount
 	 * @return List of Expenses ordered by the amount (descending) (exclusively monthly expenses and income)
 	 */
-	public List<Expense> readTopXofExpensesByMonth(final long accountId, final String month, final int topX) {
+	private List<Expense> readTopXofExpensesByMonth(final long accountId, final Month month, final int topX) {
 		List<Expense> expenses = new ArrayList<Expense>();
 
 		try (Connection connection = getConnection()) {
 			PreparedStatement readStatement;
 			readStatement = connection.prepareStatement(SQL_READ_TOPX_BY_MONTH_AND_ACCOUNT);
 			readStatement.setLong(1, accountId);
-			readStatement.setString(2, month);
+			readStatement.setString(2, month.toString());
 			readStatement.setLong(3, topX);
 			ResultSet result = readStatement.executeQuery();
 			while (result.next()) {

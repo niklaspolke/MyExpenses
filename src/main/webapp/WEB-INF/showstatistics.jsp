@@ -29,7 +29,7 @@ the License.
 </div>
 
 <div class="w3-panel w3-row-padding">
-    <div class="w3-col m8">
+    <div class="w3-col m12">
         <form action="showstatistics.jsp" method="post">
             <select class="w3-input w3-border w3-round-large"
                 name="month"
@@ -42,9 +42,13 @@ the License.
             </select>
             <label class="w3-label" for="month"><fmt:message key="statistics.month.label"/></label>
         </form>
-    </div><div class="w3-col m4">
+    </div><div class="w3-col m6">
         <a href="exportstatistics.jsp?month=${requestScope.month}" title="<fmt:message key="statistics.export.tooltip"/>">
             <fmt:message key="statistics.export.label"/><img src="img/cloud-down_24.png" alt="<fmt:message key="statistics.export.tooltip"/>" title="<fmt:message key="statistics.export.tooltip"/>" width="24" height="24"/>
+        </a>
+    </div><div class="w3-col m6">
+        <a href="exportstatistics.jsp?year=${requestScope.month.year}" title="<fmt:message key="statistics.exportyear.tooltip"/>">
+            <fmt:message key="statistics.exportyear.label"/><img src="img/cloud-down_24.png" alt="<fmt:message key="statistics.exportyear.tooltip"/>" title="<fmt:message key="statistics.exportyear.tooltip"/>" width="24" height="24"/>
         </a>
     </div>
 </div>

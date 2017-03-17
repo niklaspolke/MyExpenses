@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.ServletException;
@@ -16,12 +15,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import vu.de.npolke.myexpenses.model.Account;
-import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 import vu.de.npolke.myexpenses.servlets.util.StatisticsToCsvConverter;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.Statistics;
 import vu.de.npolke.myexpenses.util.StatisticsElement;
 import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.util.Timer;
@@ -50,11 +49,11 @@ public class ExportStatisticsServlet extends AbstractBasicServlet {
 	Timer timer = new Timer();
 
 	protected void streamFileToResponse(final File fileToStream, final HttpServletResponse response,
-			final String nameOfMonth) {
+			final String filename) {
 		response.setContentType("application/octet-stream; charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		response.setContentLength((int) fileToStream.length());
-		response.setHeader("Content-Disposition", "attachment; filename=\"" + nameOfMonth + ".csv\"");
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + ".csv\"");
 
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileToStream), "UTF-8"));
 				PrintWriter writer = response.getWriter()) {
@@ -67,8 +66,11 @@ public class ExportStatisticsServlet extends AbstractBasicServlet {
 		}
 	}
 
-	protected Month extractMonth(final String monthAsString) {
-		Month month = Month.createMonth(monthAsString);
+	protected Month extractMonth(String monthAsString) {
+		if (monthAsString.length() <= 4) {
+			monthAsString = monthAsString + ".01";
+		}
+		Month month = Month.create(monthAsString);
 		if (month == null) {
 			month = Month.createMonthFromTimeMillis(timer.getCurrentTimeMillis());
 		}
@@ -79,14 +81,35 @@ public class ExportStatisticsServlet extends AbstractBasicServlet {
 			final String monthAsString, final String locale) {
 		Month month = extractMonth(monthAsString);
 
-		StatisticsOfMonth container = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId());
-		List<Expense> top15expenses = statisticsDAO.readTopXofExpensesByMonth(account.getId(), month.toString(), 15);
+		StatisticsOfMonth container = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId(), 20);
 
-		File tempCsvFile = new StatisticsToCsvConverter(container, top15expenses).convertToCsv(new Locale(locale));
+		File tempCsvFile = new StatisticsToCsvConverter(container).convertToCsv(new Locale(locale));
 		streamFileToResponse(tempCsvFile, response, container.getMonth().toString());
 		tempCsvFile.delete();
 
 		return null;
+	}
+
+	protected ServletReaction readStatisticsForYear(final HttpServletResponse response, final Account account,
+			final String yearAsString, final String locale) {
+		Month year = extractMonth(yearAsString);
+
+		Statistics container = statisticsDAO.readStatisticsByYearAndAccountId(year, account.getId(), 20);
+
+		File tempCsvFile = new StatisticsToCsvConverter(container).convertToCsv(new Locale(locale));
+		streamFileToResponse(tempCsvFile, response, "" + year.getYear());
+		tempCsvFile.delete();
+
+		return null;
+	}
+
+	public ServletReaction readStatistics(final HttpServletResponse response, final Account account,
+			final String monthAsString, final String yearAsString, final String locale) {
+		if (yearAsString != null && yearAsString.length() > 0) {
+			return readStatisticsForYear(response, account, yearAsString, locale);
+		} else {
+			return readStatisticsForMonth(response, account, monthAsString, locale);
+		}
 	}
 
 	@Override
@@ -94,8 +117,9 @@ public class ExportStatisticsServlet extends AbstractBasicServlet {
 			final HttpSession session, Account account) throws ServletException, IOException {
 
 		final String month = request.getParameter("month");
+		final String year = request.getParameter("year");
 		final String locale = (String) session.getAttribute(LoginServlet.COOKIE_LOCALE);
 
-		return readStatisticsForMonth(response, account, month, locale);
+		return readStatistics(response, account, month, year, locale);
 	}
 }

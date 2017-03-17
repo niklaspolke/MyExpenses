@@ -2,6 +2,7 @@ package vu.de.npolke.myexpenses.servlets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -28,6 +29,7 @@ import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.Statistics;
 import vu.de.npolke.myexpenses.util.StatisticsElement;
 import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 import vu.de.npolke.myexpenses.util.TimerMock;
@@ -55,24 +57,25 @@ public class ExportStatisticsServletTest {
 	private static final String MONTHLY_EXPENSE = "monthlyexpense";
 	private static final String EXPENSE = "expense";
 	private static final Month MONTH = Month.create(2015, 5);
-	private static final StatisticsElement PAIR_MONTHLY_INCOME = createIncome(1, MONTHLY_INCOME, true);
-	private static final StatisticsElement PAIR_INCOME = createIncome(2, INCOME, false);
-	private static final StatisticsElement PAIR_MONTHLY_EXPENSE = createExpense(3, MONTHLY_EXPENSE, true);
-	private static final StatisticsElement PAIR_EXPENSE = createExpense(4, EXPENSE, false);
+	private static final StatisticsElement PAIR_MONTHLY_INCOME = createIncome(MONTH, 1, MONTHLY_INCOME, true);
+	private static final StatisticsElement PAIR_INCOME = createIncome(MONTH, 2, INCOME, false);
+	private static final StatisticsElement PAIR_MONTHLY_EXPENSE = createExpense(MONTH, 3, MONTHLY_EXPENSE, true);
+	private static final StatisticsElement PAIR_EXPENSE = createExpense(MONTH, 4, EXPENSE, false);
 
-	private static StatisticsElement createIncome(final long categoryid, final String category,
+	private static StatisticsElement createIncome(final Month month, final long categoryid, final String category,
 			final boolean isMonthly) {
-		return StatisticsElement.create(MONTH, categoryid, category, 2.3, isMonthly, true);
+		return StatisticsElement.create(month, categoryid, category, 2.3, isMonthly, true);
 	}
 
-	private static StatisticsElement createExpense(final long categoryid, final String category,
+	private static StatisticsElement createExpense(final Month month, final long categoryid, final String category,
 			final boolean isMonthly) {
-		return StatisticsElement.create(MONTH, categoryid, category, 2.3, isMonthly, false);
+		return StatisticsElement.create(month, categoryid, category, 2.3, isMonthly, false);
 	}
 
 	private static Account account = new Account();
 
-	private static StatisticsOfMonth statistics;
+	private static StatisticsOfMonth statisticsOfMonth;
+	private static Statistics statisticsOfYear;
 	private static List<Expense> topExpenses;
 
 	@BeforeClass
@@ -85,10 +88,22 @@ public class ExportStatisticsServletTest {
 		income.add(PAIR_MONTHLY_INCOME);
 		income.add(PAIR_INCOME);
 		expenses.add(PAIR_EXPENSE);
-		statistics = new StatisticsOfMonth(MONTH, income, monthlyExpenses, expenses);
 		topExpenses = new ArrayList<Expense>();
 		topExpenses.add(createExpense("sports", "squash", 40));
 		topExpenses.add(createExpense("food", "supermarket", 20.5));
+		statisticsOfMonth = new StatisticsOfMonth(MONTH, income, monthlyExpenses, expenses, topExpenses);
+
+		statisticsOfYear = new Statistics();
+		statisticsOfYear.addTopExpenses(MONTH, new ArrayList<Expense>(topExpenses));
+		statisticsOfYear.addTopExpenses(MONTH.next(), new ArrayList<Expense>(topExpenses));
+		statisticsOfYear.add(PAIR_MONTHLY_EXPENSE);
+		statisticsOfYear.add(PAIR_MONTHLY_INCOME);
+		statisticsOfYear.add(PAIR_INCOME);
+		statisticsOfYear.add(PAIR_EXPENSE);
+		statisticsOfYear.add(createIncome(MONTH.next(), 1, MONTHLY_INCOME, true));
+		statisticsOfYear.add(createIncome(MONTH.next(), 2, INCOME, false));
+		statisticsOfYear.add(createExpense(MONTH.next(), 3, MONTHLY_EXPENSE, true));
+		statisticsOfYear.add(createExpense(MONTH.next(), 4, EXPENSE, false));
 	}
 
 	private static Expense createExpense(final String categoryName, final String reason, final double amount) {
@@ -156,17 +171,16 @@ public class ExportStatisticsServletTest {
 	}
 
 	@Test
-	public void readStatistics() throws IOException {
+	public void readStatisticsForMonth() throws IOException {
 		PrintWriter writer = mock(PrintWriter.class);
 		HttpServletResponse response = mock(HttpServletResponse.class);
 		when(response.getWriter()).thenReturn(writer);
 
 		servlet.statisticsDAO = mock(StatisticsDAO.class);
-		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(eq(MONTH), eq(ACCOUNT_ID))).thenReturn(statistics);
-		when(servlet.statisticsDAO.readTopXofExpensesByMonth(eq(ACCOUNT_ID), eq(MONTH.toString()), eq(15)))
-				.thenReturn(topExpenses);
+		when(servlet.statisticsDAO.readStatisticsByMonthAndAccountId(eq(MONTH), eq(ACCOUNT_ID), any(Integer.class)))
+				.thenReturn(statisticsOfMonth);
 
-		ServletReaction reaction = servlet.readStatisticsForMonth(response, account, MONTH.toString(), "de");
+		ServletReaction reaction = servlet.readStatistics(response, account, MONTH.toString(), null, "de");
 
 		assertNull(reaction);
 		InOrder inOrder = inOrder(writer);
@@ -178,8 +192,36 @@ public class ExportStatisticsServletTest {
 		inOrder.verify(writer).println("Ausgaben");
 		inOrder.verify(writer).println(EXPENSE + "," + "\"2,30\"");
 		inOrder.verify(writer).println("");
-		inOrder.verify(writer).println("Top15 Ausgaben");
+		inOrder.verify(writer).println("Top20 Ausgaben");
 		inOrder.verify(writer).println("sports - squash,\"40,00\"");
 		inOrder.verify(writer).println("food - supermarket,\"20,50\"");
+	}
+
+	@Test
+	public void readStatisticsForYear() throws IOException {
+		PrintWriter writer = mock(PrintWriter.class);
+		HttpServletResponse response = mock(HttpServletResponse.class);
+		when(response.getWriter()).thenReturn(writer);
+
+		servlet.statisticsDAO = mock(StatisticsDAO.class);
+		when(servlet.statisticsDAO.readStatisticsByYearAndAccountId(eq(Month.create(MONTH.getYear(), 1)),
+				eq(ACCOUNT_ID), any(Integer.class))).thenReturn(statisticsOfYear);
+
+		ServletReaction reaction = servlet.readStatistics(response, account, null, "" + MONTH.getYear(), "de");
+
+		assertNull(reaction);
+		InOrder inOrder = inOrder(writer);
+		inOrder.verify(writer).println(",2015.05,,2015.06");
+		inOrder.verify(writer).println("Einnahmen");
+		inOrder.verify(writer).println(INCOME + "," + "\"2,30\"," + "," + "\"2,30\",");
+		inOrder.verify(writer).println(MONTHLY_INCOME + "," + "\"2,30\"," + "," + "\"2,30\",");
+		inOrder.verify(writer).println("Fixkosten");
+		inOrder.verify(writer).println(MONTHLY_EXPENSE + "," + "\"2,30\"," + "," + "\"2,30\",");
+		inOrder.verify(writer).println("Ausgaben");
+		inOrder.verify(writer).println(EXPENSE + "," + "\"2,30\"," + "," + "\"2,30\",");
+		inOrder.verify(writer).println("");
+		inOrder.verify(writer).println("Top20 Ausgaben");
+		inOrder.verify(writer).println("sports - squash,\"40,00\"," + "sports - squash,\"40,00\"");
+		inOrder.verify(writer).println("food - supermarket,\"20,50\"," + "food - supermarket,\"20,50\"");
 	}
 }

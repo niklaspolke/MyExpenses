@@ -184,9 +184,9 @@ public class ImportMonthlyServletTest {
 		expensesCurrentMonth.add(exp1);
 		expensesPreviousMonth.add(exp1);
 		expensesPreviousMonth.add(exp2);
-		when(expenseDAO.readMonthlyByAccountAndMonth(account.getId(), Month.createMonth(MONTH)))
+		when(expenseDAO.readMonthlyByAccountAndMonth(account.getId(), Month.create(MONTH)))
 				.thenReturn(expensesCurrentMonth);
-		when(expenseDAO.readMonthlyByAccountAndMonth(account.getId(), Month.createMonth(MONTH_PREVIOUS)))
+		when(expenseDAO.readMonthlyByAccountAndMonth(account.getId(), Month.create(MONTH_PREVIOUS)))
 				.thenReturn(expensesPreviousMonth);
 		when(expenseDAO.create(anyString(), anyDouble(), anyString(), anyBoolean(), anyBoolean(), anyLong(), anyLong()))
 				.thenReturn(new Expense());

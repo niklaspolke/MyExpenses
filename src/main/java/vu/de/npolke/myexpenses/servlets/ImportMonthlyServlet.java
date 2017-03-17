@@ -54,7 +54,7 @@ public class ImportMonthlyServlet extends AbstractBasicServlet {
 
 	public ServletReaction duplicateMonthlyExpenses(final Account account, final String monthAsString) {
 		ServletReaction reaction = new ServletReaction();
-		Month month = Month.createMonth(monthAsString);
+		Month month = Month.create(monthAsString);
 		int countNewExpenses = 0;
 
 		if (month != null) {

@@ -105,7 +105,7 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 			Month currentMonth = getCurrentMonth();
 			Month maxMonth = calcMaxMonth(currentMonth, monthsWithExpenses);
 			Month minMonth = calcMinMonth(currentMonth, monthsWithExpenses);
-			Month monthToShow = Month.createMonth(month);
+			Month monthToShow = Month.create(month);
 			if (monthToShow == null || monthToShow.compareTo(maxMonth) > 0 || monthToShow.compareTo(minMonth) < 0) {
 				monthToShow = currentMonth;
 			}

@@ -45,13 +45,13 @@ public class StatisticsToCsvConverterTest {
 	private static final String CATEGORY_SPECIALCHARS_QUOTATIONMARK = "5expe\"nse";
 	private static final String CATEGORY_SPECIALCHARS_QUOTATIONMARK_AND_COLON = "6e\"xp\"e,nse";
 
-	private static StatisticsElement createIncome(final long categoryid, final String category) {
-		return StatisticsElement.create(MONTH, categoryid, category, 2.3, true, true);
+	private static StatisticsElement createIncome(final Month month, final long categoryid, final String category) {
+		return StatisticsElement.create(month, categoryid, category, 2.3, true, true);
 	}
 
-	private static StatisticsElement createExpense(final long categoryid, final String category,
+	private static StatisticsElement createExpense(final Month month, final long categoryid, final String category,
 			final boolean isMonthly) {
-		return StatisticsElement.create(MONTH, categoryid, category, 2.3, isMonthly, false);
+		return StatisticsElement.create(month, categoryid, category, 2.3, isMonthly, false);
 	}
 
 	private Statistics stats = new Statistics();
@@ -60,9 +60,9 @@ public class StatisticsToCsvConverterTest {
 
 	@Before
 	public void setup() {
-		stats.add(createIncome(1, CATEGORY_MONTHLYINCOME));
-		stats.add(createExpense(2, CATEGORY_MONTHLYEXPENSE, true));
-		stats.add(createExpense(3, CATEGORY_EXPENSE, false));
+		stats.add(createIncome(MONTH, 1, CATEGORY_MONTHLYINCOME));
+		stats.add(createExpense(MONTH, 2, CATEGORY_MONTHLYEXPENSE, true));
+		stats.add(createExpense(MONTH, 3, CATEGORY_EXPENSE, false));
 
 		converter = new StatisticsToCsvConverter(stats.filter(MONTH));
 	}
@@ -120,7 +120,8 @@ public class StatisticsToCsvConverterTest {
 		ArrayList<Expense> topExpenses = new ArrayList<Expense>();
 		topExpenses.add(createExpense("sports", "squash", 40));
 		topExpenses.add(createExpense("food", "supermarket", 20.5));
-		converter = new StatisticsToCsvConverter(stats.filter(MONTH), topExpenses);
+		stats.addTopExpenses(MONTH, topExpenses);
+		converter = new StatisticsToCsvConverter(stats.filter(MONTH));
 
 		File tempFile = converter.convertToCsv(Locale.GERMAN);
 
@@ -134,7 +135,7 @@ public class StatisticsToCsvConverterTest {
 			assertEquals("Ausgaben", reader.readLine());
 			assertEquals(CATEGORY_EXPENSE + ",\"2,30\"", reader.readLine());
 			assertEquals("", reader.readLine());
-			assertEquals("Top15 Ausgaben", reader.readLine());
+			assertEquals("Top20 Ausgaben", reader.readLine());
 			assertEquals("sports - squash,\"40,00\"", reader.readLine());
 			assertEquals("food - supermarket,\"20,50\"", reader.readLine());
 		} catch (IOException e) {
@@ -145,10 +146,49 @@ public class StatisticsToCsvConverterTest {
 	}
 
 	@Test
+	public void exportYearToCsv_DE_WithTopExpenses() {
+		ArrayList<Expense> topExpenses = new ArrayList<Expense>();
+		topExpenses.add(createExpense("sports", "squash", 40));
+		topExpenses.add(createExpense("food", "supermarket", 20.5));
+		stats.addTopExpenses(MONTH, topExpenses);
+
+		stats.add(createIncome(MONTH.next(), 1, CATEGORY_MONTHLYINCOME));
+		stats.add(createExpense(MONTH.next(), 2, CATEGORY_MONTHLYEXPENSE, true));
+		stats.add(createExpense(MONTH.next(), 4, CATEGORY_EXPENSE, false));
+		topExpenses = new ArrayList<Expense>(topExpenses);
+		topExpenses.add(createExpense("2food", "2supermarket", 33.5));
+		stats.addTopExpenses(MONTH.next(), topExpenses);
+		converter = new StatisticsToCsvConverter(stats);
+
+		File tempFile = converter.convertToCsv(Locale.GERMAN);
+
+		assertNotNull(tempFile);
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(new FileInputStream(tempFile), "UTF-8"));) {
+			assertEquals(",2015.05,,2015.06", reader.readLine());
+			assertEquals("Einnahmen", reader.readLine());
+			assertEquals(CATEGORY_MONTHLYINCOME + ",\"2,30\",,\"2,30\",", reader.readLine());
+			assertEquals("Fixkosten", reader.readLine());
+			assertEquals(CATEGORY_MONTHLYEXPENSE + ",\"2,30\",,\"2,30\",", reader.readLine());
+			assertEquals("Ausgaben", reader.readLine());
+			assertEquals(CATEGORY_EXPENSE + ",\"2,30\",,\"2,30\",", reader.readLine());
+			assertEquals("", reader.readLine());
+			assertEquals("Top20 Ausgaben", reader.readLine());
+			assertEquals("sports - squash,\"40,00\",sports - squash,\"40,00\"", reader.readLine());
+			assertEquals("food - supermarket,\"20,50\",food - supermarket,\"20,50\"", reader.readLine());
+			assertEquals(",,2food - 2supermarket,\"33,50\"", reader.readLine());
+		} catch (IOException e) {
+			fail();
+		} finally {
+			tempFile.delete();
+		}
+	}
+
+	@Test
 	public void exportToCsv_DE_WithTopExpenses_SpecialCharacter() {
-		stats.add(createExpense(4, CATEGORY_SPECIALCHARS_COLON, false));
-		stats.add(createExpense(5, CATEGORY_SPECIALCHARS_QUOTATIONMARK, false));
-		stats.add(createExpense(6, CATEGORY_SPECIALCHARS_QUOTATIONMARK_AND_COLON, false));
+		stats.add(createExpense(MONTH, 4, CATEGORY_SPECIALCHARS_COLON, false));
+		stats.add(createExpense(MONTH, 5, CATEGORY_SPECIALCHARS_QUOTATIONMARK, false));
+		stats.add(createExpense(MONTH, 6, CATEGORY_SPECIALCHARS_QUOTATIONMARK_AND_COLON, false));
 		converter = new StatisticsToCsvConverter(stats.filter(MONTH));
 
 		File tempFile = converter.convertToCsv(Locale.GERMAN);

@@ -1,11 +1,14 @@
 package vu.de.npolke.myexpenses.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+
+import vu.de.npolke.myexpenses.model.Expense;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -38,13 +41,16 @@ public class StatisticsTest {
 	private static final StatisticsElement M1_C2_T_F = StatisticsElement.create(M1, 2, C2, AMOUNT, true, false);
 	private static final StatisticsElement M1_C2_T_T = StatisticsElement.create(M1, 2, C2, AMOUNT, true, true);
 	private static final StatisticsElement M1_C2_F_T = StatisticsElement.create(M1, 2, C2, AMOUNT, false, true);
+	private static final Expense M1_TOP1 = createExpense();
+	private static final Expense M1_TOP2 = createExpense();
 
 	private static final StatisticsElement M2_C1_F_F = StatisticsElement.create(M2, 1, C1, AMOUNT, false, false);
 	private static final StatisticsElement M2_C3_T_F = StatisticsElement.create(M2, 3, C3, AMOUNT, true, false);
 	private static final StatisticsElement M2_C4_T_T = StatisticsElement.create(M2, 4, C4, AMOUNT, true, true);
 	private static final StatisticsElement M2_C5_F_T = StatisticsElement.create(M2, 5, C5, AMOUNT, false, true);
+	private static final Expense M2_TOP1 = createExpense();
 
-	private static Statistics statistics = new Statistics();
+	public static Statistics statistics = new Statistics();
 
 	static {
 		List<StatisticsElement> elements = new ArrayList<StatisticsElement>();
@@ -57,6 +63,18 @@ public class StatisticsTest {
 		elements.add(M2_C4_T_T);
 		elements.add(M2_C5_F_T);
 		statistics.add(elements);
+		ArrayList<Expense> topM1 = new ArrayList<Expense>();
+		topM1.add(M1_TOP1);
+		topM1.add(M1_TOP2);
+		statistics.addTopExpenses(M1, topM1);
+		ArrayList<Expense> topM2 = new ArrayList<Expense>();
+		topM2.add(M2_TOP1);
+		statistics.addTopExpenses(M2, topM2);
+	}
+
+	private static Expense createExpense() {
+		Expense expense = new Expense();
+		return expense;
 	}
 
 	@Test
@@ -155,5 +173,21 @@ public class StatisticsTest {
 		assertEquals(0.0, stats.getIncome().get(2).getAmount(), DELTA);
 
 		assertEquals(M1.toString(), stats.getMonth().toString());
+	}
+
+	@Test
+	public void filterTopExpenses_NonExistingMonth() {
+		StatisticsOfMonth stats = statistics.filter(M2.next());
+
+		assertEquals(0, stats.getTopExpenses().size());
+	}
+
+	@Test
+	public void filterTopExpenses() {
+		StatisticsOfMonth stats = statistics.filter(M1);
+
+		assertEquals(2, stats.getTopExpenses().size());
+		assertSame(M1_TOP1, stats.getTopExpenses().get(0));
+		assertSame(M1_TOP2, stats.getTopExpenses().get(1));
 	}
 }

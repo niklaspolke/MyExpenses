@@ -3,8 +3,9 @@ package vu.de.npolke.myexpenses.services;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
-import static vu.de.npolke.myexpenses.util.Month.createMonth;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+import static vu.de.npolke.myexpenses.util.Month.create;
 
 import java.util.Calendar;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.junit.experimental.categories.Category;
 
 import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.Statistics;
 import vu.de.npolke.myexpenses.util.StatisticsElement;
 import vu.de.npolke.myexpenses.util.StatisticsOfMonth;
 
@@ -88,10 +90,23 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 		assertEquals(isIncome, statistics.isIncome());
 	}
 
+	private void assertStatistics(final String readableDate, final long categoryId, final String category,
+			final String reason, final double amount, final boolean isMonthly, final boolean isIncome,
+			final long accountId, final Expense expense) {
+		assertEquals(readableDate, expense.getReadableDayAsString());
+		assertEquals(categoryId, expense.getCategoryId());
+		assertEquals(category, expense.getCategoryName());
+		assertEquals(reason, expense.getReason());
+		assertEquals(amount, expense.getAmount(), 0.01);
+		assertEquals(isMonthly, expense.isMonthly());
+		assertEquals(isIncome, expense.isIncome());
+		assertEquals(accountId, expense.getAccountId());
+	}
+
 	@Test
-	public void readStatisticsByMonthsAndAccountId_201506() {
-		Month month = createMonth("2015.06");
-		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(month, ACCOUNT_ID);
+	public void readStatisticsByMonthAndAccountId_201506() {
+		Month month = create("2015.06");
+		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(month, ACCOUNT_ID, 2);
 
 		assertNotNull(statistics);
 		assertEquals(3, statistics.getExpenses().size());
@@ -99,12 +114,18 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 		assertStatistics(month, 22, "food", 35, false, false, statistics.getExpenses().get(0));
 		assertStatistics(month, 23, "luxury", 15, false, false, statistics.getExpenses().get(1));
 		assertStatistics(month, 21, "sports", 35, false, false, statistics.getExpenses().get(2));
+
+		assertEquals(2, statistics.getTopExpenses().size());
+		assertStatistics("04.06.15", 22, "food", "supermarket", 19, false, false, ACCOUNT_ID,
+				statistics.getTopExpenses().get(0));
+		assertStatistics("04.06.15", 21, "sports", "climbing", 18, false, false, ACCOUNT_ID,
+				statistics.getTopExpenses().get(1));
 	}
 
 	@Test
-	public void readStatisticsByMonthsAndAccountId_201505() {
-		Month month = createMonth("2015.05");
-		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(month, ACCOUNT_ID);
+	public void readStatisticsByMonthAndAccountId_201505() {
+		Month month = create("2015.05");
+		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(month, ACCOUNT_ID, 2);
 
 		assertNotNull(statistics);
 
@@ -118,12 +139,30 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 		assertStatistics(month, 22, "food", 12, false, false, statistics.getExpenses().get(0));
 		assertStatistics(month, 23, "luxury", 27, false, false, statistics.getExpenses().get(1));
 		assertStatistics(month, 21, "sports", 11, false, false, statistics.getExpenses().get(2));
+
+		assertEquals(2, statistics.getTopExpenses().size());
+		assertStatistics("04.05.15", 23, "luxury", "climbing", 14, false, false, ACCOUNT_ID,
+				statistics.getTopExpenses().get(0));
+		assertStatistics("03.05.15", 23, "luxury", "jewels", 13, false, false, ACCOUNT_ID,
+				statistics.getTopExpenses().get(1));
 	}
 
 	@Test
-	public void readStatisticsByMonthsAndAccountId_InvalidMonth() {
-		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(createMonth("2002.01"),
-				ACCOUNT_ID);
+	public void readStatisticsByMonthAndAccountId_InvalidMonth() {
+		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(create("2002.01"), ACCOUNT_ID,
+				2);
+
+		assertNotNull(statistics);
+		assertEquals(0, statistics.getIncome().size());
+		assertEquals(0, statistics.getMonthlyExpenses().size());
+		assertEquals(0, statistics.getExpenses().size());
+
+		assertEquals(0, statistics.getTopExpenses().size());
+	}
+
+	@Test
+	public void readStatisticsByMonthAndAccountId_InvalidAccount() {
+		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(create("2015.06"), 9, 2);
 
 		assertNotNull(statistics);
 		assertEquals(0, statistics.getIncome().size());
@@ -132,13 +171,72 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 	}
 
 	@Test
-	public void readStatisticsByMonthsAndAccountId_InvalidAccount() {
-		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(createMonth("2015.06"), 9);
+	public void readStatisticsByYearAndAccountId_2015() {
+		Month year = create("2015.12");
+		Month month;
+		Statistics statistics = statisticsDAO.readStatisticsByYearAndAccountId(year, ACCOUNT_ID, 2);
 
 		assertNotNull(statistics);
-		assertEquals(0, statistics.getIncome().size());
-		assertEquals(0, statistics.getMonthlyExpenses().size());
-		assertEquals(0, statistics.getExpenses().size());
+		assertEquals(3, statistics.getMonths().size());
+
+		month = Month.create("2015.05");
+		assertEquals(month.toString(), statistics.getMonths().get(0).toString());
+		StatisticsOfMonth mayStats = statistics.filter(month, false);
+		assertEquals(1, mayStats.getIncome().size());
+		assertStatistics(month, 24, "income", 2000, true, true, mayStats.getIncome().get(0));
+		assertEquals(1, mayStats.getMonthlyExpenses().size());
+		assertStatistics(month, 21, "sports", 21, true, false, mayStats.getMonthlyExpenses().get(0));
+		assertEquals(3, mayStats.getExpenses().size());
+		assertStatistics(month, 22, "food", 12, false, false, mayStats.getExpenses().get(0));
+		assertStatistics(month, 23, "luxury", 27, false, false, mayStats.getExpenses().get(1));
+		assertStatistics(month, 21, "sports", 11, false, false, mayStats.getExpenses().get(2));
+		assertEquals(2, mayStats.getTopExpenses().size());
+		assertStatistics("04.05.15", 23, "luxury", "climbing", 14, false, false, ACCOUNT_ID,
+				mayStats.getTopExpenses().get(0));
+		assertStatistics("03.05.15", 23, "luxury", "jewels", 13, false, false, ACCOUNT_ID,
+				mayStats.getTopExpenses().get(1));
+
+		month = Month.create("2015.06");
+		assertEquals(month.toString(), statistics.getMonths().get(1).toString());
+		StatisticsOfMonth juneStats = statistics.filter(month, false);
+		assertEquals(0, juneStats.getIncome().size());
+		assertEquals(0, juneStats.getMonthlyExpenses().size());
+		assertEquals(3, juneStats.getExpenses().size());
+		assertStatistics(month, 22, "food", 35, false, false, juneStats.getExpenses().get(0));
+		assertStatistics(month, 23, "luxury", 15, false, false, juneStats.getExpenses().get(1));
+		assertStatistics(month, 21, "sports", 35, false, false, juneStats.getExpenses().get(2));
+		assertEquals(2, juneStats.getTopExpenses().size());
+		assertStatistics("04.06.15", 22, "food", "supermarket", 19, false, false, ACCOUNT_ID,
+				juneStats.getTopExpenses().get(0));
+		assertStatistics("04.06.15", 21, "sports", "climbing", 18, false, false, ACCOUNT_ID,
+				juneStats.getTopExpenses().get(1));
+
+		month = Month.create("2015.07");
+		assertEquals(month.toString(), statistics.getMonths().get(2).toString());
+		StatisticsOfMonth julyStats = statistics.filter(month, false);
+		assertEquals(0, julyStats.getIncome().size());
+		assertEquals(0, julyStats.getMonthlyExpenses().size());
+		assertEquals(1, julyStats.getExpenses().size());
+		assertStatistics(month, 21, "sports", 20, false, false, julyStats.getExpenses().get(0));
+		assertEquals(1, julyStats.getTopExpenses().size());
+		assertStatistics("04.07.15", 21, "sports", "climbing", 20, false, false, ACCOUNT_ID,
+				julyStats.getTopExpenses().get(0));
+	}
+
+	@Test
+	public void readStatisticsByYearAndAccountId_InvalidYear() {
+		Statistics statistics = statisticsDAO.readStatisticsByYearAndAccountId(create("2202.01"), ACCOUNT_ID, 2);
+
+		assertNotNull(statistics);
+		assertEquals(0, statistics.getMonths().size());
+	}
+
+	@Test
+	public void readStatisticsByYearAndAccountId_InvalidAccount() {
+		Statistics statistics = statisticsDAO.readStatisticsByYearAndAccountId(create("2015.06"), 9, 2);
+
+		assertNotNull(statistics);
+		assertEquals(0, statistics.getMonths().size());
 	}
 
 	public static void assertExpense(final Expense expense, final String reason, final long categoryId,
@@ -174,36 +272,6 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 		assertEquals(categoryName, expense.getCategoryName());
 		assertEquals(categoryId, expense.getCategoryId());
 		assertEquals(amount, expense.getAmount(), DELTA);
-	}
-
-	@Test
-	public void readTopXofExpensesByMonth_Top3Of4_NoIncome_NoMonthly() {
-		List<Expense> expenses = statisticsDAO.readTopXofExpensesByMonth(ACCOUNT_ID, "2015.05", 3);
-
-		assertNotNull(expenses);
-		assertEquals(3, expenses.size());
-
-		assertExpense(expenses.get(0), "climbing", 23, "luxury", 14);
-		assertExpense(expenses.get(1), "jewels", 23, "luxury", 13);
-		assertExpense(expenses.get(2), "supermarket", 22, "food", 12);
-	}
-
-	@Test
-	public void readTopXofExpensesByMonth_Top3OfOne() {
-		List<Expense> expenses = statisticsDAO.readTopXofExpensesByMonth(ACCOUNT_ID, "2015.07", 3);
-
-		assertNotNull(expenses);
-		assertEquals(1, expenses.size());
-
-		assertExpense(expenses.get(0), "climbing", 21, "sports", 20);
-	}
-
-	@Test
-	public void readTopXofExpensesByMonth_NoResult() {
-		List<Expense> expenses = statisticsDAO.readTopXofExpensesByMonth(ACCOUNT_ID, "2020.05", 3);
-
-		assertNotNull(expenses);
-		assertEquals(0, expenses.size());
 	}
 
 	@Test

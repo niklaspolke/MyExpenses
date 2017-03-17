@@ -90,7 +90,7 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 
 	protected void readStatisticsForMonth(final ServletReaction reaction, final Month month, final Account account,
 			final Locale locale) {
-		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId());
+		StatisticsOfMonth statistics = statisticsDAO.readStatisticsByMonthAndAccountId(month, account.getId(), 0);
 
 		List<StatisticsElement> statsExpenses = statistics.getExpenses();
 		statsExpenses.add(StatisticsElement.create(month, 0, TEXT_TOTAL, statistics.getSumExpenses(), false, false));
@@ -144,7 +144,7 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 	public ServletReaction prepareStatistics(final Account account, final String monthAsString,
 			final String localeAsString) {
 		ServletReaction reaction = new ServletReaction();
-		Month month = Month.createMonth(monthAsString);
+		Month month = Month.create(monthAsString);
 		if (month == null) {
 			month = Month.createMonthFromTimeMillis(timer.getCurrentTimeMillis());
 		}
