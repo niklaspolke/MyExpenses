@@ -37,7 +37,7 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 	private static final String SQL_READ_BY_ID = SQL_READ_TEMPLATE + "AND e.id = ?";
 
 	private static final String SQL_READ_BY_ACCOUNT_ID_INFUTURE = "SELECT * FROM (" + SQL_READ_TEMPLATE
-			+ "AND e.monthly = false AND e.day > ? ORDER BY e.day DESC, e.id DESC) WHERE rownum() <= ?";
+			+ "AND e.monthly = false AND e.day > ? ORDER BY e.day ASC, e.id DESC) WHERE rownum() <= ?";
 
 	private static final String SQL_READ_BY_ACCOUNT_ID_UPTONOW = "SELECT * FROM (" + SQL_READ_TEMPLATE
 			+ "AND monthly = false AND day <= ? ORDER BY day DESC, id DESC) WHERE rownum() <= ?";
@@ -164,12 +164,14 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 		return updated;
 	}
 
-	public List<Expense> readByAccountId(final long accountId, final long startIndex, final long endIndex, final boolean inFuture) {
+	public List<Expense> readByAccountId(final long accountId, final long startIndex, final long endIndex,
+			final boolean inFuture) {
 		List<Expense> expenses = new ArrayList<Expense>();
 
 		try (Connection connection = getConnection()) {
 			PreparedStatement readStatement;
-			readStatement = connection.prepareStatement(inFuture ? SQL_READ_BY_ACCOUNT_ID_INFUTURE : SQL_READ_BY_ACCOUNT_ID_UPTONOW);
+			readStatement = connection
+					.prepareStatement(inFuture ? SQL_READ_BY_ACCOUNT_ID_INFUTURE : SQL_READ_BY_ACCOUNT_ID_UPTONOW);
 			readStatement.setLong(1, accountId);
 			readStatement.setDate(2, new java.sql.Date(timer.getCurrentTimeMillis()));
 			readStatement.setLong(3, endIndex);
@@ -177,7 +179,12 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 			while (result.next()) {
 				if (result.getRow() >= startIndex) {
 					Expense expense = mapResultRow(result);
-					expenses.add(expense);
+					if (inFuture) {
+						// reverse order needed
+						expenses.add(0, expense);
+					} else {
+						expenses.add(expense);
+					}
 				}
 			}
 			connection.rollback();
