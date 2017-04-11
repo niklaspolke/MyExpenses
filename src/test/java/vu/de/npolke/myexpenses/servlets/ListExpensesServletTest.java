@@ -46,6 +46,35 @@ public class ListExpensesServletTest {
 	}
 
 	@Test
+	public void checkRedirect() {
+		ServletReaction reaction = servlet.checkRedirect("true", new Integer(4));
+
+		assertNotNull(reaction);
+		assertEquals("listexpenses.jsp?page=4", reaction.getRedirect());
+	}
+
+	@Test
+	public void checkRedirect_false() {
+		ServletReaction reaction = servlet.checkRedirect("false", new Integer(4));
+
+		assertNull(reaction);
+	}
+
+	@Test
+	public void checkRedirect_noLastSite() {
+		ServletReaction reaction = servlet.checkRedirect("true", null);
+
+		assertNull(reaction);
+	}
+
+	@Test
+	public void checkRedirect_noParam() {
+		ServletReaction reaction = servlet.checkRedirect("", null);
+
+		assertNull(reaction);
+	}
+
+	@Test
 	public void getCurrentMonth() {
 		final Calendar now = Calendar.getInstance(Locale.GERMANY);
 		now.setTimeInMillis(System.currentTimeMillis());

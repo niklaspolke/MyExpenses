@@ -1,7 +1,9 @@
 package vu.de.npolke.myexpenses.servlets;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -306,7 +308,7 @@ public class AddExpenseServletTest {
 
 		assertNotNull(reaction);
 		// correct navigation
-		assertEquals("listexpenses.jsp", reaction.getRedirect());
+		assertEquals("listexpenses.jsp?back=true", reaction.getRedirect());
 		// correct creation of Expense
 		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, false, false, categoryId,
 				ACCOUNT_ID);
@@ -328,7 +330,7 @@ public class AddExpenseServletTest {
 
 		assertNotNull(reaction);
 		// correct navigation
-		assertEquals("listexpenses.jsp?monthly=true", reaction.getRedirect());
+		assertEquals("listexpenses.jsp?monthly=true&back=true", reaction.getRedirect());
 		// correct creation of Expense
 		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, true, true, categoryId,
 				ACCOUNT_ID);

@@ -106,9 +106,9 @@ public class EditExpenseServlet extends AbstractBasicServlet {
 
 		ServletReaction reaction = new ServletReaction();
 		if (expense.isMonthly()) {
-			reaction.setRedirect("listexpenses.jsp").add("monthly", true);
+			reaction.setRedirect("listexpenses.jsp").add("monthly", true).add("back", "true");
 		} else {
-			reaction.setRedirect("listexpenses.jsp");
+			reaction.setRedirect("listexpenses.jsp").add("back", "true");
 		}
 		return reaction;
 	}

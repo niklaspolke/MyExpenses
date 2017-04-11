@@ -63,7 +63,7 @@ public class DeleteExpenseServletTest {
 		// correct deletion
 		verify(servlet.expenseDAO).deleteById(expenseId);
 		// correct navigation
-		assertEquals("listexpenses.jsp", reaction.getRedirect());
+		assertEquals("listexpenses.jsp?back=true", reaction.getRedirect());
 	}
 
 	@Test
@@ -80,7 +80,7 @@ public class DeleteExpenseServletTest {
 		// no deletion
 		verify(servlet.expenseDAO, never()).deleteById(anyLong());
 		// correct navigation
-		assertEquals("listexpenses.jsp", reaction.getRedirect());
+		assertEquals("listexpenses.jsp?back=true", reaction.getRedirect());
 	}
 
 	@Test
@@ -98,7 +98,7 @@ public class DeleteExpenseServletTest {
 		// no deletion
 		verify(servlet.expenseDAO, never()).deleteById(anyLong());
 		// correct navigation
-		assertEquals("listexpenses.jsp?monthly=true", reaction.getRedirect());
+		assertEquals("listexpenses.jsp?monthly=true&back=true", reaction.getRedirect());
 	}
 
 	@Test

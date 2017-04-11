@@ -54,9 +54,9 @@ public class DeleteExpenseServlet extends AbstractBasicServlet {
 		ServletReaction reaction = new ServletReaction();
 		Expense expense = expenseDAO.read(account.getId(), expenseId);
 		if (expense != null && expense.isMonthly()) {
-			reaction.setRedirect("listexpenses.jsp").add("monthly", true);
+			reaction.setRedirect("listexpenses.jsp").add("monthly", true).add("back", "true");
 		} else {
-			reaction.setRedirect("listexpenses.jsp");
+			reaction.setRedirect("listexpenses.jsp").add("back", "true");
 		}
 
 		if ("yes".equalsIgnoreCase(confirmed)) {

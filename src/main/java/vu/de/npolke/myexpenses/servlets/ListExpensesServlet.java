@@ -46,6 +46,8 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 	protected static final String MODE_TOP_10 = "topten";
 	protected static final String MODE_MONTHLY = "monthly";
 
+	public static final String SESSION_LISTEXPENSES_LASTSITE = "listexpenses_lastsite";
+
 	private static final int AMOUNT_OF_ENTRIES_PER_PAGE = 10;
 
 	ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
@@ -59,10 +61,25 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 		final String requestedMonth = request.getParameter("month");
 		final String requestedCategoryId = request.getParameter("category");
 		final String requestedMonthly = request.getParameter("monthly");
+		final String useLastSite = request.getParameter("back");
+		final Integer lastSite = (Integer) session.getAttribute("lastSite");
 		final String message = (String) session.getAttribute("message");
 
-		return prepareListExpenses(account, requestedPage, requestedMonth, requestedCategoryId, requestedMonthly,
-				message);
+		ServletReaction reaction = checkRedirect(useLastSite, lastSite);
+		if (reaction == null) {
+			reaction = prepareListExpenses(account, requestedPage, requestedMonth, requestedCategoryId,
+					requestedMonthly, message);
+		}
+		return reaction;
+	}
+
+	protected ServletReaction checkRedirect(final String useLastSite, final Integer lastSite) {
+		ServletReaction reaction = null;
+		if (Boolean.parseBoolean(useLastSite) && lastSite != null) {
+			reaction = new ServletReaction();
+			reaction.setRedirect("listexpenses.jsp?page=" + lastSite);
+		}
+		return reaction;
 	}
 
 	protected Month getCurrentMonth() {
@@ -125,8 +142,11 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 			final long amountOfExpensesInFuture = expenseDAO.readAmountOfExpensesInFuture(account.getId());
 			final long amountOfExpensesUpToNow = expenseDAO.readAmountOfExpensesUpToNow(account.getId());
 
-			final int pageMax = calcAmountOfPages(amountOfExpensesInFuture, AMOUNT_OF_ENTRIES_PER_PAGE); // future on pages 1 -> x
-			final int pageMin = Math.min(0, -1 * calcAmountOfPages(amountOfExpensesUpToNow, AMOUNT_OF_ENTRIES_PER_PAGE) + 1); // past/present on pages -x+1 -> 0
+			// future on pages 1 -> x
+			final int pageMax = calcAmountOfPages(amountOfExpensesInFuture, AMOUNT_OF_ENTRIES_PER_PAGE);
+			// past/present on pages -x+1 -> 0
+			final int pageMin = Math.min(0,
+					-1 * calcAmountOfPages(amountOfExpensesUpToNow, AMOUNT_OF_ENTRIES_PER_PAGE) + 1);
 			final int page = parseRequestedPage(requestedPage, pageMin, pageMax);
 
 			if (page >= 1) { // expenses of the future
@@ -138,6 +158,7 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 			}
 			reaction.setRequestAttribute("mode", MODE_EXPENSES);
 			reaction.setRequestAttribute("page", page);
+			reaction.setSessionAttribute("lastSite", page);
 			reaction.setRequestAttribute("pageMin", pageMin);
 			reaction.setRequestAttribute("pageMax", pageMax);
 		}
