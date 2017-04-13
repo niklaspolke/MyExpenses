@@ -78,6 +78,10 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 		if (Boolean.parseBoolean(useLastSite) && lastSite != null) {
 			reaction = new ServletReaction();
 			reaction.setRedirect("listexpenses.jsp?page=" + lastSite);
+		} else if (useLastSite != null) {
+			// invalid use of url parameter back -> redirect to default
+			reaction = new ServletReaction();
+			reaction.setRedirect("listexpenses.jsp");
 		}
 		return reaction;
 	}

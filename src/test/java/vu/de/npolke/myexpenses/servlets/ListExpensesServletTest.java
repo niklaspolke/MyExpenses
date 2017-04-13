@@ -57,21 +57,31 @@ public class ListExpensesServletTest {
 	public void checkRedirect_false() {
 		ServletReaction reaction = servlet.checkRedirect("false", new Integer(4));
 
-		assertNull(reaction);
+		assertNotNull(reaction);
+		assertEquals("listexpenses.jsp", reaction.getRedirect());
 	}
 
 	@Test
 	public void checkRedirect_noLastSite() {
 		ServletReaction reaction = servlet.checkRedirect("true", null);
 
-		assertNull(reaction);
+		assertNotNull(reaction);
+		assertEquals("listexpenses.jsp", reaction.getRedirect());
 	}
 
 	@Test
 	public void checkRedirect_noParam() {
-		ServletReaction reaction = servlet.checkRedirect("", null);
+		ServletReaction reaction = servlet.checkRedirect(null, null);
 
 		assertNull(reaction);
+	}
+
+	@Test
+	public void checkRedirect_wrongUseOfParamBack() {
+		ServletReaction reaction = servlet.checkRedirect("wrongUseOfParam", null);
+
+		assertNotNull(reaction);
+		assertEquals("listexpenses.jsp", reaction.getRedirect());
 	}
 
 	@Test
