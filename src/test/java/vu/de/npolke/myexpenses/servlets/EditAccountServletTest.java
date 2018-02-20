@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.services.AccountDAO;
+import vu.de.npolke.myexpenses.services.ExpenseDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 import vu.de.npolke.myexpenses.util.HashUtil;
 
@@ -36,6 +37,8 @@ import vu.de.npolke.myexpenses.util.HashUtil;
  */
 public class EditAccountServletTest {
 
+	private static final long ACCOUNT_ID = 1;
+
 	private static final String LOGIN_OLD = "user";
 	private static final String LOGIN_NEW = "new user";
 	private static final String PASSWORD_OLD = "password";
@@ -48,18 +51,25 @@ public class EditAccountServletTest {
 	public void init() {
 		servlet = new EditAccountServlet();
 		servlet.accountDAO = mock(AccountDAO.class);
+		servlet.expenseDAO = mock(ExpenseDAO.class);
 		account = new Account();
+		account.setId(ACCOUNT_ID);
 		account.setLogin(LOGIN_OLD);
 		account.setPassword(HashUtil.toMD5(PASSWORD_OLD));
 	}
 
 	@Test
 	public void prepareEditAccount() {
+		final long AMOUNT_OF_EXPENSES = 14;
+		when(servlet.expenseDAO.readAmountOfStandardExpenses(ACCOUNT_ID)).thenReturn(AMOUNT_OF_EXPENSES);
+
 		ServletReaction reaction = servlet.prepareEditAccount(account);
 
 		assertNotNull(reaction);
 		// correct navigation
 		assertEquals("WEB-INF/editaccount.jsp", reaction.getForward());
+		// correct amount of expenses
+		assertEquals(AMOUNT_OF_EXPENSES, reaction.getRequestAttributes().get("amountOfExpenses"));
 	}
 
 	@Test

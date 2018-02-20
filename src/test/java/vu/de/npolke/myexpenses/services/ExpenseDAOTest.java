@@ -232,6 +232,16 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 	}
 
 	@Test
+	public void readAmountOfStandardExpenses() {
+		expenseDAO.timer = new TimerMock("10.5.15");
+		assertEquals(4, expenseDAO.readAmountOfStandardExpenses(1));
+
+		expenseDAO.create("25.04.15", 13.3, "junk food", false, false, 11, 1);
+
+		assertEquals(5, expenseDAO.readAmountOfStandardExpenses(1));
+	}
+
+	@Test
 	public void readByCategoryId() {
 		List<Expense> expenses = expenseDAO.readByCategoryId(11);
 

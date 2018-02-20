@@ -22,6 +22,22 @@ the License.
 <jsp:include page="header.jsp"/>
 
 <div class="w3-container">
+    <h3><fmt:message key="editaccount.statistics.title"/></h3>
+</div>
+
+<div class="w3-container">
+<div class="w3-panel">
+    <input class="w3-input w3-border w3-round-large"
+        type="text"
+        name="amountOfExpenses"
+        title="<fmt:message key="editaccount.statistics.amountofexpenses.tooltip"/>"
+        disabled="disabled"
+        value="<c:out value="${requestScope.amountOfExpenses}"/>" >
+    <label class="w3-label" for="amountOfExpenses"><fmt:message key="editaccount.statistics.amountofexpenses.label"/></label>
+</div>
+</div>
+
+<div class="w3-container">
     <h3><fmt:message key="editaccount.title"/></h3>
 </div>
 

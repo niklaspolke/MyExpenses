@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import vu.de.npolke.myexpenses.model.Account;
+import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.AccountDAO;
 import vu.de.npolke.myexpenses.services.DAOFactory;
+import vu.de.npolke.myexpenses.services.ExpenseDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 import vu.de.npolke.myexpenses.util.HashUtil;
 
@@ -37,6 +39,7 @@ public class EditAccountServlet extends AbstractBasicServlet {
 	private static final long serialVersionUID = 1L;
 
 	AccountDAO accountDAO = (AccountDAO) DAOFactory.getDAO(Account.class);
+	ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
 
 	@Override
 	protected ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
@@ -46,8 +49,10 @@ public class EditAccountServlet extends AbstractBasicServlet {
 	}
 
 	public ServletReaction prepareEditAccount(final Account account) {
+		final long amountOfStandardExpenses = expenseDAO.readAmountOfStandardExpenses(account.getId());
 		ServletReaction reaction = new ServletReaction();
 		reaction.setForward("WEB-INF/editaccount.jsp");
+		reaction.setRequestAttribute("amountOfExpenses", amountOfStandardExpenses);
 		return reaction;
 	}
 
@@ -80,7 +85,8 @@ public class EditAccountServlet extends AbstractBasicServlet {
 					validationErrors = true;
 				}
 			}
-			if ((newPassword1 != null && newPassword1.length() > 0) || (newPassword2 != null && newPassword2.length() > 0)) {
+			if ((newPassword1 != null && newPassword1.length() > 0)
+					|| (newPassword2 != null && newPassword2.length() > 0)) {
 				if (newPassword1 != null && newPassword1.trim().length() > 3 && newPassword1.equals(newPassword2)) {
 					accountUpdate.setPassword(HashUtil.toMD5(newPassword1));
 				} else {
