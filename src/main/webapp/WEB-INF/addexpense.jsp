@@ -92,7 +92,7 @@ the License.
                 maxlength="40"
                 title="<fmt:message key="addexpense.amount.tooltip"/>"
                 placeholder="<fmt:message key="addexpense.amount.default"/>"
-                pattern="[-+]?[0-9]*[,.]?[0-9]{0,2}"
+                pattern="[-+]?[0-9]+[,.]?[0-9]{0,2}"
                 required="required"
                 autocomplete="off"
                 value="<c:out value="${requestScope.expense.amount != 0.0 ? requestScope.expense.amount : ''}"/>"
