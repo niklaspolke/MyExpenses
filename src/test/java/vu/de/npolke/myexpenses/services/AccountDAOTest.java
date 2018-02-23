@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import vu.de.npolke.myexpenses.model.Account;
+import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.util.HashUtil;
 
 /**
@@ -33,6 +34,8 @@ import vu.de.npolke.myexpenses.util.HashUtil;
 public class AccountDAOTest extends AbstractDAOTest {
 
 	private static AccountDAO accountDAO;
+	private static CategoryDAO categoryDAO;
+	private static ExpenseDAO expenseDAO;
 
 	private static long testCounter = 0;
 
@@ -43,6 +46,8 @@ public class AccountDAOTest extends AbstractDAOTest {
 	@BeforeClass
 	public static void initialise() {
 		accountDAO = (AccountDAO) DAOFactory.getDAO(Account.class);
+		categoryDAO = (CategoryDAO) DAOFactory.getDAO(vu.de.npolke.myexpenses.model.Category.class);
+		expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
 	}
 
 	@Test
@@ -94,5 +99,30 @@ public class AccountDAOTest extends AbstractDAOTest {
 		assertEquals(oldId, account.getId());
 		assertEquals("user111", account.getLogin());
 		assertEquals(HashUtil.toMD5("password2"), account.getPassword());
+	}
+
+	@Test
+	public void delete_success() {
+		final long deletedAccounts = accountDAO.deleteByAccountId(1);
+
+		assertEquals(1, deletedAccounts);
+	}
+
+	@Test
+	public void delete_invalidUser() {
+		final long deletedAccounts = accountDAO.deleteByAccountId(666);
+
+		assertEquals(0, deletedAccounts);
+	}
+
+	@Test
+	public void delete_integration() {
+		final long deletedExpenses = expenseDAO.deleteByAccountId(1);
+		final long deletedCategorys = categoryDAO.deleteByAccountId(1);
+		final long deletedAccounts = accountDAO.deleteByAccountId(1);
+
+		assertEquals(6, deletedExpenses);
+		assertEquals(4, deletedCategorys);
+		assertEquals(1, deletedAccounts);
 	}
 }

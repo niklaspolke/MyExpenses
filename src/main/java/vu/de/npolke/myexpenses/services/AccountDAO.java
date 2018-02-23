@@ -33,6 +33,8 @@ public class AccountDAO extends AbstractConnectionDAO {
 
 	private static final String SQL_READ_BY_LOGIN = "SELECT id, login FROM Account WHERE login = ? AND password = ?";
 
+	private static final String DELETE_BY_ID = "DELETE FROM Account WHERE id = ?";
+
 	private SequenceDAO sequenceDAO;
 
 	public AccountDAO(final SequenceDAO sequenceDAO) {
@@ -107,5 +109,20 @@ public class AccountDAO extends AbstractConnectionDAO {
 		}
 
 		return account;
+	}
+
+	public long deleteByAccountId(final long accountId) {
+		long deleted = 0;
+		try (Connection connection = getConnection()) {
+			PreparedStatement deleteStatement;
+			deleteStatement = connection.prepareStatement(DELETE_BY_ID);
+			deleteStatement.setLong(1, accountId);
+			deleted = deleteStatement.executeUpdate();
+			connection.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			deleted = 0;
+		}
+		return deleted;
 	}
 }

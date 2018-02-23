@@ -99,6 +99,36 @@ the License.
 </div>
 </form>
 
+<div class="w3-container">
+    <h3><fmt:message key="deleteaccount.title"/></h3>
+</div>
+
+<form action="deleteaccount.jsp" method="post">
+<c:if test="${not empty requestScope.errorMessage}"><div class="w3-panel w3-leftbar w3-pale-red w3-border-red">
+    <fmt:message key="${requestScope.errorMessage}"/>
+</div></c:if>
+<div class="w3-panel w3-text-red w3-large">
+    <fmt:message key="deleteaccount.warning"/>
+</div><div class="w3-panel">
+    <input class="w3-input w3-border w3-round-large"
+        type="password"
+        name="password"
+        size="40"
+        maxlength="30"
+        title="<fmt:message key="editaccount.oldpassword.tooltip"/>"
+        placeholder="<fmt:message key="editaccount.oldpassword.default"/>"
+        pattern=".{4,}"
+        required="required"
+        value=""
+        autofocus>
+    <label class="w3-label" for="oldpassword"><fmt:message key="editaccount.oldpassword.label"/></label>
+</div><div class="w3-panel">
+    <div class="w3-row">
+        <input class="w3-btn w3-red w3-xlarge w3-round-xxlarge" type="submit" value="<fmt:message key="deleteaccount.button.label"/>">
+    </div>
+</div>
+</form>
+
 <script type="text/javascript">
 function checkPasswords() {
 	var passwd1 = document.forms[0]["newpassword1"].value;

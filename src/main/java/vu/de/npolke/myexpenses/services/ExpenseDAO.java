@@ -57,6 +57,8 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 
 	private static final String SQL_DELETE_BY_ID = "DELETE FROM Expense WHERE id = ?";
 
+	private static final String SQL_DELETE_BY_ACCOUNTID = "DELETE FROM Expense WHERE account_id = ?";
+
 	private SequenceDAO sequenceDAO;
 
 	private CategoryDAO categoryDAO;
@@ -310,6 +312,21 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 			e.printStackTrace();
 		}
 
+		return deleted;
+	}
+
+	public long deleteByAccountId(final long accountId) {
+		long deleted = 0;
+		try (Connection connection = getConnection()) {
+			PreparedStatement deleteStatement;
+			deleteStatement = connection.prepareStatement(SQL_DELETE_BY_ACCOUNTID);
+			deleteStatement.setLong(1, accountId);
+			deleted = deleteStatement.executeUpdate();
+			connection.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			deleted = 0;
+		}
 		return deleted;
 	}
 }

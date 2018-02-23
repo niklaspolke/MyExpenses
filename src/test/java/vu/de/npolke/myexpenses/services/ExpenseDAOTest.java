@@ -274,4 +274,18 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 
 		assertFalse(success);
 	}
+
+	@Test
+	public void delete_success() {
+		final long deletedAccounts = expenseDAO.deleteByAccountId(1);
+
+		assertEquals(6, deletedAccounts);
+	}
+
+	@Test
+	public void delete_invalidUser() {
+		final long deletedAccounts = expenseDAO.deleteByAccountId(666);
+
+		assertEquals(0, deletedAccounts);
+	}
 }

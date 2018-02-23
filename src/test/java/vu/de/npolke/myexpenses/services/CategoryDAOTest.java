@@ -137,4 +137,18 @@ public class CategoryDAOTest extends AbstractDAOTest {
 
 		assertFalse(success);
 	}
+
+	@Test
+	public void delete_success() {
+		final long deletedAccounts = categoryDAO.deleteByAccountId(1);
+
+		assertEquals(4, deletedAccounts);
+	}
+
+	@Test
+	public void delete_invalidUser() {
+		final long deletedAccounts = categoryDAO.deleteByAccountId(666);
+
+		assertEquals(0, deletedAccounts);
+	}
 }
