@@ -5,8 +5,7 @@ Web Application to track and analyse my expenses
 * Coverage: [![codecov.io](http://codecov.io/github/niklaspolke/MyExpenses/coverage.svg?branch=master)](http://codecov.io/github/niklaspolke/MyExpenses?branch=master)
 
 ### Planned features:
-* Quick cloning of frequently used expenses 
-* Multiple language support
+* Live statistics of application use
 
 ### Architecture:
 * Java EE
@@ -14,6 +13,7 @@ Web Application to track and analyse my expenses
 * W3.CSS
 * JDBC / HSQLDB
 * Maven
+* Gradle
 * Tomcat
 
 ### License
