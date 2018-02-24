@@ -24,8 +24,8 @@ the License.
 <h3><fmt:message key="createaccount.title"/></h3>
 
 <form action="register" method="post">
-<c:if test="${not empty requestScope.errorMessage}"><div class="w3-panel w3-leftbar w3-pale-red w3-border-red">
-    <c:out value="${requestScope.errorMessage}"/>
+<c:if test="${not empty param.error}"><div class="w3-panel w3-leftbar w3-pale-red w3-border-red">
+    <fmt:message key="${param.error}"/>
 </div></c:if>
 <div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
