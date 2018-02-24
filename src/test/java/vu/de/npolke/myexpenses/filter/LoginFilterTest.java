@@ -71,6 +71,11 @@ public class LoginFilterTest {
 	}
 
 	@Test
+	public void noRedirectWhen_ApplicationStatisticsPage() {
+		assertFalse(filter.redirectToLoginPage("/myexpenses/applicationstatistics.jsp", "/myexpenses", "GET", null));
+	}
+
+	@Test
 	public void originalUri_standard() {
 		assertEquals("listexpenses", filter.extractOrignalRequest("/myexpenses/listexpenses"));
 	}

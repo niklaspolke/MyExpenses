@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -20,6 +21,8 @@ import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.CategoryDAO;
 import vu.de.npolke.myexpenses.services.ExpenseDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
+import vu.de.npolke.myexpenses.util.ApplicationStatisticTypes;
+import vu.de.npolke.myexpenses.util.ApplicationStatistics;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -53,6 +56,7 @@ public class AddExpenseServletTest {
 		servlet = new AddExpenseServlet();
 		servlet.categoryDAO = mock(CategoryDAO.class);
 		servlet.expenseDAO = mock(ExpenseDAO.class);
+		servlet.statistics = spy(ApplicationStatistics.getSingleton());
 	}
 
 	@Test
@@ -312,6 +316,7 @@ public class AddExpenseServletTest {
 		// correct creation of Expense
 		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, false, false, categoryId,
 				ACCOUNT_ID);
+		verify(servlet.statistics).increaseCounterForStatisticType(ApplicationStatisticTypes.NEW_EXPENSES);
 	}
 
 	@Test
@@ -334,5 +339,6 @@ public class AddExpenseServletTest {
 		// correct creation of Expense
 		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, true, true, categoryId,
 				ACCOUNT_ID);
+		verify(servlet.statistics).increaseCounterForStatisticType(ApplicationStatisticTypes.NEW_EXPENSES);
 	}
 }

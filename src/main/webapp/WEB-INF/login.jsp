@@ -67,7 +67,10 @@ the License.
     </div>
 </div>
 </form>
-<a href="register.jsp" title="<fmt:message key="login.registerlink.tooltip"/>"><fmt:message key="login.registerlink.label"/></a>
-
+<div class="w3-panel">
+    <a href="register.jsp" title="<fmt:message key="login.registerlink.tooltip"/>"><fmt:message key="login.registerlink.label"/></a>
+</div><div class="w3-panel">
+    <a href="applicationstatistics.jsp" title="<fmt:message key="login.applicationstatisticslink.tooltip"/>"><fmt:message key="login.applicationstatisticslink.label"/></a>
+</div>
 
 <jsp:include page="footer.jsp"/>

@@ -18,6 +18,8 @@ import vu.de.npolke.myexpenses.services.CategoryDAO;
 import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.ExpenseDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
+import vu.de.npolke.myexpenses.util.ApplicationStatisticTypes;
+import vu.de.npolke.myexpenses.util.ApplicationStatistics;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -45,6 +47,7 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 
 	ExpenseDAO expenseDAO = (ExpenseDAO) DAOFactory.getDAO(Expense.class);
 	CategoryDAO categoryDAO = (CategoryDAO) DAOFactory.getDAO(Category.class);
+	ApplicationStatistics statistics = ApplicationStatistics.getSingleton();
 
 	@Override
 	protected ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
@@ -136,6 +139,7 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 		String readableDate = day + "." + month + "." + year;
 
 		expenseDAO.create(readableDate, amount, reason, isMonthly, isIncome, categoryId, account.getId());
+		statistics.increaseCounterForStatisticType(ApplicationStatisticTypes.NEW_EXPENSES);
 
 		ServletReaction reaction = new ServletReaction();
 		if (isMonthly) {

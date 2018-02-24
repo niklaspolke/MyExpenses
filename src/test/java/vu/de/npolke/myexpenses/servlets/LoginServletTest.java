@@ -6,6 +6,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -21,6 +24,8 @@ import vu.de.npolke.myexpenses.model.Expense;
 import vu.de.npolke.myexpenses.services.AccountDAO;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
+import vu.de.npolke.myexpenses.util.ApplicationStatisticTypes;
+import vu.de.npolke.myexpenses.util.ApplicationStatistics;
 
 public class LoginServletTest {
 
@@ -45,6 +50,7 @@ public class LoginServletTest {
 		servlet = new LoginServlet();
 		servlet.accountDAO = mock(AccountDAO.class);
 		servlet.statisticsDAO = mock(StatisticsDAO.class);
+		servlet.statistics = spy(ApplicationStatistics.getSingleton());
 	}
 
 	@Test
@@ -80,6 +86,7 @@ public class LoginServletTest {
 		assertEquals(COOKIE_VALUE, reaction.getSessionAttributes().get(COOKIE_KEY));
 		// correct navigation
 		assertEquals("listexpenses.jsp", reaction.getRedirect());
+		verify(servlet.statistics).increaseCounterForStatisticType(ApplicationStatisticTypes.LOGINS);
 	}
 
 	@Test
@@ -95,6 +102,7 @@ public class LoginServletTest {
 		assertEquals(COOKIE_VALUE, reaction.getSessionAttributes().get(COOKIE_KEY));
 		// correct navigation
 		assertEquals("addExpense", reaction.getRedirect());
+		verify(servlet.statistics).increaseCounterForStatisticType(ApplicationStatisticTypes.LOGINS);
 	}
 
 	@Test
@@ -110,6 +118,7 @@ public class LoginServletTest {
 		assertEquals(COOKIE_VALUE, reaction.getSessionAttributes().get(COOKIE_KEY));
 		// correct navigation
 		assertEquals("addExpense?id=445&test=true", reaction.getRedirect());
+		verify(servlet.statistics).increaseCounterForStatisticType(ApplicationStatisticTypes.LOGINS);
 	}
 
 	@Test
@@ -124,5 +133,6 @@ public class LoginServletTest {
 		assertEquals(COOKIE_VALUE, reaction.getSessionAttributes().get(COOKIE_KEY));
 		// correct navigation
 		assertEquals("login.jsp?error=error.login.notfound", reaction.getRedirect());
+		verify(servlet.statistics, never()).increaseCounterForStatisticType(ApplicationStatisticTypes.LOGINS);
 	}
 }

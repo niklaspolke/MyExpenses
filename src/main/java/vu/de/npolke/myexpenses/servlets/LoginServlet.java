@@ -16,6 +16,8 @@ import vu.de.npolke.myexpenses.services.AccountDAO;
 import vu.de.npolke.myexpenses.services.DAOFactory;
 import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
+import vu.de.npolke.myexpenses.util.ApplicationStatisticTypes;
+import vu.de.npolke.myexpenses.util.ApplicationStatistics;
 import vu.de.npolke.myexpenses.util.StatisticsElement;
 
 /**
@@ -45,6 +47,7 @@ public class LoginServlet extends AbstractBasicServlet {
 
 	AccountDAO accountDAO = (AccountDAO) DAOFactory.getDAO(Account.class);
 	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsElement.class);
+	ApplicationStatistics statistics = ApplicationStatistics.getSingleton();
 
 	@Override
 	public ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
@@ -96,6 +99,7 @@ public class LoginServlet extends AbstractBasicServlet {
 		Account account = accountDAO.readByLogin(login, password);
 
 		if (account != null) {
+			statistics.increaseCounterForStatisticType(ApplicationStatisticTypes.LOGINS);
 			List<Expense> topten = statisticsDAO.readTopTenByAccountId(account.getId());
 			reaction.setSessionAttribute("account", account);
 			reaction.setSessionAttribute("topten", topten);
