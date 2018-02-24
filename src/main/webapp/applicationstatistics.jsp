@@ -25,6 +25,7 @@ the License.
 
 <h3><fmt:message key="applicationstatistics.title"/></h3>
 
+<% ApplicationStatistics statistics = ApplicationStatistics.getSingleton(); %>
 <div class="w3-container">
 <div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
@@ -32,7 +33,7 @@ the License.
         name="applicationStart"
         title="<fmt:message key="applicationstatistics.applicationstart.tooltip"/>"
         disabled="disabled"
-        value="<c:out value="<%= ApplicationStatistics.getApplicationStart() %>"/>" >
+        value="<c:out value="<%= statistics.getStartOfApplication() %>"/>" >
     <label class="w3-label" for="applicationStart"><fmt:message key="applicationstatistics.applicationstart.label"/></label>
 </div><div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
@@ -40,7 +41,7 @@ the License.
         name="amountOfLogins"
         title="<fmt:message key="applicationstatistics.amountoflogins.tooltip"/>"
         disabled="disabled"
-        value="<c:out value="<%= ApplicationStatistics.getStatisticsCounter(ApplicationStatisticTypes.LOGINS) %>"/>" >
+        value="<c:out value="<%= statistics.getCounterForStatisticType(ApplicationStatisticTypes.LOGINS) %>"/>" >
     <label class="w3-label" for="amountOfLogins"><fmt:message key="applicationstatistics.amountoflogins.label"/></label>
 </div><div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
@@ -48,7 +49,7 @@ the License.
         name="amountOfNewExpenses"
         title="<fmt:message key="applicationstatistics.amountofnewexpenses.tooltip"/>"
         disabled="disabled"
-        value="<c:out value="<%= ApplicationStatistics.getStatisticsCounter(ApplicationStatisticTypes.NEW_EXPENSES) %>"/>" >
+        value="<c:out value="<%= statistics.getCounterForStatisticType(ApplicationStatisticTypes.NEW_EXPENSES) %>"/>" >
     <label class="w3-label" for="amountOfNewExpenses"><fmt:message key="applicationstatistics.amountofnewexpenses.label"/></label>
 </div>
 </div>
