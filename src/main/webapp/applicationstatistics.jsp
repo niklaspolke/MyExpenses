@@ -26,7 +26,6 @@ the License.
 <h3><fmt:message key="applicationstatistics.title"/></h3>
 
 <% ApplicationStatistics statistics = ApplicationStatistics.getSingleton(); %>
-<div class="w3-container">
 <div class="w3-panel">
     <input class="w3-input w3-border w3-round-large"
         type="text"
@@ -52,7 +51,8 @@ the License.
         value="<c:out value="<%= statistics.getCounterForStatisticType(ApplicationStatisticTypes.NEW_EXPENSES) %>"/>" >
     <label class="w3-label" for="amountOfNewExpenses"><fmt:message key="applicationstatistics.amountofnewexpenses.label"/></label>
 </div>
+<div class="w3-panel">
+    <a href="login" title="<fmt:message key="applicationstatistics.backlink.tooltip"/>"><fmt:message key="applicationstatistics.backlink.label"/></a>
 </div>
-<a href="login" title="<fmt:message key="applicationstatistics.backlink.tooltip"/>"><fmt:message key="applicationstatistics.backlink.label"/></a>
 
 <jsp:include page="WEB-INF/footer.jsp"/>
