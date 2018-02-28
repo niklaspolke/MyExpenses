@@ -52,7 +52,7 @@ the License.
     <label class="w3-label" for="amountOfNewExpenses"><fmt:message key="applicationstatistics.amountofnewexpenses.label"/></label>
 </div>
 <div class="w3-panel">
-    <a href="login" title="<fmt:message key="applicationstatistics.backlink.tooltip"/>"><fmt:message key="applicationstatistics.backlink.label"/></a>
+    <a href="login.jsp" title="<fmt:message key="applicationstatistics.backlink.tooltip"/>"><fmt:message key="applicationstatistics.backlink.label"/></a>
 </div>
 
 <jsp:include page="WEB-INF/footer.jsp"/>
