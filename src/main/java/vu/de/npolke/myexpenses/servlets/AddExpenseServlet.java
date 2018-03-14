@@ -73,12 +73,14 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 		try {
 			long id = Long.parseLong(expenseId);
 			Expense expense = expenseDAO.read(account.getId(), id);
-			if (expense == null || expense.getAccountId() != account.getId()) {
+			if (expense == null) {
 				errorOccured = true;
 			} else {
 				expense.setId(0);
+				Calendar originalDay = (Calendar) expense.getDay().clone();
 				expense.setDay(now.getTime());
 				reaction.setRequestAttribute("expense", expense);
+				reaction.setRequestAttribute("originalday", originalDay);
 				reaction.setRequestAttribute("categoryPreset", Boolean.TRUE);
 			}
 		} catch (NumberFormatException nfe) {

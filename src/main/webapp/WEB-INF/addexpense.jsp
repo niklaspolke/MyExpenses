@@ -28,7 +28,7 @@ the License.
 <form action="addexpense.jsp" method="post">
 <div class="w3-panel">
     <div class="w3-row-padding">
-        <div class="w3-third">
+        <div class="w3-quarter">
             <input class="w3-input w3-border w3-round-large"
                 type="number"
                 name="day"
@@ -41,7 +41,7 @@ the License.
                 value="<c:out value="${requestScope.expense.getDay().get(5)}"/>"
                 required="required" >
             <label class="w3-label"><fmt:message key="addexpense.day.label"/></label>
-        </div><div class="w3-third">
+        </div><div class="w3-quarter">
             <input class="w3-input w3-border w3-round-large"
                 type="number"
                 name="month"
@@ -54,7 +54,7 @@ the License.
                 value="<c:out value="${requestScope.expense.getDay().get(2)+1}"/>"
                 required="required">
             <label class="w3-label"><fmt:message key="addexpense.month.label"/></label>
-        </div><div class="w3-third">
+        </div><div class="w3-quarter">
             <input class="w3-input w3-border w3-round-large"
                 type="number"
                 name="year"
@@ -67,7 +67,10 @@ the License.
                 value="<c:out value="${requestScope.expense.getDay().get(1)}"/>"
                 required="required">
             <label class="w3-label" for="year"><fmt:message key="addexpense.year.label"/></label>
-        </div>
+        </div><c:if test="${not empty requestScope.originalday}"><div class="w3-quarter">
+            <!-- <a href="" onclick="resetToOriginalDay(${requestScope.originalday.get(5)})">reset</a> -->
+            <input type="button" name="resetdatebutton" value="<fmt:message key="addexpense.resetdatebutton.label"/>" onclick="resetToOriginalDay(${requestScope.originalday.get(5)}, ${requestScope.originalday.get(2)+1}, ${requestScope.originalday.get(1)});">
+        </div></c:if>
     </div>
 </div><div class="w3-panel">
     <div class="w3-row-padding"><div class="w3-col s12">
@@ -127,6 +130,15 @@ the License.
     </div>
 </div>
 </form>
+
+<script type="text/javascript">
+function resetToOriginalDay(originalDay, originalMonth, originalYear) {
+    document.getElementsByName('day')[0].value = originalDay;
+    document.getElementsByName('month')[0].value = originalMonth;
+    document.getElementsByName('year')[0].value = originalYear;
+    document.getElementsByName('resetdatebutton')[0].style.display = 'none';
+}
+</script>
 
 
 <jsp:include page="footer.jsp"/>

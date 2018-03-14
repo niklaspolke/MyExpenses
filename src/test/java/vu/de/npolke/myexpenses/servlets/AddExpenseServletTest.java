@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.junit.Before;
@@ -205,6 +206,8 @@ public class AddExpenseServletTest {
 		Expense expense = new Expense();
 		expense.setAccountId(ACCOUNT_ID);
 		expense.setId(expenseId);
+		expense.setReadableDayAsString("15.09.15");
+		final Calendar ORIGINAL_DATE = (Calendar) expense.getDay().clone();
 		List<Category> categories = new ArrayList<Category>();
 		when(servlet.expenseDAO.read(ACCOUNT_ID, expenseId)).thenReturn(expense);
 		when(servlet.categoryDAO.readByAccountId(ACCOUNT_ID)).thenReturn(categories);
@@ -212,13 +215,15 @@ public class AddExpenseServletTest {
 		ServletReaction reaction = servlet.prepareAddExpense(account, Long.toString(expenseId), null, null);
 
 		assertNotNull(reaction);
-		assertEquals(3, reaction.getRequestAttributes().size());
+		assertEquals(4, reaction.getRequestAttributes().size());
 		// correct session attribute: prepared expense
 		assertEquals(expense, reaction.getRequestAttributes().get("expense"));
 		// correct session attribute: categories
 		assertSame(categories, reaction.getRequestAttributes().get("categories"));
 		// preset of category
 		assertEquals(Boolean.TRUE, reaction.getRequestAttributes().get("categoryPreset"));
+		// original date of expense
+		assertEquals(ORIGINAL_DATE, reaction.getRequestAttributes().get("originalday"));
 		// correct navigation
 		assertEquals("WEB-INF/addexpense.jsp", reaction.getForward());
 	}
@@ -231,6 +236,8 @@ public class AddExpenseServletTest {
 		Expense expense = new Expense();
 		expense.setAccountId(ACCOUNT_ID);
 		expense.setId(expenseId);
+		expense.setReadableDayAsString("15.09.15");
+		final Calendar ORIGINAL_DATE = (Calendar) expense.getDay().clone();
 		expense.setReason(REASON);
 		expense.setCategoryId(CATEGORY_ID);
 		List<Category> categories = new ArrayList<Category>();
@@ -241,7 +248,7 @@ public class AddExpenseServletTest {
 				"" + NON_EXISTING_CATEGORY_ID);
 
 		assertNotNull(reaction);
-		assertEquals(3, reaction.getRequestAttributes().size());
+		assertEquals(4, reaction.getRequestAttributes().size());
 		// correct session attribute: prepared expense
 		assertEquals(expense, reaction.getRequestAttributes().get("expense"));
 		final Expense sessionExpense = (Expense) reaction.getRequestAttributes().get("expense");
@@ -252,6 +259,8 @@ public class AddExpenseServletTest {
 		assertSame(categories, reaction.getRequestAttributes().get("categories"));
 		// preset of category
 		assertEquals(Boolean.TRUE, reaction.getRequestAttributes().get("categoryPreset"));
+		// original date of expense
+		assertEquals(ORIGINAL_DATE, reaction.getRequestAttributes().get("originalday"));
 		// correct navigation
 		assertEquals("WEB-INF/addexpense.jsp", reaction.getForward());
 	}
