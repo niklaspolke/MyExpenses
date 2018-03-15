@@ -69,7 +69,7 @@ the License.
             <label class="w3-label" for="year"><fmt:message key="addexpense.year.label"/></label>
         </div><c:if test="${not empty requestScope.originalday}"><div class="w3-quarter">
             <!-- <a href="" onclick="resetToOriginalDay(${requestScope.originalday.get(5)})">reset</a> -->
-            <input type="button" name="resetdatebutton" value="<fmt:message key="addexpense.resetdatebutton.label"/>" onclick="resetToOriginalDay(${requestScope.originalday.get(5)}, ${requestScope.originalday.get(2)+1}, ${requestScope.originalday.get(1)});">
+            <input class="w3-btn w3-blue w3-round-xxlarge" type="button" name="resetdatebutton" value="<fmt:message key="addexpense.resetdatebutton.label"/>" onclick="resetToOriginalDay(${requestScope.originalday.get(5)}, ${requestScope.originalday.get(2)+1}, ${requestScope.originalday.get(1)});">
         </div></c:if>
     </div>
 </div><div class="w3-panel">
