@@ -31,6 +31,7 @@ the License.
         <div class="w3-quarter">
             <input class="w3-input w3-border w3-round-large"
                 type="number"
+                id="day"
                 name="day"
                 size="4"
                 maxlength="2"
@@ -44,6 +45,7 @@ the License.
         </div><div class="w3-quarter">
             <input class="w3-input w3-border w3-round-large"
                 type="number"
+                id="month"
                 name="month"
                 size="4"
                 maxlength="2"
@@ -57,6 +59,7 @@ the License.
         </div><div class="w3-quarter">
             <input class="w3-input w3-border w3-round-large"
                 type="number"
+                id="year"
                 name="year"
                 size="6"
                 maxlength="4"
@@ -68,8 +71,7 @@ the License.
                 required="required">
             <label class="w3-label" for="year"><fmt:message key="addexpense.year.label"/></label>
         </div><c:if test="${not empty requestScope.originalday}"><div class="w3-quarter">
-            <!-- <a href="" onclick="resetToOriginalDay(${requestScope.originalday.get(5)})">reset</a> -->
-            <input class="w3-btn w3-blue w3-round-xxlarge" type="button" name="resetdatebutton" value="<fmt:message key="addexpense.resetdatebutton.label"/>" onclick="resetToOriginalDay(${requestScope.originalday.get(5)}, ${requestScope.originalday.get(2)+1}, ${requestScope.originalday.get(1)});">
+            <input class="w3-btn w3-blue w3-round-xxlarge" type="button" id="resetdatebutton" value="<fmt:message key="addexpense.resetdatebutton.label"/>" onclick="resetToOriginalDay(${requestScope.originalday.get(5)}, ${requestScope.originalday.get(2)+1}, ${requestScope.originalday.get(1)});">
         </div></c:if>
     </div>
 </div><div class="w3-panel">
@@ -131,12 +133,12 @@ the License.
 </div>
 </form>
 
-<script type="text/javascript">
+<script>
 function resetToOriginalDay(originalDay, originalMonth, originalYear) {
-    document.getElementsByName('day')[0].value = originalDay;
-    document.getElementsByName('month')[0].value = originalMonth;
-    document.getElementsByName('year')[0].value = originalYear;
-    document.getElementsByName('resetdatebutton')[0].style.display = 'none';
+    document.getElementById('day').value   = originalDay;
+    document.getElementById('month').value = originalMonth;
+    document.getElementById('year').value  = originalYear;
+    document.getElementById('resetdatebutton').style.display = 'none';
 }
 </script>
 

@@ -146,7 +146,7 @@ the License.
 </table>
 </div>
 
-<script type="text/javascript">
+<script>
 function prompt(id, expense) {
     var confirmed = confirm('<fmt:message key="warn.deleteexpensey"><fmt:param value="' + expense + '"/></fmt:message>');
     if (confirmed) {
