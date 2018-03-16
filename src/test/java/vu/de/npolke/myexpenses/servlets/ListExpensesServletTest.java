@@ -2,6 +2,7 @@ package vu.de.npolke.myexpenses.servlets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -47,17 +48,19 @@ public class ListExpensesServletTest {
 
 	@Test
 	public void checkRedirect() {
-		ServletReaction reaction = servlet.checkRedirect("true", new Integer(4));
+		ServletReaction redirectReaction = new ServletReaction();
+		ServletReaction reaction = servlet.checkRedirect("true", redirectReaction);
 
-		assertNotNull(reaction);
-		assertEquals("listexpenses.jsp?page=4", reaction.getRedirect());
+		assertSame(redirectReaction, reaction);
 	}
 
 	@Test
 	public void checkRedirect_false() {
-		ServletReaction reaction = servlet.checkRedirect("false", new Integer(4));
+		ServletReaction redirectReaction = new ServletReaction();
+		ServletReaction reaction = servlet.checkRedirect("false", redirectReaction);
 
 		assertNotNull(reaction);
+		assertNotSame(redirectReaction, reaction);
 		assertEquals("listexpenses.jsp", reaction.getRedirect());
 	}
 

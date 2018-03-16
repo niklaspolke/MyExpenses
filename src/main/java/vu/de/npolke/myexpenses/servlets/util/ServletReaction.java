@@ -24,7 +24,7 @@ public class ServletReaction {
 
 	private Map<String, Object> sessionAttributes = new HashMap<String, Object>();
 	private Map<String, Object> requestAttributes = new HashMap<String, Object>();
-	private URLParameterBuilder requestParameters = new URLParameterBuilder();
+	private URLParameterBuilder redirectParameter = new URLParameterBuilder();
 
 	private String location = null;
 
@@ -37,8 +37,14 @@ public class ServletReaction {
 	public URLParameterBuilder setRedirect(final String location) {
 		doRedirect = true;
 		this.location = location;
-		requestParameters = new URLParameterBuilder();
-		return requestParameters;
+		redirectParameter = new URLParameterBuilder();
+		return redirectParameter;
+	}
+
+	public void addRedirectParameter(final String key, final Object value) {
+		if (getDoRedirect()) {
+			redirectParameter.add(key, value);
+		}
 	}
 
 	public void setForward(final String location) {
@@ -47,7 +53,7 @@ public class ServletReaction {
 	}
 
 	public String getRedirect() {
-		return doRedirect ? this.location + requestParameters.buildURL() : null;
+		return doRedirect ? this.location + redirectParameter.buildURL() : null;
 	}
 
 	public String getForward() {

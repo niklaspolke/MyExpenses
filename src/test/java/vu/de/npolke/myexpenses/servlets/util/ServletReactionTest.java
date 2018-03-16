@@ -124,6 +124,17 @@ public class ServletReactionTest {
 	}
 
 	@Test
+	public void addRequestParameter2() {
+		final String KEY = "mykey";
+		final String VALUE = "value";
+
+		reaction.setRedirect(DEFAULT_URL);
+		reaction.addRedirectParameter(KEY, VALUE);
+
+		assertEquals(DEFAULT_URL + "?" + KEY + "=" + VALUE, reaction.getRedirect());
+	}
+
+	@Test
 	public void addTwoRequestParameterWithBuilder() {
 		final String KEY1 = "mykey";
 		final String VALUE1 = "value";
@@ -131,6 +142,21 @@ public class ServletReactionTest {
 		final String VALUE2 = "value2";
 
 		reaction.setRedirect(DEFAULT_URL).add(KEY1, VALUE1).add(KEY2, VALUE2);
+
+		// expect: /myurl/index.jsp?mykey=value&mykey2=value2
+		assertEquals(DEFAULT_URL + "?" + KEY1 + "=" + VALUE1 + "&" + KEY2 + "=" + VALUE2, reaction.getRedirect());
+	}
+
+	@Test
+	public void addTwoRequestParameterWithBuilder2() {
+		final String KEY1 = "mykey";
+		final String VALUE1 = "value";
+		final String KEY2 = "mykey2";
+		final String VALUE2 = "value2";
+
+		reaction.setRedirect(DEFAULT_URL);
+		reaction.addRedirectParameter(KEY1, VALUE1);
+		reaction.addRedirectParameter(KEY2, VALUE2);
 
 		// expect: /myurl/index.jsp?mykey=value&mykey2=value2
 		assertEquals(DEFAULT_URL + "?" + KEY1 + "=" + VALUE1 + "&" + KEY2 + "=" + VALUE2, reaction.getRedirect());

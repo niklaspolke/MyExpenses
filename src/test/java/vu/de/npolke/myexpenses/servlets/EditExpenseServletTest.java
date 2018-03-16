@@ -167,6 +167,6 @@ public class EditExpenseServletTest {
 		assertEquals(DAY_NEW + "." + MONTH_NEW + "." + "00", expense.getReadableDayAsString());
 		verify(servlet.expenseDAO).update(expense);
 		// correct navigation
-		assertEquals("listexpenses.jsp?monthly=true", reaction.getRedirect());
+		assertEquals("listexpenses.jsp?back=true", reaction.getRedirect());
 	}
 }

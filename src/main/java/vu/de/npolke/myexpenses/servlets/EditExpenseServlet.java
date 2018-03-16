@@ -105,11 +105,7 @@ public class EditExpenseServlet extends AbstractBasicServlet {
 		expenseDAO.update(expense);
 
 		ServletReaction reaction = new ServletReaction();
-		if (expense.isMonthly()) {
-			reaction.setRedirect("listexpenses.jsp").add("monthly", true);
-		} else {
-			reaction.setRedirect("listexpenses.jsp").add("back", "true");
-		}
+		reaction.setRedirect("listexpenses.jsp").add("back", "true");
 		return reaction;
 	}
 }

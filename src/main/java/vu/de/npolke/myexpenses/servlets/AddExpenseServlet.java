@@ -144,11 +144,7 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 		statistics.increaseCounterForStatisticType(ApplicationStatisticTypes.NEW_EXPENSES);
 
 		ServletReaction reaction = new ServletReaction();
-		if (isMonthly) {
-			reaction.setRedirect("listexpenses.jsp").add("monthly", true);
-		} else {
-			reaction.setRedirect("listexpenses.jsp").add("back", "true");
-		}
+		reaction.setRedirect("listexpenses.jsp").add("back", "true");
 
 		return reaction;
 	}

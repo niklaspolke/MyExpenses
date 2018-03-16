@@ -98,7 +98,7 @@ public class DeleteExpenseServletTest {
 		// no deletion
 		verify(servlet.expenseDAO, never()).deleteById(anyLong());
 		// correct navigation
-		assertEquals("listexpenses.jsp?monthly=true", reaction.getRedirect());
+		assertEquals("listexpenses.jsp?back=true", reaction.getRedirect());
 	}
 
 	@Test

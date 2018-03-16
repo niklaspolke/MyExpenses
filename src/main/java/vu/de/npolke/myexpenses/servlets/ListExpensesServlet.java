@@ -62,10 +62,11 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 		final String requestedCategoryId = request.getParameter("category");
 		final String requestedMonthly = request.getParameter("monthly");
 		final String useLastSite = request.getParameter("back");
-		final Integer lastSite = (Integer) session.getAttribute("lastSite");
+		final ServletReaction redirectToLastListExpenses = (ServletReaction) session
+				.getAttribute("redirectAfterExpenseSave");
 		final String message = (String) session.getAttribute("message");
 
-		ServletReaction reaction = checkRedirect(useLastSite, lastSite);
+		ServletReaction reaction = checkRedirect(useLastSite, redirectToLastListExpenses);
 		if (reaction == null) {
 			reaction = prepareListExpenses(account, requestedPage, requestedMonth, requestedCategoryId,
 					requestedMonthly, message);
@@ -73,11 +74,11 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 		return reaction;
 	}
 
-	protected ServletReaction checkRedirect(final String useLastSite, final Integer lastSite) {
+	protected ServletReaction checkRedirect(final String useLastSite,
+			final ServletReaction redirectToLastListExpenses) {
 		ServletReaction reaction = null;
-		if (Boolean.parseBoolean(useLastSite) && lastSite != null) {
-			reaction = new ServletReaction();
-			reaction.setRedirect("listexpenses.jsp?page=" + lastSite);
+		if (Boolean.parseBoolean(useLastSite) && redirectToLastListExpenses != null) {
+			reaction = redirectToLastListExpenses;
 		} else if (useLastSite != null) {
 			// invalid use of url parameter back -> redirect to default
 			reaction = new ServletReaction();
@@ -121,6 +122,10 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 		}
 		reaction.setSessionAttribute("message", null);
 
+		// remember redirect for using after next save expense action
+		ServletReaction redirectAfterExpenseSave = new ServletReaction();
+		redirectAfterExpenseSave.setRedirect("listexpenses.jsp");
+
 		if (getMonthly) {
 			List<Month> monthsWithExpenses = statisticsDAO.readDistinctMonthsByAccountId(account.getId());
 			Month currentMonth = getCurrentMonth();
@@ -135,6 +140,9 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 			reaction.setRequestAttribute("monthMax", maxMonth);
 			reaction.setRequestAttribute("monthCurrent", monthToShow);
 			reaction.setRequestAttribute("monthMin", minMonth);
+
+			redirectAfterExpenseSave.addRedirectParameter("monthly", "true");
+			redirectAfterExpenseSave.addRedirectParameter("month", monthToShow.toString());
 		} else if (month != null || categoryIdForTopTen != null) {
 			final long parsedCategoryIdForTopTen = parseLongDefault0(categoryIdForTopTen);
 			expenses = statisticsDAO.readTopTenByMonthAndCategory(account.getId(), month, parsedCategoryIdForTopTen);
@@ -142,6 +150,9 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 			reaction.setRequestAttribute("month", month);
 			reaction.setRequestAttribute("category",
 					expenses.size() > 0 ? expenses.get(0).getCategoryName() : categoryIdForTopTen);
+
+			redirectAfterExpenseSave.addRedirectParameter("category", categoryIdForTopTen);
+			redirectAfterExpenseSave.addRedirectParameter("month", month);
 		} else {
 			final long amountOfExpensesInFuture = expenseDAO.readAmountOfExpensesInFuture(account.getId());
 			final long amountOfExpensesUpToNow = expenseDAO.readAmountOfExpensesUpToNow(account.getId());
@@ -160,6 +171,9 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 				expenses = expenseDAO.readByAccountId(account.getId(), Math.abs(page) * AMOUNT_OF_ENTRIES_PER_PAGE + 1,
 						(Math.abs(page) + 1) * AMOUNT_OF_ENTRIES_PER_PAGE, false);
 			}
+
+			redirectAfterExpenseSave.addRedirectParameter("page", page);
+
 			reaction.setRequestAttribute("mode", MODE_EXPENSES);
 			reaction.setRequestAttribute("page", page);
 			reaction.setSessionAttribute("lastSite", page);
@@ -167,6 +181,7 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 			reaction.setRequestAttribute("pageMax", pageMax);
 		}
 
+		reaction.setSessionAttribute("redirectAfterExpenseSave", redirectAfterExpenseSave);
 		reaction.setRequestAttribute("expenses", expenses);
 		reaction.setForward("WEB-INF/listexpenses.jsp");
 

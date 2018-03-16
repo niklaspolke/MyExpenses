@@ -344,7 +344,7 @@ public class AddExpenseServletTest {
 
 		assertNotNull(reaction);
 		// correct navigation
-		assertEquals("listexpenses.jsp?monthly=true", reaction.getRedirect());
+		assertEquals("listexpenses.jsp?back=true", reaction.getRedirect());
 		// correct creation of Expense
 		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, true, true, categoryId,
 				ACCOUNT_ID);
