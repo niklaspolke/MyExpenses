@@ -15,7 +15,10 @@ tasks.withType(JavaCompile) {
 }
 
 repositories {
-     maven { url "http://repo.maven.apache.org/maven2" }
+    maven { url "http://repo.maven.apache.org/maven2" }
+}
+war {
+    archiveName = 'myexpenses.war'
 }
 dependencies {
     compile(group: 'org.glassfish.web', name: 'javax.servlet.jsp.jstl', version:'1.2.1') {
