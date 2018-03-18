@@ -144,6 +144,9 @@ the License.
         </th></c:if>
     </tbody>
 </table>
+<c:if test="${requestScope.mode eq 'topten'}">
+    <a href="showstatistics.jsp?back=true" title="<fmt:message key="listexpenses.backtostatistics.tooltip"/>"><fmt:message key="listexpenses.backtostatistics.label"/></a>
+</c:if>
 </div>
 
 <script>

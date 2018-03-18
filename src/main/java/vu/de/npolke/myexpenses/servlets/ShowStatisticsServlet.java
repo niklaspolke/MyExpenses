@@ -95,7 +95,8 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 		List<StatisticsElement> statsExpenses = statistics.getExpenses();
 		statsExpenses.add(StatisticsElement.create(month, 0, TEXT_TOTAL, statistics.getSumExpenses(), false, false));
 		List<StatisticsElement> statsMonthlyExpenses = statistics.getMonthlyExpenses();
-		statsMonthlyExpenses.add(StatisticsElement.create(month, 0, TEXT_TOTAL, statistics.getSumMonthlyExpenses(), true, false));
+		statsMonthlyExpenses
+				.add(StatisticsElement.create(month, 0, TEXT_TOTAL, statistics.getSumMonthlyExpenses(), true, false));
 		List<StatisticsElement> statsIncome = statistics.getIncome();
 		statsIncome.add(StatisticsElement.create(month, 0, TEXT_TOTAL, statistics.getSumIncome(), true, true));
 
@@ -123,8 +124,29 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 
 		final String month = request.getParameter("month");
 		final String locale = (String) session.getAttribute(LoginServlet.COOKIE_LOCALE);
+		final String useLastSite = request.getParameter("back");
+		final ServletReaction redirectToLastShowStatistics = (ServletReaction) session
+				.getAttribute("redirectToLastShowStatistics");
 
-		return prepareStatistics(account, month, locale);
+		ServletReaction reaction = checkRedirect(useLastSite, redirectToLastShowStatistics);
+		if (reaction == null) {
+			reaction = prepareStatistics(account, month, locale);
+		}
+
+		return reaction;
+	}
+
+	protected ServletReaction checkRedirect(final String useLastSite,
+			final ServletReaction redirectToLastShowStatistics) {
+		ServletReaction reaction = null;
+		if (Boolean.parseBoolean(useLastSite) && redirectToLastShowStatistics != null) {
+			reaction = redirectToLastShowStatistics;
+		} else if (useLastSite != null) {
+			// invalid use of url parameter back -> redirect to default
+			reaction = new ServletReaction();
+			reaction.setRedirect("showstatistics.jsp");
+		}
+		return reaction;
 	}
 
 	Month getSelectedMonth(final Month wantedMonth, final List<Month> existingMonths) {
@@ -143,6 +165,13 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 
 	public ServletReaction prepareStatistics(final Account account, final String monthAsString,
 			final String localeAsString) {
+		// remember redirect for using after next save expense action
+		ServletReaction redirectToLastShowStatistics = new ServletReaction();
+		redirectToLastShowStatistics.setRedirect("showstatistics.jsp");
+		if (monthAsString != null) {
+			redirectToLastShowStatistics.addRedirectParameter("month", monthAsString);
+		}
+
 		ServletReaction reaction = new ServletReaction();
 		Month month = Month.create(monthAsString);
 		if (month == null) {
@@ -161,6 +190,7 @@ public class ShowStatisticsServlet extends AbstractBasicServlet {
 			readStatisticsForMonth(reaction, month, account, locale);
 		}
 
+		reaction.setSessionAttribute("redirectToLastShowStatistics", redirectToLastShowStatistics);
 		reaction.setRequestAttribute("months", months);
 		reaction.setForward("WEB-INF/showstatistics.jsp");
 

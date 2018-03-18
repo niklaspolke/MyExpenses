@@ -2,7 +2,10 @@ package vu.de.npolke.myexpenses.servlets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -31,14 +34,17 @@ import vu.de.npolke.myexpenses.util.TimerMock;
 /**
  * Copyright 2015 Niklas Polke
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  *
  * @author Niklas Polke
  */
@@ -151,6 +157,47 @@ public class ShowStatisticsServletTest {
 	}
 
 	@Test
+	public void checkRedirect() {
+		ServletReaction redirectReaction = new ServletReaction();
+		ServletReaction reaction = servlet.checkRedirect("true", redirectReaction);
+
+		assertSame(redirectReaction, reaction);
+	}
+
+	@Test
+	public void checkRedirect_false() {
+		ServletReaction redirectReaction = new ServletReaction();
+		ServletReaction reaction = servlet.checkRedirect("false", redirectReaction);
+
+		assertNotNull(reaction);
+		assertNotSame(redirectReaction, reaction);
+		assertEquals("showstatistics.jsp", reaction.getRedirect());
+	}
+
+	@Test
+	public void checkRedirect_noLastSite() {
+		ServletReaction reaction = servlet.checkRedirect("true", null);
+
+		assertNotNull(reaction);
+		assertEquals("showstatistics.jsp", reaction.getRedirect());
+	}
+
+	@Test
+	public void checkRedirect_noParam() {
+		ServletReaction reaction = servlet.checkRedirect(null, null);
+
+		assertNull(reaction);
+	}
+
+	@Test
+	public void checkRedirect_wrongUseOfParamBack() {
+		ServletReaction reaction = servlet.checkRedirect("wrongUseOfParam", null);
+
+		assertNotNull(reaction);
+		assertEquals("showstatistics.jsp", reaction.getRedirect());
+	}
+
+	@Test
 	public void prepareStatistics_WithMonth() {
 		servlet = spy(servlet);
 		// equal to FAKE TIME, even if it is not used within this test
@@ -185,6 +232,28 @@ public class ShowStatisticsServletTest {
 		assertNotNull(reaction);
 		assertEquals(months, reaction.getRequestAttributes().get("months"));
 		assertEquals("WEB-INF/showstatistics.jsp", reaction.getForward());
+	}
+
+	@Test
+	public void prepareStatistics_WithMonth_SaveBackLink() {
+		final Month MONTH = Month.create("2017.01");
+
+		final ServletReaction reaction = servlet.prepareStatistics(account, MONTH.toString(), "en");
+
+		assertEquals(1, reaction.getSessionAttributes().size());
+		assertTrue(reaction.getSessionAttributes().get("redirectToLastShowStatistics") instanceof ServletReaction);
+		assertEquals("showstatistics.jsp?month=2017.01",
+				((ServletReaction) reaction.getSessionAttributes().get("redirectToLastShowStatistics")).getRedirect());
+	}
+
+	@Test
+	public void prepareStatistics_WithoutMonth_SaveBackLink() {
+		final ServletReaction reaction = servlet.prepareStatistics(account, null, "en");
+
+		assertEquals(1, reaction.getSessionAttributes().size());
+		assertTrue(reaction.getSessionAttributes().get("redirectToLastShowStatistics") instanceof ServletReaction);
+		assertEquals("showstatistics.jsp",
+				((ServletReaction) reaction.getSessionAttributes().get("redirectToLastShowStatistics")).getRedirect());
 	}
 
 	@Test
