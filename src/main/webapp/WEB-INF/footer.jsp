@@ -16,12 +16,16 @@ the License.
 <%@page language="Java" contentType="text/html" pageEncoding="UTF-8"%>
 <script type="text/javascript">
 function w3_open() {
-    document.getElementById("mySidenav").style.display = "inherit";
-    document.getElementById("mySidenav").style.top = "0px";
+    if (document.getElementById("mySidenav") != null) {
+        document.getElementById("mySidenav").style.display = "inherit";
+        document.getElementById("mySidenav").style.top = "0px";
+    }
 }
 function w3_close() {
-    document.getElementById("mySidenav").style.display = "none";
-    document.getElementById("mySidenav").style.top = "";
+    if (document.getElementById("mySidenav") != null) {
+        document.getElementById("mySidenav").style.display = "none";
+        document.getElementById("mySidenav").style.top = "";
+    }
 }
 function myAccFunc() {
     var x = document.getElementById("topten");
