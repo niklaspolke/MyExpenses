@@ -54,6 +54,14 @@ public class LoginServletTest {
 	}
 
 	@Test
+	public void doGet_alreadyLoggedIn() throws Exception {
+		final ServletReaction reaction = servlet.doGet(null, null, null, new Account());
+
+		assertNotNull(reaction);
+		assertEquals("listexpenses.jsp?back=true", reaction.getRedirect());
+	}
+
+	@Test
 	public void initialiseLocale_noCookie() {
 		final ServletReaction reaction = servlet.initialiseLocale(null);
 

@@ -53,6 +53,16 @@ public class LoginServlet extends AbstractBasicServlet {
 	public ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
 			final HttpSession session, Account account) throws ServletException, IOException {
 
+		if (account != null) {
+			/*
+			 * if already logged in then redirect to last visited page on
+			 * listexpenses.jsp
+			 */
+			ServletReaction redirectToListExpenses = new ServletReaction();
+			redirectToListExpenses.setRedirect("listexpenses.jsp").add("back", "true");
+			return redirectToListExpenses;
+		}
+
 		Cookie[] cookies = request.getCookies();
 		Cookie localeCookie = null;
 		if (cookies != null) {
@@ -67,7 +77,7 @@ public class LoginServlet extends AbstractBasicServlet {
 		return initialiseLocale(localeCookie);
 	}
 
-	public ServletReaction initialiseLocale(final Cookie localeCookie) {
+	protected ServletReaction initialiseLocale(final Cookie localeCookie) {
 		ServletReaction reaction = new ServletReaction();
 		reaction.setForward("WEB-INF/login.jsp");
 		if (localeCookie != null && COOKIE_LOCALE.equals(localeCookie.getName())) {
