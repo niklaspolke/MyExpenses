@@ -83,6 +83,11 @@ the License.
                         <span class="w3-xlarge"><fmt:message key="menu.listexpenses.label"/></span>
                     </a>
                 </li><li class="w3-hover-yellow">
+                    <a href="searchexpenses.jsp" title="<fmt:message key="menu.searchexpenses.tooltip"/>">
+                        <img class="w3-left w3-margin-right" src="img/search_48.png" style="width:40px" alt="<fmt:message key="menu.searchexpenses.tooltip"/>" title="<fmt:message key="menu.searchexpenses.tooltip"/>">
+                        <span class="w3-xlarge"><fmt:message key="menu.searchexpenses.label"/></span>
+                    </a>
+                </li><li class="w3-hover-yellow">
                     <a href="listexpenses.jsp?monthly=true" title="<fmt:message key="menu.listexpenses.monthly.tooltip"/>">
                         <img class="w3-left w3-margin-right" src="img/calendar_48.png" style="width:40px" alt="<fmt:message key="menu.listexpenses.monthly.tooltip"/>" title="<fmt:message key="menu.listexpenses.monthly.tooltip"/>">
                         <span class="w3-xlarge"><fmt:message key="menu.listexpenses.monthly.label"/></span>

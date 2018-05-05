@@ -38,6 +38,11 @@ the License.
             <fmt:param value="${requestScope.monthCurrent}"/>
         </fmt:message>
     </c:when>
+    <c:when test="${requestScope.mode eq 'search'}">
+        <fmt:message key="searchexpenses.result.title">
+            <fmt:param value="${requestScope.searchText}"/>
+        </fmt:message>
+    </c:when>
     <c:otherwise>
         <fmt:message key="listexpenses.title"/>
     </c:otherwise>

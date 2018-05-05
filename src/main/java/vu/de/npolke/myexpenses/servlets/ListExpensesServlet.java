@@ -45,6 +45,7 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 	protected static final String MODE_EXPENSES = "expenses";
 	protected static final String MODE_TOP_10 = "topten";
 	protected static final String MODE_MONTHLY = "monthly";
+	protected static final String MODE_SEARCH = "search";
 
 	public static final String SESSION_LISTEXPENSES_LASTSITE = "listexpenses_lastsite";
 
@@ -61,6 +62,7 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 		final String requestedMonth = request.getParameter("month");
 		final String requestedCategoryId = request.getParameter("category");
 		final String requestedMonthly = request.getParameter("monthly");
+		final String requestedSearchText = request.getParameter("search");
 		final String useLastSite = request.getParameter("back");
 		final ServletReaction redirectToLastListExpenses = (ServletReaction) session
 				.getAttribute("redirectAfterExpenseSave");
@@ -69,7 +71,7 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 		ServletReaction reaction = checkRedirect(useLastSite, redirectToLastListExpenses);
 		if (reaction == null) {
 			reaction = prepareListExpenses(account, requestedPage, requestedMonth, requestedCategoryId,
-					requestedMonthly, message);
+					requestedMonthly, requestedSearchText, message);
 		}
 		return reaction;
 	}
@@ -112,7 +114,7 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 	}
 
 	public ServletReaction prepareListExpenses(final Account account, final String requestedPage, final String month,
-			final String categoryIdForTopTen, final String monthly, final String message) {
+			final String categoryIdForTopTen, final String monthly, final String searchText, final String message) {
 		ServletReaction reaction = new ServletReaction();
 		List<Expense> expenses = null;
 		boolean getMonthly = Boolean.parseBoolean(monthly);
@@ -126,7 +128,13 @@ public class ListExpensesServlet extends AbstractBasicServlet {
 		ServletReaction redirectAfterExpenseSave = new ServletReaction();
 		redirectAfterExpenseSave.setRedirect("listexpenses.jsp");
 
-		if (getMonthly) {
+		if (searchText != null) {
+			expenses = expenseDAO.searchForTextInReasons(account.getId(), searchText);
+			reaction.setRequestAttribute("mode", MODE_SEARCH);
+			reaction.setRequestAttribute("searchText", searchText);
+
+			redirectAfterExpenseSave.addRedirectParameter("search", searchText);
+		} else if (getMonthly) {
 			List<Month> monthsWithExpenses = statisticsDAO.readDistinctMonthsByAccountId(account.getId());
 			Month currentMonth = getCurrentMonth();
 			Month maxMonth = calcMaxMonth(currentMonth, monthsWithExpenses);

@@ -30,7 +30,7 @@ import vu.de.npolke.myexpenses.util.Timer;
  */
 public class ExpenseDAO extends AbstractConnectionDAO {
 
-	private static final String SQL_READ_TEMPLATE = "SELECT e.id, e.day, e.amount, e.reason, e.monthly, e.income, e.category_id, e.account_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE e.account_id = ?";
+	private static final String SQL_READ_TEMPLATE = "SELECT e.id, e.day, e.amount, e.reason, e.monthly, e.income, e.category_id, e.account_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE e.account_id = ? ";
 
 	private static final String SQL_INSERT = "INSERT INTO Expense (id, day, amount, reason, monthly, income, category_id, account_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -52,6 +52,9 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 	private static final String SQL_READ_AMOUNT_STANDARD_EXPENSE_BY_ACCOUNT_ID = "SELECT COUNT(id) as amountofexpenses FROM Expense WHERE account_id = ? AND monthly = false AND income = false";
 
 	private static final String SQL_READ_BY_CATEGORY_ID = "SELECT e.id, e.day, e.amount, e.reason, e.monthly, e.income, e.category_id, e.account_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE e.category_id = ? ORDER BY day DESC";
+
+	private static final String SQL_SEARCH_IN_REASON = SQL_READ_TEMPLATE
+			+ "AND lower(e.reason) like ? ORDER BY e.day DESC";
 
 	private static final String SQL_UPDATE_BY_ID = "UPDATE Expense SET day = ?, amount = ?, reason = ?, monthly = ?, income = ?, category_id = ? WHERE id = ?";
 
@@ -294,6 +297,30 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 			connection.rollback();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+
+		return expenses;
+	}
+
+	public List<Expense> searchForTextInReasons(final long accountId, String searchString) {
+		List<Expense> expenses = new ArrayList<Expense>();
+
+		if (searchString != null && searchString.trim().length() > 0) {
+			searchString = searchString.toLowerCase();
+			try (Connection connection = getConnection()) {
+				PreparedStatement readStatement;
+				readStatement = connection.prepareStatement(SQL_SEARCH_IN_REASON);
+				readStatement.setLong(1, accountId);
+				readStatement.setString(2, "%" + searchString + "%");
+				ResultSet result = readStatement.executeQuery();
+				while (result.next()) {
+					Expense expense = mapResultRow(result);
+					expenses.add(expense);
+				}
+				connection.rollback();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 
 		return expenses;

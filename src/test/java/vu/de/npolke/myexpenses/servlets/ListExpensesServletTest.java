@@ -26,6 +26,23 @@ import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 import vu.de.npolke.myexpenses.util.Month;
 
+/**
+ * Copyright 2015 Niklas Polke
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ * @author Niklas Polke
+ */
 public class ListExpensesServletTest {
 
 	private static final String LISTEXPENSES_JSP = "WEB-INF/listexpenses.jsp";
@@ -171,7 +188,7 @@ public class ListExpensesServletTest {
 		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(0L);
 		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 1, 10, false)).thenReturn(expenses);
 
-		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, null, null, null);
+		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, null, null, null, null);
 
 		assertNotNull(reaction);
 		// correct mode in request
@@ -198,7 +215,7 @@ public class ListExpensesServletTest {
 		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 1, 10, false)).thenReturn(expenses);
 		final String MESSAGE = "My Message";
 
-		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, null, null, MESSAGE);
+		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, null, null, null, MESSAGE);
 
 		assertNotNull(reaction);
 		assertEquals(MESSAGE, reaction.getRequestAttributes().get("message"));
@@ -216,7 +233,7 @@ public class ListExpensesServletTest {
 		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(3L);
 		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 1, 10, false)).thenReturn(expenses);
 
-		final ServletReaction reaction = servlet.prepareListExpenses(account, "0", null, null, null, null);
+		final ServletReaction reaction = servlet.prepareListExpenses(account, "0", null, null, null, null, null);
 
 		assertNotNull(reaction);
 		// correct mode in request
@@ -243,7 +260,7 @@ public class ListExpensesServletTest {
 		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(3L);
 		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 1, 10, true)).thenReturn(expenses);
 
-		final ServletReaction reaction = servlet.prepareListExpenses(account, "1", null, null, null, null);
+		final ServletReaction reaction = servlet.prepareListExpenses(account, "1", null, null, null, null, null);
 
 		assertNotNull(reaction);
 		// correct mode in request
@@ -269,7 +286,7 @@ public class ListExpensesServletTest {
 		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(12L);
 		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 11, 20, false)).thenReturn(expenses);
 
-		final ServletReaction reaction = servlet.prepareListExpenses(account, "-1", null, null, null, null);
+		final ServletReaction reaction = servlet.prepareListExpenses(account, "-1", null, null, null, null, null);
 
 		assertNotNull(reaction);
 		// correct mode in request
@@ -295,7 +312,7 @@ public class ListExpensesServletTest {
 		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(5L);
 		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 11, 20, true)).thenReturn(expenses);
 
-		final ServletReaction reaction = servlet.prepareListExpenses(account, "2", null, null, null, null);
+		final ServletReaction reaction = servlet.prepareListExpenses(account, "2", null, null, null, null, null);
 
 		assertNotNull(reaction);
 		// correct mode in request
@@ -321,7 +338,7 @@ public class ListExpensesServletTest {
 		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(12L);
 		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 11, 20, false)).thenReturn(expenses);
 
-		final ServletReaction reaction = servlet.prepareListExpenses(account, "-4", null, null, null, null);
+		final ServletReaction reaction = servlet.prepareListExpenses(account, "-4", null, null, null, null, null);
 
 		assertNotNull(reaction);
 		// correct mode in request
@@ -347,7 +364,7 @@ public class ListExpensesServletTest {
 		when(servlet.expenseDAO.readAmountOfExpensesUpToNow(ACCOUNT_ID)).thenReturn(5L);
 		when(servlet.expenseDAO.readByAccountId(ACCOUNT_ID, 11, 20, true)).thenReturn(expenses);
 
-		final ServletReaction reaction = servlet.prepareListExpenses(account, "5", null, null, null, null);
+		final ServletReaction reaction = servlet.prepareListExpenses(account, "5", null, null, null, null, null);
 
 		assertNotNull(reaction);
 		// correct mode in request
@@ -373,7 +390,7 @@ public class ListExpensesServletTest {
 		expenses.add(expense);
 		when(servlet.statisticsDAO.readTopTenByMonthAndCategory(ACCOUNT_ID, MONTH, CATEGORY_ID)).thenReturn(expenses);
 
-		final ServletReaction reaction = servlet.prepareListExpenses(account, null, MONTH, "" + CATEGORY_ID, null,
+		final ServletReaction reaction = servlet.prepareListExpenses(account, null, MONTH, "" + CATEGORY_ID, null, null,
 				null);
 
 		assertNotNull(reaction);
@@ -395,7 +412,7 @@ public class ListExpensesServletTest {
 		when(servlet.statisticsDAO.readTopTenByMonthAndCategory(ACCOUNT_ID, MONTH, 0)).thenReturn(expenses);
 
 		final ServletReaction reaction = servlet.prepareListExpenses(account, null, MONTH, "error" + CATEGORY_ID, null,
-				null);
+				null, null);
 
 		assertNotNull(reaction);
 		// correct mode in request
@@ -419,7 +436,8 @@ public class ListExpensesServletTest {
 		expenses.add(expense);
 		when(servlet.statisticsDAO.readTopTenByMonthAndCategory(ACCOUNT_ID, null, CATEGORY_ID)).thenReturn(expenses);
 
-		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, "" + CATEGORY_ID, null, null);
+		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, "" + CATEGORY_ID, null, null,
+				null);
 
 		assertNotNull(reaction);
 		// correct mode in request
@@ -450,7 +468,7 @@ public class ListExpensesServletTest {
 		when(servlet.expenseDAO.readMonthlyByAccountAndMonth(eq(ACCOUNT_ID), eq(Month.create("2016.09"))))
 				.thenReturn(expenses);
 
-		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, null, "true", null);
+		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, null, "true", null, null);
 
 		assertNotNull(reaction);
 		// correct mode in request
@@ -480,7 +498,8 @@ public class ListExpensesServletTest {
 		when(servlet.expenseDAO.readMonthlyByAccountAndMonth(eq(ACCOUNT_ID), eq(Month.create("2016.11"))))
 				.thenReturn(expenses);
 
-		final ServletReaction reaction = servlet.prepareListExpenses(account, null, "2016.11", null, "true", null);
+		final ServletReaction reaction = servlet.prepareListExpenses(account, null, "2016.11", null, "true", null,
+				null);
 
 		assertNotNull(reaction);
 		// correct mode in request
@@ -510,7 +529,8 @@ public class ListExpensesServletTest {
 		when(servlet.expenseDAO.readMonthlyByAccountAndMonth(eq(ACCOUNT_ID), eq(Month.create("2016.09"))))
 				.thenReturn(expenses);
 
-		final ServletReaction reaction = servlet.prepareListExpenses(account, null, "2016.11", null, "true", null);
+		final ServletReaction reaction = servlet.prepareListExpenses(account, null, "2016.11", null, "true", null,
+				null);
 
 		assertNotNull(reaction);
 		// correct mode in request
@@ -518,6 +538,29 @@ public class ListExpensesServletTest {
 		assertEquals("2016.09", reaction.getRequestAttributes().get("monthCurrent").toString());
 		assertEquals("2016.10", reaction.getRequestAttributes().get("monthMax").toString());
 		assertEquals("2016.08", reaction.getRequestAttributes().get("monthMin").toString());
+		// correct expenses in session
+		assertSame(expenses, reaction.getRequestAttributes().get("expenses"));
+		// correct navigation
+		assertEquals(LISTEXPENSES_JSP, reaction.getForward());
+	}
+
+	@Test
+	public void prepareListExpenses_searchText() {
+		servlet = spy(servlet);
+		final ArrayList<Expense> expenses = new ArrayList<Expense>();
+		Expense expense = new Expense();
+		expense.setCategoryId(CATEGORY_ID);
+		expense.setCategoryName(CATEGORY);
+		expenses.add(expense);
+		when(servlet.expenseDAO.searchForTextInReasons(eq(ACCOUNT_ID), eq("french"))).thenReturn(expenses);
+
+		final ServletReaction reaction = servlet.prepareListExpenses(account, null, null, null, null, "french", null);
+
+		assertNotNull(reaction);
+		// correct mode in request
+		assertEquals(ListExpensesServlet.MODE_SEARCH, reaction.getRequestAttributes().get("mode"));
+		// correct search text
+		assertEquals("french", reaction.getRequestAttributes().get("searchText"));
 		// correct expenses in session
 		assertSame(expenses, reaction.getRequestAttributes().get("expenses"));
 		// correct navigation

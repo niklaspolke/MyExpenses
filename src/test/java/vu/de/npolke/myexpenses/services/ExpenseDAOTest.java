@@ -260,6 +260,51 @@ public class ExpenseDAOTest extends AbstractDAOTest {
 	}
 
 	@Test
+	public void searchForTextInReasons_NoResult() {
+		List<Expense> expenses = expenseDAO.searchForTextInReasons(1, "no Result");
+
+		assertNotNull(expenses);
+		assertEquals(0, expenses.size());
+	}
+
+	@Test
+	public void searchForTextInReasons_exactMatch() {
+		List<Expense> expenses = expenseDAO.searchForTextInReasons(1, "jewels");
+
+		assertNotNull(expenses);
+		assertEquals(1, expenses.size());
+		assertEquals("jewels", expenses.get(0).getReason());
+	}
+
+	@Test
+	public void searchForTextInReasons_matchDifferentCase() {
+		List<Expense> expenses = expenseDAO.searchForTextInReasons(1, "JEWels");
+
+		assertNotNull(expenses);
+		assertEquals(1, expenses.size());
+		assertEquals("jewels", expenses.get(0).getReason());
+	}
+
+	@Test
+	public void searchForTextInReasons_matchPartOfText() {
+		List<Expense> expenses = expenseDAO.searchForTextInReasons(1, "fries");
+
+		assertNotNull(expenses);
+		assertEquals(1, expenses.size());
+		assertEquals("french fries", expenses.get(0).getReason());
+	}
+
+	@Test
+	public void searchForTextInReasons_matchMultipleTimes() {
+		List<Expense> expenses = expenseDAO.searchForTextInReasons(1, "at");
+
+		assertNotNull(expenses);
+		assertEquals(2, expenses.size());
+		assertEquals("flat", expenses.get(0).getReason());
+		assertEquals("watch", expenses.get(1).getReason());
+	}
+
+	@Test
 	public void delete() {
 		boolean success = expenseDAO.deleteById(101);
 		Expense expense = expenseDAO.read(1, 101);
