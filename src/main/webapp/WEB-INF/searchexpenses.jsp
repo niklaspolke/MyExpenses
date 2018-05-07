@@ -37,7 +37,8 @@ the License.
         placeholder="<fmt:message key="searchexpenses.text.default"/>"
         pattern=".{3,}"
         required="required"
-        value="">
+        value=""
+        autofocus>
     <label class="w3-label" for="reason"><fmt:message key="searchexpenses.text.label"/></label>
     </div></div>
 </div><div class="w3-panel">
