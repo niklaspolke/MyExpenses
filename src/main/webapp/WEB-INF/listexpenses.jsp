@@ -107,7 +107,7 @@ the License.
             </th></c:if>
         </tr>
         </c:if>
-        <tr>
+        <tr class="w3-light-grey">
             <c:if test="${requestScope.mode ne 'monthly'}"><th><fmt:message key="listexpenses.table.header.date"/></th></c:if>
             <c:if test="${requestScope.mode ne 'topten'}"><th><fmt:message key="listexpenses.table.header.category"/></th></c:if>
             <th><fmt:message key="listexpenses.table.header.amount"/></th>
