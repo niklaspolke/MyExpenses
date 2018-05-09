@@ -32,8 +32,8 @@ the License.
 <c:set var="showmenu" value="${not empty sessionScope.account}" scope="page"/>
 
 <body>
-    <div class="w3-row w3-grey">
-        <c:if test="${showmenu}"><span class="w3-col s3 w3-opennav w3-xlarge w3-hide-large w3-grey" onclick="w3_open()">
+    <div class="w3-row w3-dark-grey">
+        <c:if test="${showmenu}"><span class="w3-col s3 w3-opennav w3-xlarge w3-hide-large w3-dark-grey" onclick="w3_open()">
             <fmt:message key="menu.title"/>
         </span></c:if>
         <header class="w3-col s9 l6">
@@ -61,7 +61,7 @@ the License.
         </nav></c:if>
     </div>
     <div class="w3-row">
-        <c:if test="${showmenu}"><nav class="w3-sidenav w3-col s10 m6 l4 w3-collapse w3-animate-left w3-grey" style="position:relative !important" id="mySidenav">
+        <c:if test="${showmenu}"><nav class="w3-sidenav w3-col s10 m6 l4 w3-collapse w3-animate-left w3-dark-grey" style="position:relative !important" id="mySidenav">
             <a href="javascript:void(0)" onclick="w3_close()" class="w3-closenav w3-xlarge w3-hide-large"><fmt:message key="menu.close.label"/></a>
             <ul class="w3-ul">
                 <li class="w3-hover-yellow">
