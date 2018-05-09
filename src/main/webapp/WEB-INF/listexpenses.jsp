@@ -63,6 +63,7 @@ the License.
 <div class="w3-panel w3-padding-8">
 <table class="w3-table-all">
     <thead>
+        <c:if test="${requestScope.pageMax - requestScope.pageMin + 1 gt 1 or requestScope.mode eq 'monthly'}">
         <tr>
             <c:if test="${requestScope.pageMax - requestScope.pageMin + 1 gt 1}"><th class="w3-light-grey" colspan="5">
                 <c:choose>
@@ -105,6 +106,7 @@ the License.
                 </c:choose>
             </th></c:if>
         </tr>
+        </c:if>
         <tr>
             <c:if test="${requestScope.mode ne 'monthly'}"><th><fmt:message key="listexpenses.table.header.date"/></th></c:if>
             <c:if test="${requestScope.mode ne 'topten'}"><th><fmt:message key="listexpenses.table.header.category"/></th></c:if>
