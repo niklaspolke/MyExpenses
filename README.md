@@ -14,6 +14,7 @@ Web Application to track and analyse my expenses
 * do with Account: Register, Edit, Delete, Login, Logout
 * show statistics per month (top 10 per category, pie chart with sum per category, income vs expenses)
 * export to csv (month or year)
+* chooseable languages: english, german
 
 ### Planned features:
 * ?
