@@ -28,7 +28,8 @@ the License.
 <form action="addexpense.jsp" method="post">
 <div class="w3-panel">
     <div class="w3-row-padding">
-        <div class="w3-quarter">
+        <div class="w3-twothird">
+        <div class="w3-col s4">
             <input class="w3-input w3-border w3-round-large"
                 type="number"
                 id="day"
@@ -42,7 +43,7 @@ the License.
                 value="<c:out value="${requestScope.expense.getDay().get(5)}"/>"
                 required="required" >
             <label class="w3-label"><fmt:message key="addexpense.day.label"/></label>
-        </div><div class="w3-quarter">
+        </div><div class="w3-col s4">
             <input class="w3-input w3-border w3-round-large"
                 type="number"
                 id="month"
@@ -56,7 +57,7 @@ the License.
                 value="<c:out value="${requestScope.expense.getDay().get(2)+1}"/>"
                 required="required">
             <label class="w3-label"><fmt:message key="addexpense.month.label"/></label>
-        </div><div class="w3-quarter">
+        </div><div class="w3-col s4">
             <input class="w3-input w3-border w3-round-large"
                 type="number"
                 id="year"
@@ -70,26 +71,13 @@ the License.
                 value="<c:out value="${requestScope.expense.getDay().get(1)}"/>"
                 required="required">
             <label class="w3-label" for="year"><fmt:message key="addexpense.year.label"/></label>
-        </div><c:if test="${not empty requestScope.originalday}"><div class="w3-quarter">
+        </div></div><c:if test="${not empty requestScope.originalday}"><div class="w3-third">
             <input class="w3-btn w3-blue w3-round-xxlarge" type="button" id="resetdatebutton" value="<fmt:message key="addexpense.resetdatebutton.label"/>" onclick="resetToOriginalDay(${requestScope.originalday.get(5)}, ${requestScope.originalday.get(2)+1}, ${requestScope.originalday.get(1)});">
         </div></c:if>
     </div>
 </div><div class="w3-panel">
-    <div class="w3-row-padding"><div class="w3-col s12">
-    <select class="w3-input w3-border w3-round-large"
-        name="category"
-        title="<fmt:message key="addexpense.category.tooltip"/>"
-        required="required"
-        ${requestScope.categoryPreset ? '' : 'autofocus'}>
-        <c:forEach items="${requestScope.categories}" var="singlecategory">
-            <option value="${singlecategory.id}" ${singlecategory.id eq requestScope.expense.categoryId ? 'selected' : ''}><c:out value="${singlecategory.name}"/></option>
-        </c:forEach>
-    </select>
-    <label class="w3-label" for="category"><fmt:message key="addexpense.category.label"/></label>
-    </div></div>
-</div><div class="w3-panel">
     <div class="w3-row-padding">
-        <div class="w3-third">
+        <div class="w3-col s4">
             <input class="w3-input w3-border w3-round-large"
                 type="text"
                 name="amount"
@@ -103,28 +91,41 @@ the License.
                 value="<c:out value="${requestScope.expense.amount != 0.0 ? requestScope.expense.amount : ''}"/>"
                 ${requestScope.categoryPreset ? 'autofocus' : ''}>
             <label class="w3-label" for="amount"><fmt:message key="addexpense.amount.label"/></label>
-        </div><div class="w3-third">
+        </div><div class="w3-col s8">
+            <select class="w3-input w3-border w3-round-large"
+                    name="category"
+                    title="<fmt:message key="addexpense.category.tooltip"/>"
+                    required="required"
+                    ${requestScope.categoryPreset ? '' : 'autofocus'}>
+                <c:forEach items="${requestScope.categories}" var="singlecategory">
+                    <option value="${singlecategory.id}" ${singlecategory.id eq requestScope.expense.categoryId ? 'selected' : ''}><c:out value="${singlecategory.name}"/></option>
+                </c:forEach>
+            </select>
+            <label class="w3-label" for="category"><fmt:message key="addexpense.category.label"/></label>
+        </div>
+    </div>
+</div><div class="w3-panel">
+    <div class="w3-row-padding">
+        <div class="w3-col s12 l6">
+            <input class="w3-input w3-border w3-round-large"
+                type="text"
+                name="reason"
+                size="40"
+                maxlength="40"
+                title="<fmt:message key="addexpense.reason.tooltip"/>"
+                placeholder="<fmt:message key="addexpense.reason.default"/>"
+                pattern=".{3,}"
+                required="required"
+                value="<c:out value="${requestScope.expense.reason}"/>">
+            <label class="w3-label" for="reason"><fmt:message key="addexpense.reason.label"/></label>
+        </div><div class="w3-col s4 l3">
             <input class="w3-check" type="checkbox" name="monthly" title="<fmt:message key="addexpense.monthly.tooltip"/>" value="true" ${requestScope.expense.monthly ? 'checked' : ''}>
             <label class="w3-label" for="monthly"><fmt:message key="addexpense.monthly.label"/></label>
-        </div><div class="w3-third">
+        </div><div class="w3-col s4 l3">
             <input class="w3-check" type="checkbox" name="income" title="<fmt:message key="addexpense.income.tooltip"/>" value="true" ${requestScope.expense.income ? 'checked' : ''}>
             <label class="w3-label" for="income"><fmt:message key="addexpense.income.label"/></label>
         </div>
     </div>
-</div><div class="w3-panel">
-    <div class="w3-row-padding"><div class="w3-col s12">
-    <input class="w3-input w3-border w3-round-large"
-        type="text"
-        name="reason"
-        size="40"
-        maxlength="40"
-        title="<fmt:message key="addexpense.reason.tooltip"/>"
-        placeholder="<fmt:message key="addexpense.reason.default"/>"
-        pattern=".{3,}"
-        required="required"
-        value="<c:out value="${requestScope.expense.reason}"/>">
-    <label class="w3-label" for="reason"><fmt:message key="addexpense.reason.label"/></label>
-    </div></div>
 </div><div class="w3-panel">
     <div class="w3-row">
         <input class="w3-btn w3-green w3-xlarge w3-round-xxlarge" type="submit" value="<fmt:message key="addexpense.button.label"/>">
