@@ -1,5 +1,4 @@
-INSERT INTO account(id, login, password, budget) VALUES (1, 'test1', '5f4dcc3b5aa765d61d8327deb882cf99', null);
-INSERT INTO account(id, login, password, budget) VALUES (10, 'test2', '5f4dcc3b5aa765d61d8327deb882cf99', 400);
+INSERT INTO account(id, login, password) VALUES (1, 'test1', '5f4dcc3b5aa765d61d8327deb882cf99');
 
 INSERT INTO category(id, name, account_id) VALUES (11, 'food', 1);
 INSERT INTO category(id, name, account_id) VALUES (12, 'luxury', 1);

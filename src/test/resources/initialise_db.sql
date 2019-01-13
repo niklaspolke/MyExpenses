@@ -7,7 +7,8 @@ INSERT INTO sequence(seq_name, seq_number) VALUES ('ID_GENERATOR', 1000);
 CREATE TABLE account (
     id          INTEGER PRIMARY KEY,
     login       VARCHAR(40) NOT NULL UNIQUE,
-    password    VARCHAR(40) NOT NULL
+    password    VARCHAR(40) NOT NULL,
+    budget      DOUBLE
 );
 
 CREATE TABLE category (

@@ -65,7 +65,6 @@ the License.
         title="<fmt:message key="editaccount.oldpassword.tooltip"/>"
         placeholder="<fmt:message key="editaccount.oldpassword.default"/>"
         pattern=".{4,}"
-        required="required"
         value=""
         autofocus>
     <label class="w3-label" for="oldpassword"><fmt:message key="editaccount.oldpassword.label"/></label>
@@ -91,6 +90,18 @@ the License.
         pattern=".{4,}"
         value="">
     <label class="w3-label" for="newpassword2"><fmt:message key="editaccount.newpassword2.label"/></label>
+</div><div class="w3-panel">
+    <input class="w3-input w3-border w3-round-large"
+        type="number"
+        name="budget"
+        size="6"
+        maxlength="4"
+        min="0"
+        max="9999"
+        title="<fmt:message key="editaccount.budget.tooltip"/>"
+        placeholder="<fmt:message key="editaccount.budget.default"/>"
+        value="<c:out value="${sessionScope.account.getBudgetAsInteger()}"/>"/>
+    <label class="w3-label" for="budget"><fmt:message key="editaccount.budget.label"/></label>
 </div><div class="w3-panel">
     <div class="w3-row">
         <input class="w3-btn w3-green w3-xlarge w3-round-xxlarge" type="submit" value="<fmt:message key="editaccount.button.label"/>" onclick="return checkPasswords()">

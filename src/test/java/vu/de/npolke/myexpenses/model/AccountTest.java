@@ -30,39 +30,53 @@ public class AccountTest {
 	private static final int ID = 4;
 	private static final String LOGIN = "testuser";
 	private static final String PASSWORD = "password";
+	private static final Double BUDGET = 400.0;
 
 	private Account account;
 
 	@Before
 	public void setup() {
 		account = new Account();
+		account.setId(ID);
+		account.setLogin(LOGIN);
+		account.setPassword(PASSWORD);
+		account.setBudget(BUDGET);
 	}
 
 	@Test
 	public void normalValues() {
-		account.setId(ID);
-		account.setLogin(LOGIN);
-		account.setPassword(PASSWORD);
-
 		assertEquals(ID, account.getId());
 		assertEquals(LOGIN, account.getLogin());
 		assertEquals(PASSWORD, account.getPassword());
+		assertTrue(account.equalBudget(BUDGET));
 
 		assertEquals("Account: testuser", account.toString());
 	}
 
 	@Test
-	public void cloneAccount() {
-		account.setId(ID);
-		account.setLogin(LOGIN);
-		account.setPassword(PASSWORD);
+	public void equalBudget_nullVsNotNull() {
+		assertFalse(account.equalBudget(null));
+	}
 
+	@Test
+	public void equalBudget_otherValue() {
+		assertFalse(account.equalBudget(BUDGET + 20));
+	}
+
+	@Test
+	public void equalBudget_equalValue() {
+		assertTrue(account.equalBudget(BUDGET + 0.0001));
+	}
+
+	@Test
+	public void cloneAccount() {
 		Account clone = account.clone();
 
 		assertNotSame(account, clone);
 		assertEquals(ID, clone.getId());
 		assertEquals(LOGIN, clone.getLogin());
 		assertEquals(PASSWORD, clone.getPassword());
+		assertTrue(account.equalBudget(clone.getBudget()));
 	}
 
 	@Test
@@ -77,6 +91,7 @@ public class AccountTest {
 		assertFalse(account.equals(null));
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	@Test
 	public void equals_notequal_noAccount() {
 		assertFalse(account.equals(new String("Test")));
@@ -102,6 +117,14 @@ public class AccountTest {
 	public void equals_notequal_password() {
 		Account clone = account.clone();
 		clone.setPassword(PASSWORD + "abc");
+
+		assertFalse(account.equals(clone));
+	}
+
+	@Test
+	public void equals_notequal_budget() {
+		Account clone = account.clone();
+		clone.setBudget(null);
 
 		assertFalse(account.equals(clone));
 	}

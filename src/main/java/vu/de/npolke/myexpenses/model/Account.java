@@ -21,6 +21,8 @@ import java.io.Serializable;
  */
 public class Account implements Serializable, Cloneable {
 
+	public static final double DELTA_NOT_ZERO = 0.001;
+
 	private static final long serialVersionUID = 1L;
 
 	private long id;
@@ -29,6 +31,8 @@ public class Account implements Serializable, Cloneable {
 
 	// MD5-Hashvalue
 	private String password;
+
+	private Double budget;
 
 	public long getId() {
 		return id;
@@ -54,12 +58,37 @@ public class Account implements Serializable, Cloneable {
 		this.password = password;
 	}
 
+	public Double getBudget() {
+		return budget;
+	}
+
+	public Integer getBudgetAsInteger() {
+		if (getBudget() == null) {
+			return null;
+		} else {
+			return getBudget().intValue();
+		}
+	}
+
+	public void setBudget(final Double budget) {
+		this.budget = budget;
+	}
+
+	public boolean equalBudget(final Double otherBudget) {
+		if (getBudget() == null || otherBudget == null) {
+			return getBudget() == otherBudget;
+		} else {
+			return Math.abs(getBudget() - otherBudget) <= DELTA_NOT_ZERO;
+		}
+	}
+
 	@Override
 	public Account clone() {
 		final Account clone = new Account();
 		clone.setId(getId());
 		clone.setLogin(getLogin());
 		clone.setPassword(getPassword());
+		clone.setBudget(getBudget());
 		return clone;
 	}
 
@@ -78,6 +107,7 @@ public class Account implements Serializable, Cloneable {
 			} else {
 				equal &= getPassword().equals(other.getPassword());
 			}
+			equal &= equalBudget(other.getBudget());
 			return equal;
 		} else {
 			return false;

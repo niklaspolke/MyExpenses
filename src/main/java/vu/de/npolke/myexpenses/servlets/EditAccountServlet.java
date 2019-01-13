@@ -51,6 +51,7 @@ public class EditAccountServlet extends AbstractBasicServlet {
 	public ServletReaction prepareEditAccount(final Account account) {
 		final long amountOfStandardExpenses = expenseDAO.readAmountOfStandardExpenses(account.getId());
 		ServletReaction reaction = new ServletReaction();
+
 		reaction.setForward("WEB-INF/editaccount.jsp");
 		reaction.setRequestAttribute("amountOfExpenses", amountOfStandardExpenses);
 		return reaction;
@@ -64,15 +65,30 @@ public class EditAccountServlet extends AbstractBasicServlet {
 		final String newpassword1 = request.getParameter("newpassword1");
 		final String newpassword2 = request.getParameter("newpassword2");
 		final String login = request.getParameter("login");
+		final String budget = request.getParameter("budget");
 
-		return editAccount(account, oldpassword, newpassword1, newpassword2, login);
+		return editAccount(account, oldpassword, newpassword1, newpassword2, login, budget);
 	}
 
 	public ServletReaction editAccount(final Account account, final String oldPassword, final String newPassword1,
-			final String newPassword2, final String login) {
+			final String newPassword2, final String login, final String budget) {
 		ServletReaction reaction = new ServletReaction();
 		boolean validationErrors = false;
-		if (!account.getPassword().equals(HashUtil.toMD5(oldPassword))) {
+		if ("".equals(oldPassword) && "".equals(newPassword1) && "".equals(newPassword2)) {
+			try {
+				Double newBudget = null;
+				if (budget != null && budget.length() > 0) {
+					newBudget = Double.parseDouble(budget.replaceAll(",", "."));
+				}
+				Account accountUpdate = account.clone();
+				accountUpdate.setBudget(newBudget);
+				accountDAO.update(accountUpdate);
+				account.setBudget(newBudget);
+				reaction.setRedirect("editaccount.jsp");
+			} catch (NumberFormatException e) {
+				handleIncorrectInput(reaction, "error.editaccount.wrongpassword");
+			}
+		} else if (!account.getPassword().equals(HashUtil.toMD5(oldPassword))) {
 			handleIncorrectInput(reaction, "error.editaccount.wrongpassword");
 			validationErrors = true;
 		} else {

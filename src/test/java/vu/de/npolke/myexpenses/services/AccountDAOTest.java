@@ -58,6 +58,7 @@ public class AccountDAOTest extends AbstractDAOTest {
 		assertEquals(1, account.getId());
 		assertEquals("test1", account.getLogin());
 		assertEquals(HashUtil.toMD5("password"), account.getPassword());
+		assertNull(account.getBudget());
 	}
 
 	@Test
@@ -75,6 +76,18 @@ public class AccountDAOTest extends AbstractDAOTest {
 	}
 
 	@Test
+	public void readAccountFromLogin_WithBudget() {
+		Account account = accountDAO.readByLogin("test2", "password");
+
+		assertNotNull(account);
+		assertEquals(10, account.getId());
+		assertEquals("test2", account.getLogin());
+		assertEquals(HashUtil.toMD5("password"), account.getPassword());
+		assertNotNull(account.getBudget());
+		assertTrue(400 - account.getBudget() <= Account.DELTA_NOT_ZERO);
+	}
+
+	@Test
 	public void create() {
 		Account account = accountDAO.create("user1", "password1");
 
@@ -89,6 +102,7 @@ public class AccountDAOTest extends AbstractDAOTest {
 		Account account = accountDAO.readByLogin("test1", "password");
 		account.setLogin("user111");
 		account.setPassword(HashUtil.toMD5("password2"));
+		account.setBudget(400.0);
 		long oldId = account.getId();
 
 		accountDAO.update(account);
@@ -99,6 +113,8 @@ public class AccountDAOTest extends AbstractDAOTest {
 		assertEquals(oldId, account.getId());
 		assertEquals("user111", account.getLogin());
 		assertEquals(HashUtil.toMD5("password2"), account.getPassword());
+		assertNotNull(account.getBudget());
+		assertTrue(400 - account.getBudget() <= Account.DELTA_NOT_ZERO);
 	}
 
 	@Test

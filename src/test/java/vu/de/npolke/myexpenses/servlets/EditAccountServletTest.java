@@ -43,6 +43,8 @@ public class EditAccountServletTest {
 	private static final String LOGIN_NEW = "new user";
 	private static final String PASSWORD_OLD = "password";
 	private static final String PASSWORD_NEW = "new password";
+	private static final String BUDGET_OLD = "";
+	private static final String BUDGET_NEW = "400";
 
 	private EditAccountServlet servlet;
 	private Account account;
@@ -78,7 +80,8 @@ public class EditAccountServletTest {
 		accountToUpdate.setPassword(HashUtil.toMD5(PASSWORD_NEW));
 		when(servlet.accountDAO.update(eq(accountToUpdate))).thenReturn(true);
 
-		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, PASSWORD_NEW, PASSWORD_NEW, LOGIN_OLD);
+		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, PASSWORD_NEW, PASSWORD_NEW, LOGIN_OLD,
+				BUDGET_OLD);
 
 		assertNotNull(reaction);
 		assertEquals(LOGIN_OLD, account.getLogin());
@@ -95,7 +98,7 @@ public class EditAccountServletTest {
 		accountToUpdate.setLogin(LOGIN_NEW);
 		when(servlet.accountDAO.update(eq(accountToUpdate))).thenReturn(true);
 
-		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, "", "", LOGIN_NEW);
+		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, "", "", LOGIN_NEW, BUDGET_OLD);
 
 		assertNotNull(reaction);
 		assertEquals(LOGIN_NEW, account.getLogin());
@@ -107,13 +110,30 @@ public class EditAccountServletTest {
 	}
 
 	@Test
+	public void editAccount_Budget() {
+		Account accountToUpdate = account.clone();
+		accountToUpdate.setBudget(Double.parseDouble(BUDGET_NEW));
+		when(servlet.accountDAO.update(eq(accountToUpdate))).thenReturn(true);
+
+		ServletReaction reaction = servlet.editAccount(account, "", "", "", LOGIN_NEW, BUDGET_NEW);
+
+		assertNotNull(reaction);
+		assertEquals(BUDGET_NEW, "" + account.getBudget().intValue());
+		// correct persisting
+		verify(servlet.accountDAO).update(eq(accountToUpdate));
+		// correct navigation
+		assertEquals("editaccount.jsp", reaction.getRedirect());
+	}
+
+	@Test
 	public void editAccount_LoginAndPassword() {
 		Account accountToUpdate = account.clone();
 		accountToUpdate.setLogin(LOGIN_NEW);
 		accountToUpdate.setPassword(HashUtil.toMD5(PASSWORD_NEW));
 		when(servlet.accountDAO.update(eq(accountToUpdate))).thenReturn(true);
 
-		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, PASSWORD_NEW, PASSWORD_NEW, LOGIN_NEW);
+		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, PASSWORD_NEW, PASSWORD_NEW, LOGIN_NEW,
+				BUDGET_OLD);
 
 		assertNotNull(reaction);
 		assertEquals(LOGIN_NEW, account.getLogin());
@@ -126,8 +146,8 @@ public class EditAccountServletTest {
 
 	@Test
 	public void editAccount_wrongPassword() {
-		ServletReaction reaction = servlet.editAccount(account, "notOldPassword", PASSWORD_NEW, PASSWORD_NEW,
-				LOGIN_OLD);
+		ServletReaction reaction = servlet.editAccount(account, "notOldPassword", PASSWORD_NEW, PASSWORD_NEW, LOGIN_OLD,
+				BUDGET_OLD);
 
 		assertNotNull(reaction);
 		assertEquals(LOGIN_OLD, account.getLogin());
@@ -142,8 +162,8 @@ public class EditAccountServletTest {
 
 	@Test
 	public void editAccount_newPasswordsNotEqual() {
-		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, PASSWORD_NEW, "notNewPassword",
-				LOGIN_NEW);
+		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, PASSWORD_NEW, "notNewPassword", LOGIN_NEW,
+				BUDGET_OLD);
 
 		assertNotNull(reaction);
 		assertEquals(LOGIN_OLD, account.getLogin());
@@ -158,7 +178,8 @@ public class EditAccountServletTest {
 
 	@Test
 	public void editAccount_emptyLogin() {
-		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, PASSWORD_NEW, PASSWORD_NEW, "");
+		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, PASSWORD_NEW, PASSWORD_NEW, "",
+				BUDGET_OLD);
 
 		assertNotNull(reaction);
 		assertEquals(LOGIN_OLD, account.getLogin());
@@ -177,7 +198,7 @@ public class EditAccountServletTest {
 		accountToUpdate.setLogin(LOGIN_NEW);
 		when(servlet.accountDAO.update(eq(accountToUpdate))).thenReturn(false);
 
-		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, "", "", LOGIN_NEW);
+		ServletReaction reaction = servlet.editAccount(account, PASSWORD_OLD, "", "", LOGIN_NEW, BUDGET_OLD);
 
 		assertNotNull(reaction);
 		assertEquals(LOGIN_OLD, account.getLogin());
