@@ -78,21 +78,23 @@ public class EditExpenseServlet extends AbstractBasicServlet {
 		String reason = request.getParameter("reason");
 		String monthly = request.getParameter("monthly");
 		String income = request.getParameter("income");
+		String budget = request.getParameter("budget");
 		String day = request.getParameter("day");
 		String month = request.getParameter("month");
 		String year = request.getParameter("year");
 		String categoryId = request.getParameter("category");
 
-		return editExpense(account, id, amount, reason, monthly, income, day, month, year, categoryId);
+		return editExpense(account, id, amount, reason, monthly, income, budget, day, month, year, categoryId);
 	}
 
 	public ServletReaction editExpense(final Account account, final String idAsString, final String amountAsString,
-			final String reason, final String monthly, final String income, final String day, final String month,
-			final String year, final String categoryIdAsString) {
+			final String reason, final String monthly, final String income, final String budget, final String day,
+			final String month, final String year, final String categoryIdAsString) {
 		long id = Long.parseLong(idAsString);
 		double amount = Double.parseDouble(amountAsString.replaceAll(",", "."));
 		boolean isMonthly = Boolean.parseBoolean(monthly);
 		boolean isIncome = Boolean.parseBoolean(income);
+		boolean isBudget = Boolean.parseBoolean(budget);
 		long categoryId = Long.parseLong(categoryIdAsString);
 
 		Expense expense = expenseDAO.read(account.getId(), id);
@@ -100,6 +102,7 @@ public class EditExpenseServlet extends AbstractBasicServlet {
 		expense.setReason(reason);
 		expense.setMonthly(isMonthly);
 		expense.setIncome(isIncome);
+		expense.setBudget(isBudget);
 		expense.setReadableDayAsString(day + "." + month + "." + year);
 		expense.setCategoryId(categoryId);
 		expenseDAO.update(expense);

@@ -123,24 +123,26 @@ public class AddExpenseServlet extends AbstractBasicServlet {
 		String reason = request.getParameter("reason");
 		String monthly = request.getParameter("monthly");
 		String income = request.getParameter("income");
+		String budget = request.getParameter("budget");
 		String day = request.getParameter("day");
 		String month = request.getParameter("month");
 		String year = request.getParameter("year");
 		String categoryId = request.getParameter("category");
 
-		return addExpense(account, amount, reason, monthly, income, day, month, year, categoryId);
+		return addExpense(account, amount, reason, monthly, income, budget, day, month, year, categoryId);
 	}
 
 	public ServletReaction addExpense(final Account account, final String amountAsString, final String reason,
-			final String monthly, final String income, final String day, final String month, final String year,
-			final String categoryIdAsString) {
+			final String monthly, final String income, final String budget, final String day, final String month,
+			final String year, final String categoryIdAsString) {
 		double amount = Double.parseDouble(amountAsString);
 		boolean isMonthly = Boolean.parseBoolean(monthly);
 		boolean isIncome = Boolean.parseBoolean(income);
+		boolean isBudget = Boolean.parseBoolean(budget);
 		long categoryId = Long.valueOf(categoryIdAsString);
 		String readableDate = day + "." + month + "." + year;
 
-		expenseDAO.create(readableDate, amount, reason, isMonthly, isIncome, categoryId, account.getId());
+		expenseDAO.create(readableDate, amount, reason, isMonthly, isIncome, isBudget, categoryId, account.getId());
 		statistics.increaseCounterForStatisticType(ApplicationStatisticTypes.NEW_EXPENSES);
 
 		ServletReaction reaction = new ServletReaction();

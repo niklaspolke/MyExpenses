@@ -49,6 +49,8 @@ public class Expense implements Serializable {
 
 	private boolean income = false;
 
+	private boolean budget = false;
+
 	public long getId() {
 		return id;
 	}
@@ -145,6 +147,14 @@ public class Expense implements Serializable {
 		this.income = income;
 	}
 
+	public boolean isBudget() {
+		return budget;
+	}
+
+	public void setBudget(final boolean budget) {
+		this.budget = budget;
+	}
+
 	@Override
 	public String toString() {
 		//@formatter:off
@@ -154,7 +164,8 @@ public class Expense implements Serializable {
 				.append(getCategoryName()).append(" for ")
 				.append(getReason() != null ? getReason() : "")
 				.append(isMonthly() ? " - monthly fixed" : "")
-				.append(isIncome() ? " - income" : "");
+				.append(isIncome() ? " - income" : "")
+				.append(isBudget() ? " - budget relevant" : "");
 		return text.toString();
 		//@formatter:on
 	}

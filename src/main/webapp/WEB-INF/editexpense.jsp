@@ -112,12 +112,15 @@ the License.
                 required="required"
                 value="<c:out value="${requestScope.expense.reason}"/>">
             <label class="w3-label" for="reason"><fmt:message key="editexpense.reason.label"/></label>
-        </div><div class="w3-col s4 l3">
+        </div><div class="w3-col s4 l2">
             <input class="w3-check" type="checkbox" name="monthly" title="<fmt:message key="editexpense.monthly.tooltip"/>" value="true" ${requestScope.expense.monthly ? 'checked' : ''}>
             <label class="w3-label" for="fixedcost"><fmt:message key="editexpense.monthly.label"/></label>
-        </div><div class="w3-col s4 l3">
+        </div><div class="w3-col s4 l2">
             <input class="w3-check" type="checkbox" name="income" title="<fmt:message key="editexpense.income.tooltip"/> "value="true" ${requestScope.expense.income ? 'checked' : ''}>
             <label class="w3-label" for="income"><fmt:message key="editexpense.income.label"/></label>
+        </div><div class="w3-col s4 l2">
+            <input class="w3-check" type="checkbox" name="budget" title="<fmt:message key="editexpense.budget.tooltip"/> "value="true" ${requestScope.expense.budget ? 'checked' : ''}>
+            <label class="w3-label" for="budget"><fmt:message key="editexpense.budget.label"/></label>
         </div>
     </div>
 </div><div class="w3-panel">

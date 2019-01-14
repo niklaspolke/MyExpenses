@@ -30,9 +30,9 @@ import vu.de.npolke.myexpenses.util.Timer;
  */
 public class ExpenseDAO extends AbstractConnectionDAO {
 
-	private static final String SQL_READ_TEMPLATE = "SELECT e.id, e.day, e.amount, e.reason, e.monthly, e.income, e.category_id, e.account_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE e.account_id = ? ";
+	private static final String SQL_READ_TEMPLATE = "SELECT e.id, e.day, e.amount, e.reason, e.monthly, e.income, e.budget, e.category_id, e.account_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE e.account_id = ? ";
 
-	private static final String SQL_INSERT = "INSERT INTO Expense (id, day, amount, reason, monthly, income, category_id, account_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+	private static final String SQL_INSERT = "INSERT INTO Expense (id, day, amount, reason, monthly, income, budget, category_id, account_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	private static final String SQL_READ_BY_ID = SQL_READ_TEMPLATE + "AND e.id = ?";
 
@@ -51,12 +51,12 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 
 	private static final String SQL_READ_AMOUNT_STANDARD_EXPENSE_BY_ACCOUNT_ID = "SELECT COUNT(id) as amountofexpenses FROM Expense WHERE account_id = ? AND monthly = false AND income = false";
 
-	private static final String SQL_READ_BY_CATEGORY_ID = "SELECT e.id, e.day, e.amount, e.reason, e.monthly, e.income, e.category_id, e.account_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE e.category_id = ? ORDER BY day DESC";
+	private static final String SQL_READ_BY_CATEGORY_ID = "SELECT e.id, e.day, e.amount, e.reason, e.monthly, e.income, e.budget, e.category_id, e.account_id, c.name FROM Expense e JOIN Category c ON e.category_id = c.id WHERE e.category_id = ? ORDER BY day DESC";
 
 	private static final String SQL_SEARCH_IN_REASON = SQL_READ_TEMPLATE
 			+ "AND lower(e.reason) like ? ORDER BY e.day DESC";
 
-	private static final String SQL_UPDATE_BY_ID = "UPDATE Expense SET day = ?, amount = ?, reason = ?, monthly = ?, income = ?, category_id = ? WHERE id = ?";
+	private static final String SQL_UPDATE_BY_ID = "UPDATE Expense SET day = ?, amount = ?, reason = ?, monthly = ?, income = ?, budget = ?, category_id = ? WHERE id = ?";
 
 	private static final String SQL_DELETE_BY_ID = "DELETE FROM Expense WHERE id = ?";
 
@@ -77,7 +77,7 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 	}
 
 	public Expense create(final String readableDate, final double amount, final String reason, final boolean monthly,
-			final boolean income, final long categoryId, final long accountId) {
+			final boolean income, final boolean budget, final long categoryId, final long accountId) {
 		Expense expense = new Expense();
 		expense.setId(sequenceDAO.getNextPrimaryKey());
 		expense.setReadableDayAsString(readableDate);
@@ -85,6 +85,7 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 		expense.setReason(reason);
 		expense.setMonthly(monthly);
 		expense.setIncome(income);
+		expense.setBudget(budget);
 		expense.setCategoryId(categoryId);
 		expense.setCategoryName(categoryDAO.read(accountId, categoryId).getName());
 		expense.setAccountId(accountId);
@@ -98,8 +99,9 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 			createStatement.setString(4, expense.getReason());
 			createStatement.setBoolean(5, expense.isMonthly());
 			createStatement.setBoolean(6, expense.isIncome());
-			createStatement.setLong(7, categoryId);
-			createStatement.setLong(8, accountId);
+			createStatement.setBoolean(7, expense.isBudget());
+			createStatement.setLong(8, categoryId);
+			createStatement.setLong(9, accountId);
 			boolean created = 1 == createStatement.executeUpdate();
 			if (!created) {
 				expense = null;
@@ -141,6 +143,7 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 		expense.setReason(result.getString("reason"));
 		expense.setMonthly(result.getBoolean("monthly"));
 		expense.setIncome(result.getBoolean("income"));
+		expense.setBudget(result.getBoolean("budget"));
 		expense.setCategoryId(result.getLong("category_id"));
 		expense.setAccountId(result.getLong("account_id"));
 		expense.setCategoryName(result.getString("name"));
@@ -158,10 +161,11 @@ public class ExpenseDAO extends AbstractConnectionDAO {
 			updateStatement.setString(3, expense.getReason());
 			updateStatement.setBoolean(4, expense.isMonthly());
 			updateStatement.setBoolean(5, expense.isIncome());
-			updateStatement.setLong(6, expense.getCategoryId());
+			updateStatement.setBoolean(6, expense.isBudget());
+			updateStatement.setLong(7, expense.getCategoryId());
 			String categoryName = categoryDAO.read(expense.getAccountId(), expense.getCategoryId()).getName();
 			expense.setCategoryName(categoryName);
-			updateStatement.setLong(7, expense.getId());
+			updateStatement.setLong(8, expense.getId());
 			updated = 1 == updateStatement.executeUpdate();
 			connection.commit();
 		} catch (SQLException e) {

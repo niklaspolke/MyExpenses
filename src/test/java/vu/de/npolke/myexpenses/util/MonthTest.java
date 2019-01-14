@@ -72,11 +72,13 @@ public class MonthTest {
 		assertFalse(month.equals(create(month.getYear() + 1, month.getMonth())));
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	@Test
 	public void equalsOtherType() {
 		assertFalse(month.equals(4));
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	@Test
 	public void equalsEqualString() {
 		assertTrue(month.equals(month.toString()));

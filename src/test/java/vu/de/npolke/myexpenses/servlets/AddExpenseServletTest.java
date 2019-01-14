@@ -316,15 +316,15 @@ public class AddExpenseServletTest {
 		int month = 6;
 		int year = 2000;
 
-		ServletReaction reaction = servlet.addExpense(account, Double.toString(amount), reason, null, null,
+		ServletReaction reaction = servlet.addExpense(account, Double.toString(amount), reason, null, null, null,
 				Integer.toString(day), Integer.toString(month), Integer.toString(year), Long.toString(categoryId));
 
 		assertNotNull(reaction);
 		// correct navigation
 		assertEquals("listexpenses.jsp?back=true", reaction.getRedirect());
 		// correct creation of Expense
-		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, false, false, categoryId,
-				ACCOUNT_ID);
+		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, false, false, false,
+				categoryId, ACCOUNT_ID);
 		verify(servlet.statistics).increaseCounterForStatisticType(ApplicationStatisticTypes.NEW_EXPENSES);
 	}
 
@@ -339,14 +339,14 @@ public class AddExpenseServletTest {
 		int month = 6;
 		int year = 2000;
 
-		ServletReaction reaction = servlet.addExpense(account, Double.toString(amount), reason, "true", "true",
+		ServletReaction reaction = servlet.addExpense(account, Double.toString(amount), reason, "true", "true", "true",
 				Integer.toString(day), Integer.toString(month), Integer.toString(year), Long.toString(categoryId));
 
 		assertNotNull(reaction);
 		// correct navigation
 		assertEquals("listexpenses.jsp?back=true", reaction.getRedirect());
 		// correct creation of Expense
-		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, true, true, categoryId,
+		verify(servlet.expenseDAO).create(day + "." + month + "." + year, amount, reason, true, true, true, categoryId,
 				ACCOUNT_ID);
 		verify(servlet.statistics).increaseCounterForStatisticType(ApplicationStatisticTypes.NEW_EXPENSES);
 	}

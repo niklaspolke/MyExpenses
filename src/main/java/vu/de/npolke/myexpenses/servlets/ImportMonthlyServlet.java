@@ -68,7 +68,7 @@ public class ImportMonthlyServlet extends AbstractBasicServlet {
 				date.add(Calendar.MONTH, 1);
 				toCopy.setDay(date.getTime());
 				final Expense newExpense = expenseDAO.create(toCopy.getReadableDayAsString(), toCopy.getAmount(),
-						toCopy.getReason(), true, toCopy.isIncome(), toCopy.getCategoryId(), account.getId());
+						toCopy.getReason(), true, toCopy.isIncome(), toCopy.isBudget(), toCopy.getCategoryId(), account.getId());
 				if (newExpense != null) {
 					countNewExpenses++;
 				}

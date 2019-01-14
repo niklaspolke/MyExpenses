@@ -85,4 +85,12 @@ public class ExpenseTest {
 
 		assertEquals("Expense: (15.09.15) - 0,00 € - null for  - monthly fixed - income", expense.toString());
 	}
+
+	@Test
+	public void toString_budgetRelevant() {
+		expense.setBudget(true);
+		expense.setReadableDayAsString(DATABASE_DATE);
+
+		assertEquals("Expense: (15.09.15) - 0,00 € - null for  - budget relevant", expense.toString());
+	}
 }

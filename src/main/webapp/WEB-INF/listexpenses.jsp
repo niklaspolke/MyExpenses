@@ -120,7 +120,7 @@ the License.
             <tr style="${expense.income ? 'color:green' : ''}">
                 <c:if test="${requestScope.mode ne 'monthly'}"><td><c:out value="${expense.getReadableDayAsString()}"/></td></c:if>
                 <c:if test="${requestScope.mode ne 'topten'}"><td><c:out value="${expense.categoryName}"/></td></c:if>
-                <td class="number nowrap" style="text-align:right"><fmt:formatNumber value="${expense.amount}" type="currency" pattern="0.00 €"/></td>
+                <td class="number nowrap" style="text-align:right;${expense.budget ? 'color:red' : ''}"><fmt:formatNumber value="${expense.amount}" type="currency" pattern="0.00 €"/></td>
                 <td><c:out value="${expense.reason}"/></td>
                 <td style="border:none">
                     <a href="editexpense.jsp?id=${expense.id}"><img src="img/pencil_24.png" alt="<fmt:message key="listexpenses.table.editexpense.tooltip"/>" title="<fmt:message key="listexpenses.table.editexpense.tooltip"/>" width="24" height="24"/></a>
