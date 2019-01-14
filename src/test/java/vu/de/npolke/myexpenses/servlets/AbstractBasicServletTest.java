@@ -1,5 +1,7 @@
 package vu.de.npolke.myexpenses.servlets;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
@@ -26,7 +28,10 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import vu.de.npolke.myexpenses.model.Account;
+import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
+import vu.de.npolke.myexpenses.util.TimerMock;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -46,6 +51,9 @@ import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
  * @author Niklas Polke
  */
 public class AbstractBasicServletTest {
+
+	public static final long FAKE_TIME = 1483999598469L; // within 2017.01
+	private static final double DELTA = 0.001;
 
 	private AbstractBasicServlet servlet;
 
@@ -68,6 +76,8 @@ public class AbstractBasicServletTest {
 		});
 		session = mock(HttpSession.class);
 		dispatcher = mock(RequestDispatcher.class);
+		servlet.statisticsDAO = mock(StatisticsDAO.class);
+		servlet.timer = new TimerMock(FAKE_TIME);
 	}
 
 	@Test
@@ -166,5 +176,22 @@ public class AbstractBasicServletTest {
 			verify(request, times(2)).setAttribute(anyString(), anyObject());
 			verify(request, times(1)).removeAttribute(anyString());
 		}
+	}
+
+	@Test
+	public void addBudgetInfo() {
+		final double BUDGET = 200.0;
+		final double SUM_BUDGET_RELEVANT_COSTS = 112.0;
+		Account account = new Account();
+		account.setId(123);
+		account.setBudget(BUDGET);
+		ServletReaction reaction = new ServletReaction();
+		when(servlet.statisticsDAO.sumBudgetExpensesByMonth(123, "2017.01")).thenReturn(SUM_BUDGET_RELEVANT_COSTS);
+
+		servlet.addBudgetInfo(account, reaction);
+
+		assertNotNull(reaction.getRequestAttributes().get("sumBudget"));
+		assertEquals(BUDGET - SUM_BUDGET_RELEVANT_COSTS, (Double) reaction.getRequestAttributes().get("sumBudget"),
+				DELTA);
 	}
 }

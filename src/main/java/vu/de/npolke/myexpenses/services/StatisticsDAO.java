@@ -67,6 +67,9 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 			+ "ON e.category_id = c.id "
 			+ "WHERE e.monthly = false AND e.income = false AND e.account_id = ? AND year(e.day)+'.'+lpad(month(e.day),2,'0') = ? "
 			+ "ORDER BY e.amount DESC " + ") WHERE rownum() <= ?";
+
+	private static final String SQL_READ_BUDGET_FOR_MONTH = "SELECT sum(e.amount) AS sumofamount FROM expense e WHERE e.budget = true "
+			+ "AND year(day)+'.'+lpad(month(day),2,'0') = ? AND account_id = ?";
 	// @formatter:on
 
 	public List<Month> readDistinctMonthsByAccountId(final long accountId) {
@@ -251,5 +254,28 @@ public class StatisticsDAO extends AbstractConnectionDAO {
 		}
 
 		return expenses;
+	}
+
+	/**
+	 * return sum of amount from all budget relevant expenses of a specific month
+	 */
+	public double sumBudgetExpensesByMonth(final long accountId, final String month) {
+		double sumOfAllBudgetRelevantExpenses = 0.0;
+
+		try (Connection connection = getConnection()) {
+			PreparedStatement readStatement;
+			readStatement = connection.prepareStatement(SQL_READ_BUDGET_FOR_MONTH);
+			readStatement.setString(1, month);
+			readStatement.setLong(2, accountId);
+			ResultSet result = readStatement.executeQuery();
+			if (result.next()) {
+				sumOfAllBudgetRelevantExpenses = result.getDouble("sumofamount");
+			}
+			connection.rollback();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return sumOfAllBudgetRelevantExpenses;
 	}
 }

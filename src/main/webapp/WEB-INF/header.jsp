@@ -36,10 +36,17 @@ the License.
         <c:if test="${showmenu}"><span class="w3-col s3 w3-opennav w3-xlarge w3-hide-large w3-dark-grey" onclick="w3_open()">
             <fmt:message key="menu.title"/>
         </span></c:if>
-        <header class="w3-col s9 l6">
+        <header class="w3-col s6 l4">
             <h1 style="text-align:center"><fmt:message key="title"/></h1>
         </header>
-        <c:if test="${showmenu}"><nav class="w3-col l3 w3-hide-medium w3-hide-small">
+        <nav class="w3-col s3 l4">
+            <ul class="w3-ul">
+                <li class="w3-hover-yellow">
+                    <c:if test="${not empty sessionScope.account.budget}"><span class="w3-xlarge" style="${requestScope.sumBudget < 0 ? 'color:red' : ''}"><fmt:message key="menu.budget"/> <fmt:formatNumber value="${requestScope.sumBudget}" type="currency" pattern="0.00 €"/></span></c:if>&nbsp;
+                </li>
+            </ul>
+        </nav>
+        <c:if test="${showmenu}"><nav class="w3-col l2 w3-hide-medium w3-hide-small">
             <ul class="w3-ul">
                 <li class="w3-hover-yellow">
                     <a href="editaccount.jsp" title="<fmt:message key="menu.editaccount.tooltip"/>">
@@ -49,7 +56,7 @@ the License.
                 </li>
             </ul>
         </nav>
-        <nav class="w3-col l3 w3-hide-medium w3-hide-small">
+        <nav class="w3-col l2 w3-hide-medium w3-hide-small">
             <ul class="w3-ul">
                 <li class="w3-hover-yellow">
                     <a href="logout.jsp" title="<fmt:message key="menu.logout.tooltip"/>">

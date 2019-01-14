@@ -291,4 +291,25 @@ public class StatisticsDAOTest extends AbstractDAOTest {
 		assertEquals(3.0, expenses.get(8).getAmount(), DELTA);
 		assertEquals("gggg", expenses.get(9).getReason());
 	}
+
+	@Test
+	public void sumBudgetExpensesByMonth() {
+		double sum = statisticsDAO.sumBudgetExpensesByMonth(3, "2016.01");
+
+		assertEquals(22 + 11 + 4 + 8, sum, DELTA);
+	}
+
+	@Test
+	public void sumBudgetExpensesByMonth_NoRelevantExpenses() {
+		double sum = statisticsDAO.sumBudgetExpensesByMonth(2, "2015.05");
+
+		assertEquals(0, sum, DELTA);
+	}
+
+	@Test
+	public void sumBudgetExpensesByMonth_NoExpensesAtAll() {
+		double sum = statisticsDAO.sumBudgetExpensesByMonth(3, "2019.01");
+
+		assertEquals(0, sum, DELTA);
+	}
 }

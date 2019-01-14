@@ -10,7 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import vu.de.npolke.myexpenses.model.Account;
+import vu.de.npolke.myexpenses.services.DAOFactory;
+import vu.de.npolke.myexpenses.services.StatisticsDAO;
 import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
+import vu.de.npolke.myexpenses.util.Month;
+import vu.de.npolke.myexpenses.util.StatisticsElement;
+import vu.de.npolke.myexpenses.util.Timer;
 
 /**
  * Copyright 2015 Niklas Polke
@@ -32,6 +37,10 @@ import vu.de.npolke.myexpenses.servlets.util.ServletReaction;
 public class AbstractBasicServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
+
+	StatisticsDAO statisticsDAO = (StatisticsDAO) DAOFactory.getDAO(StatisticsElement.class);
+
+	Timer timer = new Timer();
 
 	protected void setEncoding(final HttpServletRequest request, final HttpServletResponse response)
 			throws IOException {
@@ -75,8 +84,18 @@ public class AbstractBasicServlet extends HttpServlet {
 
 		HttpSession session = request.getSession();
 
-		ServletReaction reaction = doGet(request, response, session, getAccount(session));
+		Account account = getAccount(session);
+		ServletReaction reaction = doGet(request, response, session, account);
+		addBudgetInfo(account, reaction);
 		handleServletReaction(reaction, request, response, session);
+	}
+
+	protected void addBudgetInfo(final Account account, final ServletReaction reaction) {
+		if (account != null && account.getBudget() != null && reaction != null) {
+			String month = Month.createMonthFromTimeMillis(timer.getCurrentTimeMillis()).toString();
+			double budget = statisticsDAO.sumBudgetExpensesByMonth(account.getId(), month);
+			reaction.setRequestAttribute("sumBudget", account.getBudget() - budget);
+		}
 	}
 
 	protected ServletReaction doGet(final HttpServletRequest request, final HttpServletResponse response,
