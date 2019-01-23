@@ -6,9 +6,9 @@ Web Application to track and analyse my expenses
 * Application: https://posthuman.selfhost.eu/myexpenses
 
 ### Features:
-* Expenses: amount, reason, date, category, income (true/false), monthly (true/false)
+* Expenses: amount, reason, date, category, income (true/false), monthly (true/false), budget (true/false)
 * Category: name
-* Account: username, password
+* Account: username, password, budget
 * do with Expenses: Add, Edit, Delete, List, Search
 * do with Categories: Add, Rename, Delete
 * do with Account: Register, Edit, Delete, Login, Logout
