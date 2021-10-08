@@ -4,14 +4,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static vu.de.npolke.myexpenses.filter.CachingFilter.HEADER_CACHE;
-import static vu.de.npolke.myexpenses.filter.CachingFilter.HEADER_CACHE_VALUE;
+import static vu.de.npolke.myexpenses.filter.CachingFilter.*;
 
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
@@ -38,13 +38,13 @@ public class CachingFilterTest {
 
 	private CachingFilter filter = new CachingFilter();
 
-	private ServletRequest request;
+	private HttpServletRequest request;
 	private FilterChain filterChain;
 	private HttpServletResponse response;
 
 	@Before
 	public void init() {
-		request = mock(ServletRequest.class);
+		request = mock(HttpServletRequest.class);
 		filterChain = mock(FilterChain.class);
 		response = mock(HttpServletResponse.class);
 	}
@@ -52,6 +52,7 @@ public class CachingFilterTest {
 	@Test
 	public void changeExistingHeader() throws IOException, ServletException {
 		when(response.containsHeader(HEADER_CACHE)).thenReturn(true);
+		when(request.getRequestURI()).thenReturn("");
 
 		filter.doFilter(request, response, filterChain);
 
@@ -62,10 +63,29 @@ public class CachingFilterTest {
 	@Test
 	public void addNonExistingHeader() throws IOException, ServletException {
 		when(response.containsHeader(HEADER_CACHE)).thenReturn(false);
+		when(request.getRequestURI()).thenReturn("");
 
 		filter.doFilter(request, response, filterChain);
 
 		verify(response, never()).setHeader(HEADER_CACHE, HEADER_CACHE_VALUE);
 		verify(response).addHeader(HEADER_CACHE, HEADER_CACHE_VALUE);
+	}
+
+	@Test
+	public void contentTypeCSS() throws IOException, ServletException {
+		when(request.getRequestURI()).thenReturn("abcd/abc.css");
+
+		filter.doFilter(request, response, filterChain);
+
+		verify(response).setContentType(CONTENTTYPE_CSS);
+	}
+
+	@Test
+	public void contentTypeNonCSS() throws IOException, ServletException {
+		when(request.getRequestURI()).thenReturn("abcd/abc.png");
+
+		filter.doFilter(request, response, filterChain);
+
+		verify(response).setContentType(CONTENTTYPE_DEFAULT);
 	}
 }

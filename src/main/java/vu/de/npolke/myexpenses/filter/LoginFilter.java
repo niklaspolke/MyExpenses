@@ -62,7 +62,6 @@ public class LoginFilter implements Filter {
 		 * special characters arent't parsed correctly from forms!
 		 */
 		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html;charset=UTF-8");
 		//@formatter:off
 		final HttpServletRequest httpRequest   = (HttpServletRequest) request;
 		final String requestURI                = httpRequest.getRequestURI();
