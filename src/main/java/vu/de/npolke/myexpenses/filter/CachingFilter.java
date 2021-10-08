@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -33,6 +34,8 @@ public class CachingFilter implements Filter {
 
 	public static final String HEADER_CACHE = "Cache-Control";
 	public static final String HEADER_CACHE_VALUE = "private,max-age=2592000";
+	public static final String CONTENTTYPE_DEFAULT = "text/html;charset=UTF-8";
+	public static final String CONTENTTYPE_CSS = "text/css;charset=UTF-8";
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
@@ -43,8 +46,14 @@ public class CachingFilter implements Filter {
 		 * (AbstractBasicServlet) is for nothing / without any effect and
 		 * special characters arent't parsed correctly from forms!
 		 */
+		final HttpServletRequest httpRequest = (HttpServletRequest) request;
+		final String requestURI              = httpRequest.getRequestURI();
 		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html;charset=UTF-8");
+		if (requestURI.endsWith(".css")) {
+			response.setContentType(CONTENTTYPE_CSS);
+		} else {
+			response.setContentType(CONTENTTYPE_DEFAULT);
+		}
 
 		filterChain.doFilter(request, response);
 
