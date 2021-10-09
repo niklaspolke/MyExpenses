@@ -3,9 +3,8 @@ package vu.de.npolke.myexpenses.servlets;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -95,10 +94,10 @@ public class AbstractBasicServletTest {
 		// correct navigation
 		verify(response).sendRedirect(URL);
 		// no session attribute changes
-		verify(session, never()).setAttribute(anyString(), anyObject());
+		verify(session, never()).setAttribute(anyString(), any(Object.class));
 		verify(session, never()).removeAttribute(anyString());
 		// no request attribute changes
-		verify(request, never()).setAttribute(anyString(), anyObject());
+		verify(request, never()).setAttribute(anyString(), any(Object.class));
 		verify(request, never()).removeAttribute(anyString());
 	}
 
@@ -109,9 +108,9 @@ public class AbstractBasicServletTest {
 		reaction.setRedirect(URL);
 
 		Map<String, Object> attributes = new HashMap<String, Object>();
-		attributes.put("1", new Integer(1));
+		attributes.put("1", Integer.valueOf(1));
 		attributes.put("2", null);
-		attributes.put("3", new Integer(2));
+		attributes.put("3", Integer.valueOf(2));
 		for (Entry<String, Object> entry : attributes.entrySet()) {
 			reaction.setSessionAttribute(entry.getKey(), entry.getValue());
 		}
@@ -131,11 +130,11 @@ public class AbstractBasicServletTest {
 			} else {
 				verify(session).setAttribute(entry.getKey(), entry.getValue());
 			}
-			verify(session, times(2)).setAttribute(anyString(), anyObject());
+			verify(session, times(2)).setAttribute(anyString(), any(Object.class));
 			verify(session, times(1)).removeAttribute(anyString());
 		}
 		// no request attribute changes
-		verify(request, never()).setAttribute(anyString(), anyObject());
+		verify(request, never()).setAttribute(anyString(), any(Object.class));
 		verify(request, never()).removeAttribute(anyString());
 	}
 
@@ -146,9 +145,9 @@ public class AbstractBasicServletTest {
 		reaction.setForward(URL);
 
 		Map<String, Object> attributes = new HashMap<String, Object>();
-		attributes.put("1", new Integer(1));
+		attributes.put("1", Integer.valueOf(1));
 		attributes.put("2", null);
-		attributes.put("3", new Integer(2));
+		attributes.put("3", Integer.valueOf(2));
 		for (Entry<String, Object> entry : attributes.entrySet()) {
 			reaction.setRequestAttribute(entry.getKey(), entry.getValue());
 		}
@@ -164,7 +163,7 @@ public class AbstractBasicServletTest {
 		// correct navigation
 		verify(dispatcher).forward(request, response);
 		// correct session attribute changes
-		verify(session, never()).setAttribute(anyString(), anyObject());
+		verify(session, never()).setAttribute(anyString(), any(Object.class));
 		verify(session, never()).removeAttribute(anyString());
 		// no request attribute changes
 		for (Entry<String, Object> entry : attributes.entrySet()) {
@@ -173,7 +172,7 @@ public class AbstractBasicServletTest {
 			} else {
 				verify(request).setAttribute(entry.getKey(), entry.getValue());
 			}
-			verify(request, times(2)).setAttribute(anyString(), anyObject());
+			verify(request, times(2)).setAttribute(anyString(), any(Object.class));
 			verify(request, times(1)).removeAttribute(anyString());
 		}
 	}

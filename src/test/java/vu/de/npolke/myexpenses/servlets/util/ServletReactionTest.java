@@ -46,8 +46,8 @@ public class ServletReactionTest {
 
 	@Test
 	public void setSessionAttribute() {
-		Double attr1 = new Double(3);
-		Integer attr2 = new Integer(2);
+		Double attr1 = Double.valueOf(3);
+		Integer attr2 = Integer.valueOf(2);
 		Object attr3 = null;
 
 		reaction.setSessionAttribute("attribute1", attr1);
@@ -62,8 +62,8 @@ public class ServletReactionTest {
 
 	@Test
 	public void removeSessionAttribute() {
-		Double attr1 = new Double(3);
-		Integer attr2 = new Integer(2);
+		Double attr1 = Double.valueOf(3);
+		Integer attr2 = Integer.valueOf(2);
 		Object attr3 = null;
 		reaction.setSessionAttribute("attribute1", attr1);
 		reaction.setSessionAttribute("attribute2", attr2);
@@ -80,8 +80,8 @@ public class ServletReactionTest {
 
 	@Test
 	public void setRequestAttribute() {
-		Double attr1 = new Double(3);
-		Integer attr2 = new Integer(2);
+		Double attr1 = Double.valueOf(3);
+		Integer attr2 = Integer.valueOf(2);
 		Object attr3 = null;
 
 		reaction.setRequestAttribute("attribute1", attr1);
@@ -96,8 +96,8 @@ public class ServletReactionTest {
 
 	@Test
 	public void removeRequestAttribute() {
-		Double attr1 = new Double(3);
-		Integer attr2 = new Integer(2);
+		Double attr1 = Double.valueOf(3);
+		Integer attr2 = Integer.valueOf(2);
 		Object attr3 = null;
 		reaction.setRequestAttribute("attribute1", attr1);
 		reaction.setRequestAttribute("attribute2", attr2);

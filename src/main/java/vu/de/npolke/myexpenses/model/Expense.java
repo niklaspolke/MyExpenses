@@ -160,7 +160,7 @@ public class Expense implements Serializable {
 		//@formatter:off
 		StringBuilder text = new StringBuilder().append("Expense: ")
 				.append("(").append(getReadableDayAsString()).append(") - ")
-				.append(NUMBER_FORMATTER.format(getAmount())).append(" - ")
+				.append(NUMBER_FORMATTER.format(getAmount()).replaceAll("\\u00a0", " ")).append(" - ")
 				.append(getCategoryName()).append(" for ")
 				.append(getReason() != null ? getReason() : "")
 				.append(isMonthly() ? " - monthly fixed" : "")

@@ -3,12 +3,12 @@ package vu.de.npolke.myexpenses.servlets;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyDouble;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import vu.de.npolke.myexpenses.model.Account;
 import vu.de.npolke.myexpenses.model.Expense;
@@ -117,8 +117,6 @@ public class ImportMonthlyServletTest {
 
 	@Test
 	public void duplicateMonthlyExpenses_doNothing_whenMonthIsMissing() {
-		when(expenseDAO.readMonthlyByAccountAndMonth(anyLong(), any(Month.class))).thenReturn(EMPTY_EXPENSELIST);
-
 		ServletReaction reaction = servlet.duplicateMonthlyExpenses(account, null);
 
 		assertNotNull(reaction);
@@ -130,7 +128,6 @@ public class ImportMonthlyServletTest {
 	@Test
 	public void duplicateMonthlyExpenses_doNothing_whenMonthIsIllegalMonth() {
 		final String illegalMonth = "2016.13b";
-		when(expenseDAO.readMonthlyByAccountAndMonth(anyLong(), any(Month.class))).thenReturn(EMPTY_EXPENSELIST);
 
 		ServletReaction reaction = servlet.duplicateMonthlyExpenses(account, illegalMonth);
 
